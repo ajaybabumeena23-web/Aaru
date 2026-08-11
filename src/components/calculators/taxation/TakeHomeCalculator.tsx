@@ -54,6 +54,7 @@ function TakeHomeInner() {
 
   return (
     <CalculatorPageLayout
+      seoKey="taxation/take-home-salary"
       categoryHref="/calculators/taxation"
       categoryLabel="Taxation & Salary"
       crumb="Take-Home"

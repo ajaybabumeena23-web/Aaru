@@ -33,6 +33,7 @@ function SsyInner() {
 
   return (
     <CalculatorPageLayout
+      seoKey="government/ssy"
       categoryHref="/calculators/government"
       categoryLabel="Govt & Fixed Income"
       crumb="SSY"

@@ -44,6 +44,7 @@ function FireInner() {
 
   return (
     <CalculatorPageLayout
+      seoKey="retirement/fire"
       categoryHref="/calculators/retirement"
       categoryLabel="Retirement & Goals"
       crumb="FIRE"

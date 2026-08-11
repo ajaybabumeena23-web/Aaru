@@ -41,6 +41,7 @@ function ChildEducationInner() {
 
   return (
     <CalculatorPageLayout
+      seoKey="retirement/child-education"
       categoryHref="/calculators/retirement"
       categoryLabel="Retirement & Goals"
       crumb="Child Education"

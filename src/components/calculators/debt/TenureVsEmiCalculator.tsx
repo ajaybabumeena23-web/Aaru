@@ -42,6 +42,7 @@ function TenureVsEmiInner() {
 
   return (
     <CalculatorPageLayout
+      seoKey="debt/tenure-vs-emi"
       categoryHref="/calculators/debt"
       categoryLabel="Debt Management"
       crumb="Tenure vs EMI"

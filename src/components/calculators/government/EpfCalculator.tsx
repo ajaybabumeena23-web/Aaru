@@ -38,6 +38,7 @@ function EpfInner() {
 
   return (
     <CalculatorPageLayout
+      seoKey="government/epf"
       categoryHref="/calculators/government"
       categoryLabel="Govt & Fixed Income"
       crumb="EPF"

@@ -39,6 +39,7 @@ function HraInner() {
 
   return (
     <CalculatorPageLayout
+      seoKey="taxation/hra-exemption"
       categoryHref="/calculators/taxation"
       categoryLabel="Taxation & Salary"
       crumb="HRA"

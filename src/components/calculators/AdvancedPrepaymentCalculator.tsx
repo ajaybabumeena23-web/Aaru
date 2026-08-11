@@ -1,7 +1,6 @@
 "use client";
 
-import { Suspense, useMemo, useState } from "react";
-import Link from "next/link";
+import { useMemo, useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import {
   CalculationResultCard,
@@ -9,6 +8,10 @@ import {
   ExportPDFButton,
   FinancialDonutChart,
 } from "@/components/calculators";
+import {
+  CalculatorPageLayout,
+  withCalculatorSuspense,
+} from "@/components/calculators/CalculatorPageLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -89,29 +92,14 @@ function AdvancedPrepaymentInner() {
   };
 
   return (
-    <div className="space-y-6">
-      <nav className="text-sm text-muted-foreground">
-        <Link href="/" className="hover:text-foreground">
-          Home
-        </Link>
-        <span className="mx-2">/</span>
-        <Link href="/calculators/debt" className="hover:text-foreground">
-          Debt Management
-        </Link>
-        <span className="mx-2">/</span>
-        <span className="text-foreground">Advanced Prepayment</span>
-      </nav>
-
-      <header className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight">
-          Crush Debt Faster with Smart Prepayments
-        </h1>
-        <p className="max-w-2xl text-muted-foreground">
-          Model lump-sum prepayments in specific months and optional annual EMI
-          step-ups. Amortization updates instantly; share via URL.
-        </p>
-      </header>
-
+    <CalculatorPageLayout
+      seoKey="debt/advanced-prepayment"
+      categoryHref="/calculators/debt"
+      categoryLabel="Debt Management"
+      crumb="Advanced Prepayment"
+      title="Crush Debt Faster with Smart Prepayments"
+      description="Model lump-sum prepayments in specific months and optional annual EMI step-ups. Amortization updates instantly; share via URL."
+    >
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="space-y-6">
           <Card>
@@ -364,18 +352,10 @@ function AdvancedPrepaymentInner() {
           </table>
         </CardContent>
       </Card>
-    </div>
+    </CalculatorPageLayout>
   );
 }
 
 export function AdvancedPrepaymentCalculator() {
-  return (
-    <Suspense
-      fallback={
-        <div className="text-sm text-muted-foreground">Loading calculator…</div>
-      }
-    >
-      <AdvancedPrepaymentInner />
-    </Suspense>
-  );
+  return withCalculatorSuspense(<AdvancedPrepaymentInner />);
 }

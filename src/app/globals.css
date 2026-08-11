@@ -108,4 +108,20 @@
     @apply inline-flex items-center gap-1.5 rounded-full border border-accent/40 bg-accent/15 px-3 py-1 text-xs font-semibold tracking-wide text-accent;
     box-shadow: 0 0 20px rgba(247, 198, 21, 0.15);
   }
+
+  /* Calculator tool area: keep charts/tables from blowing mobile width */
+  .calculator-tool {
+    @apply min-w-0 space-y-6;
+  }
+
+  .calculator-tool .recharts-responsive-container {
+    min-width: 0 !important;
+  }
+
+  /* Sticky results on large screens when paired with input column */
+  @media (min-width: 1024px) {
+    .calculator-results-sticky {
+      @apply sticky top-24 self-start;
+    }
+  }
 }

@@ -1,13 +1,16 @@
 "use client";
 
-import { Suspense, useMemo } from "react";
-import Link from "next/link";
+import { useMemo } from "react";
 import {
   CalculationResultCard,
   DraggableSlider,
   ExportPDFButton,
   FinancialDonutChart,
 } from "@/components/calculators";
+import {
+  CalculatorPageLayout,
+  withCalculatorSuspense,
+} from "@/components/calculators/CalculatorPageLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -53,29 +56,14 @@ function StepUpSipCalculatorInner() {
       : result.maturityValue;
 
   return (
-    <div className="space-y-6">
-      <nav className="text-sm text-muted-foreground">
-        <Link href="/" className="hover:text-foreground">
-          Home
-        </Link>
-        <span className="mx-2">/</span>
-        <Link href="/calculators/investment" className="hover:text-foreground">
-          Investment & Wealth
-        </Link>
-        <span className="mx-2">/</span>
-        <span className="text-foreground">Step-Up SIP</span>
-      </nav>
-
-      <header className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight">
-          Accelerate Wealth with Annual SIP Step-Ups
-        </h1>
-        <p className="max-w-2xl text-muted-foreground">
-          Model SIPs that grow by a fixed % every year. Share this exact scenario
-          via the URL — calculations run entirely in your browser.
-        </p>
-      </header>
-
+    <CalculatorPageLayout
+      seoKey="investment/step-up-sip"
+      categoryHref="/calculators/investment"
+      categoryLabel="Investment & Wealth"
+      crumb="Step-Up SIP"
+      title="Accelerate Wealth with Annual SIP Step-Ups"
+      description="Model SIPs that grow by a fixed % every year. Share this exact scenario via the URL."
+    >
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
           <CardHeader>
@@ -262,18 +250,10 @@ function StepUpSipCalculatorInner() {
           />
         </div>
       </div>
-    </div>
+    </CalculatorPageLayout>
   );
 }
 
 export function StepUpSipCalculator() {
-  return (
-    <Suspense
-      fallback={
-        <div className="text-sm text-muted-foreground">Loading calculator…</div>
-      }
-    >
-      <StepUpSipCalculatorInner />
-    </Suspense>
-  );
+  return withCalculatorSuspense(<StepUpSipCalculatorInner />);
 }

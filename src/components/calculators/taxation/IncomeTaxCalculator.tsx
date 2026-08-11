@@ -41,6 +41,7 @@ function IncomeTaxInner() {
 
   return (
     <CalculatorPageLayout
+      seoKey="taxation/income-tax"
       categoryHref="/calculators/taxation"
       categoryLabel="Taxation & Salary"
       crumb="Income Tax"

@@ -44,6 +44,7 @@ function XirrInner() {
 
   return (
     <CalculatorPageLayout
+      seoKey="investment/xirr"
       categoryHref="/calculators/investment"
       categoryLabel="Investment & Wealth"
       crumb="XIRR"

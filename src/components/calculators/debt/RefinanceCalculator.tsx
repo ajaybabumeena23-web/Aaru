@@ -41,6 +41,7 @@ function RefinanceInner() {
 
   return (
     <CalculatorPageLayout
+      seoKey="debt/refinance"
       categoryHref="/calculators/debt"
       categoryLabel="Debt Management"
       crumb="Refinance"

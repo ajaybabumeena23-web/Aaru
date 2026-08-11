@@ -57,6 +57,7 @@ function FdRdInner() {
 
   return (
     <CalculatorPageLayout
+      seoKey="government/fd-rd"
       categoryHref="/calculators/government"
       categoryLabel="Govt & Fixed Income"
       crumb="FD / RD"

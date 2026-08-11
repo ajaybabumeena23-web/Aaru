@@ -50,6 +50,7 @@ function SipInner() {
 
   return (
     <CalculatorPageLayout
+      seoKey="investment/sip"
       categoryHref="/calculators/investment"
       categoryLabel="Investment & Wealth"
       crumb="SIP"

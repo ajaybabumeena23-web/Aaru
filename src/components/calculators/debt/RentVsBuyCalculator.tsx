@@ -43,6 +43,7 @@ function RentVsBuyInner() {
 
   return (
     <CalculatorPageLayout
+      seoKey="debt/rent-vs-buy"
       categoryHref="/calculators/debt"
       categoryLabel="Debt Management"
       crumb="Rent vs Buy"

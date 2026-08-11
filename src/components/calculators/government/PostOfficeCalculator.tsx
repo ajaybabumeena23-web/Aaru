@@ -51,6 +51,7 @@ function PostOfficeInner() {
 
   return (
     <CalculatorPageLayout
+      seoKey="government/post-office"
       categoryHref="/calculators/government"
       categoryLabel="Govt & Fixed Income"
       crumb="Post Office"

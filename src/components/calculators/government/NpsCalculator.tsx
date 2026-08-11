@@ -37,6 +37,7 @@ function NpsInner() {
 
   return (
     <CalculatorPageLayout
+      seoKey="government/nps"
       categoryHref="/calculators/government"
       categoryLabel="Govt & Fixed Income"
       crumb="NPS"

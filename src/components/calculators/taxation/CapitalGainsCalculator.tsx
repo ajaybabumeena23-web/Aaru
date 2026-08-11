@@ -41,6 +41,7 @@ function CapitalGainsInner() {
 
   return (
     <CalculatorPageLayout
+      seoKey="taxation/capital-gains"
       categoryHref="/calculators/taxation"
       categoryLabel="Taxation & Salary"
       crumb="Capital Gains"

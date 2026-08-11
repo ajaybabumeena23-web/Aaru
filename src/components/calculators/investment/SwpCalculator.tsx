@@ -40,6 +40,7 @@ function SwpInner() {
 
   return (
     <CalculatorPageLayout
+      seoKey="investment/swp"
       categoryHref="/calculators/investment"
       categoryLabel="Investment & Wealth"
       crumb="SWP"

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { CALCULATOR_CATEGORIES } from "@/lib/calculators";
 import { POPULAR_CALCULATORS, SITE_NAME, SITE_TAGLINE } from "@/lib/brand";
+import { ds } from "@/lib/design-system";
 import { SiteSearch } from "@/components/layout/SiteSearch";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,23 +12,22 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 export default function HomePage() {
   return (
-    <div className="space-y-12 sm:space-y-16">
-      <section className="space-y-6">
-        <p className="text-sm font-medium uppercase tracking-wider text-gold">
-          {SITE_NAME}
-        </p>
+    <div className={cn(ds.page, "pb-4")}>
+      <section className={ds.section}>
+        <p className={cn(ds.label, "text-gold")}>{SITE_NAME}</p>
         <h1 className="max-w-3xl text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
           Make smarter money decisions with simple financial tools
         </h1>
-        <p className="max-w-2xl text-base text-muted-foreground sm:text-lg">
+        <p className={cn(ds.lead, "sm:text-lg")}>
           Free calculators and practical financial resources for SIPs, loans,
           taxes, retirement, savings and wealth planning in India.{" "}
           <span className="text-foreground/90">{SITE_TAGLINE}.</span>
         </p>
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div className={ds.ctaRow}>
           <Button asChild size="lg" className="w-full sm:w-auto">
             <Link href="/calculators">
               Explore Calculators
@@ -49,11 +49,9 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="space-y-4">
+      <section className={ds.section}>
         <div className="flex items-end justify-between gap-3">
-          <h2 className="text-xl font-semibold sm:text-2xl">
-            Popular calculators
-          </h2>
+          <h2 className={cn(ds.h2, "sm:text-2xl")}>Popular calculators</h2>
           <Link
             href="/calculators"
             className="shrink-0 text-sm text-gold hover:underline"
@@ -66,7 +64,10 @@ export default function HomePage() {
             <Link
               key={`${c.category}-${c.slug}`}
               href={`/calculators/${c.category}/${c.slug}`}
-              className="rounded-lg border border-border/70 bg-card/80 px-4 py-3 text-sm font-medium transition-colors hover:border-gold/40 hover:text-gold"
+              className={cn(
+                ds.cardInteractive,
+                "px-4 py-3 text-sm font-medium hover:text-gold"
+              )}
             >
               {c.title}
             </Link>
@@ -79,11 +80,11 @@ export default function HomePage() {
           const Icon = category.icon;
           const preview = category.calculators.slice(0, 6);
           return (
-            <div key={category.id} className="space-y-3">
+            <div key={category.id} className={ds.sectionTight}>
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
-                  <Icon className="h-5 w-5 text-gold" />
-                  <h2 className="text-xl font-semibold">{category.label}</h2>
+                  <Icon className="h-5 w-5 text-gold" aria-hidden />
+                  <h2 className={ds.h2}>{category.label}</h2>
                 </div>
                 <Link
                   href={`/calculators/${category.id}`}
@@ -118,10 +119,8 @@ export default function HomePage() {
         })}
       </section>
 
-      <section className="space-y-4 rounded-xl border border-border/70 illustrative-gradient p-6 sm:p-8">
-        <h2 className="text-xl font-semibold sm:text-2xl">
-          Why use {SITE_NAME}?
-        </h2>
+      <section className={cn(ds.panel, ds.section)}>
+        <h2 className={cn(ds.h2, "sm:text-2xl")}>Why use {SITE_NAME}?</h2>
         <div className="grid gap-4 sm:grid-cols-3">
           <div>
             <p className="font-medium text-gold">Instant & private</p>

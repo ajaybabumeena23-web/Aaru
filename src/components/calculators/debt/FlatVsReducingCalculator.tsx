@@ -35,6 +35,7 @@ function FlatVsReducingInner() {
 
   return (
     <CalculatorPageLayout
+      seoKey="debt/flat-vs-reducing"
       categoryHref="/calculators/debt"
       categoryLabel="Debt Management"
       crumb="Flat vs Reducing"

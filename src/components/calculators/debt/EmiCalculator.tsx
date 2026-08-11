@@ -35,6 +35,7 @@ function EmiInner() {
 
   return (
     <CalculatorPageLayout
+      seoKey="debt/emi"
       categoryHref="/calculators/debt"
       categoryLabel="Debt Management"
       crumb="EMI"

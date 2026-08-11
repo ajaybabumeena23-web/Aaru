@@ -50,6 +50,7 @@ function LumpSumInner() {
 
   return (
     <CalculatorPageLayout
+      seoKey="investment/lump-sum"
       categoryHref="/calculators/investment"
       categoryLabel="Investment & Wealth"
       crumb="Lump Sum"

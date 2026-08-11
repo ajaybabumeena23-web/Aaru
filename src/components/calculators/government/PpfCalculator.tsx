@@ -35,6 +35,7 @@ function PpfInner() {
 
   return (
     <CalculatorPageLayout
+      seoKey="government/ppf"
       categoryHref="/calculators/government"
       categoryLabel="Govt & Fixed Income"
       crumb="PPF"

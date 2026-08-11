@@ -37,6 +37,7 @@ function ReverseSipInner() {
 
   return (
     <CalculatorPageLayout
+      seoKey="retirement/reverse-sip"
       categoryHref="/calculators/retirement"
       categoryLabel="Retirement & Goals"
       crumb="Reverse SIP"
