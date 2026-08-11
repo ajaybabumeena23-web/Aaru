@@ -508,6 +508,323 @@ export const GUIDES: Guide[] = [
     ],
     relatedGuides: ["ppf-basics"],
   },
+  {
+    slug: "term-vs-traditional-life-cover",
+    title: "Term cover vs traditional life plans",
+    description:
+      "How to think about pure protection versus bundled savings+insurance—without treating either as a tip.",
+    category: "Insurance",
+    readingMinutes: 6,
+    lastUpdated: UPDATED,
+    topicSlugs: ["insurance", "wealth-planning"],
+    sections: [
+      {
+        h2: "Different jobs",
+        paragraphs: [
+          "Term life insurance mainly pays a sum assured if the insured dies during the term. Traditional/endowment-style plans often mix protection with a savings component. Mixing makes comparison harder because you are buying two products in one wrapper.",
+        ],
+      },
+      {
+        h2: "A practical framing",
+        paragraphs: [
+          "Many households separate: buy adequate pure term cover for dependents, invest surplus for goals. That is a framework—not a mandate. If you prefer a bundled plan, demand a clear illustration of premiums, guaranteed vs non-guaranteed benefits, and exit costs.",
+        ],
+      },
+      {
+        h2: "Verify officially",
+        paragraphs: [
+          "Premiums, riders, exclusions and claim processes are insurer-specific. Read the policy document; do not rely on marketing summaries.",
+        ],
+      },
+    ],
+    relatedCalculators: [
+      {
+        href: "/calculators/taxation/take-home-salary",
+        title: "Take-Home Salary",
+      },
+      { href: "/calculators/retirement/goal-planner", title: "Goal Planner" },
+    ],
+    relatedGuides: ["how-much-life-cover", "emergency-fund-basics"],
+  },
+  {
+    slug: "how-much-life-cover",
+    title: "How much life cover? A simple framework",
+    description:
+      "Human-life-value style questions to size cover—expenses, goals, debts—without inventing a one-size multiple.",
+    category: "Insurance",
+    readingMinutes: 7,
+    lastUpdated: UPDATED,
+    topicSlugs: ["insurance"],
+    sections: [
+      {
+        h2: "Start with dependents’ needs",
+        paragraphs: [
+          "Estimate years of income replacement, outstanding loans, and major goals (education, home) that should not collapse if you die. Subtract existing cover and liquid assets earmarked for the same purpose.",
+        ],
+      },
+      {
+        h2: "Income multiples are only a shortcut",
+        paragraphs: [
+          "Rules of thumb (for example “10× income”) ignore debt, spouse income, and lifestyle. Prefer a needs analysis, then sanity-check affordability of premiums against take-home pay.",
+        ],
+      },
+      {
+        h2: "Review when life changes",
+        paragraphs: [
+          "Marriage, children, home loans and career jumps change the right number. Revisit cover when those events happen—not only at policy anniversary marketing calls.",
+        ],
+      },
+    ],
+    relatedCalculators: [
+      { href: "/calculators/debt/emi", title: "EMI Calculator" },
+      { href: "/calculators/retirement/goal-planner", title: "Goal Planner" },
+      {
+        href: "/calculators/taxation/take-home-salary",
+        title: "Take-Home Salary",
+      },
+    ],
+    relatedGuides: ["term-vs-traditional-life-cover", "health-insurance-planning-basics"],
+  },
+  {
+    slug: "health-insurance-planning-basics",
+    title: "Health insurance planning basics",
+    description:
+      "What to clarify before buying or upgrading health cover—without quoting premiums you haven’t verified.",
+    category: "Insurance",
+    readingMinutes: 6,
+    lastUpdated: UPDATED,
+    topicSlugs: ["insurance", "wealth-planning"],
+    sections: [
+      {
+        h2: "Cover catastrophic medical risk first",
+        paragraphs: [
+          "Health insurance is primarily about hospitalisation and large bills you cannot pay from an emergency fund. Room rent limits, disease waiting periods, co-pays and network hospitals matter as much as the headline sum insured.",
+        ],
+      },
+      {
+        h2: "Questions to ask",
+        paragraphs: [],
+        bullets: [
+          "What is excluded or waiting-period limited?",
+          "How do cashless claims work at nearby hospitals?",
+          "Are there sub-limits that shrink real cover?",
+          "How do premiums change with age (ask insurer for illustrations)?",
+        ],
+      },
+      {
+        h2: "Emergency fund still matters",
+        paragraphs: [
+          "Insurance does not replace a cash buffer for deductibles, non-covered care, or income pauses during illness.",
+        ],
+      },
+    ],
+    relatedCalculators: [
+      {
+        href: "/calculators/taxation/take-home-salary",
+        title: "Take-Home Salary",
+      },
+    ],
+    relatedGuides: ["emergency-fund-basics", "how-much-life-cover"],
+  },
+  {
+    slug: "stocks-vs-mutual-funds",
+    title: "Stocks vs mutual funds",
+    description:
+      "When direct equity and mutual funds differ in effort, diversification and behaviour risk.",
+    category: "Stocks",
+    readingMinutes: 6,
+    lastUpdated: UPDATED,
+    topicSlugs: ["stocks", "mutual-funds"],
+    sections: [
+      {
+        h2: "Same market, different packaging",
+        paragraphs: [
+          "Both can give equity exposure. Mutual funds pool money and follow a mandate; individual stocks concentrate decisions on fewer companies. Concentration can help or hurt—there is no free lunch.",
+        ],
+      },
+      {
+        h2: "Effort and process",
+        paragraphs: [
+          "Stock picking needs research, monitoring and emotional control. Funds shift some of that work to a manager (for a fee). SIPs into diversified funds are popular because they automate behaviour—not because returns are guaranteed.",
+        ],
+      },
+      {
+        h2: "Measure honestly",
+        paragraphs: [
+          "Use XIRR for irregular buy/sell histories. Do not compare a favourite stock’s peak gain to a fund’s long-term SIP without matching cash-flow timing.",
+        ],
+      },
+    ],
+    relatedCalculators: [
+      { href: "/calculators/investment/sip", title: "SIP Calculator" },
+      { href: "/calculators/investment/xirr", title: "XIRR Calculator" },
+    ],
+    relatedGuides: ["equity-risk-basics", "diversification-basics", "xirr-explained"],
+  },
+  {
+    slug: "equity-risk-basics",
+    title: "Equity risk basics",
+    description:
+      "What equity volatility means for goals, timelines and sleep-at-night money.",
+    category: "Stocks",
+    readingMinutes: 5,
+    lastUpdated: UPDATED,
+    topicSlugs: ["stocks", "wealth-planning"],
+    sections: [
+      {
+        h2: "Prices can fall for long periods",
+        paragraphs: [
+          "Equity markets have historically rewarded long holding periods in many countries—but past returns do not guarantee the future, and drawdowns can last years. Money needed soon usually should not be 100% equity.",
+        ],
+      },
+      {
+        h2: "Match risk to the goal date",
+        paragraphs: [
+          "A retirement corpus decades away can tolerate more volatility than next year’s tuition. If a 30–40% paper fall would force you to sell, your allocation is too aggressive for your temperament.",
+        ],
+      },
+    ],
+    relatedCalculators: [
+      { href: "/calculators/investment/sip", title: "SIP Calculator" },
+      { href: "/calculators/retirement/goal-planner", title: "Goal Planner" },
+    ],
+    relatedGuides: ["stocks-vs-mutual-funds", "asset-allocation-basics"],
+  },
+  {
+    slug: "diversification-basics",
+    title: "Diversification basics",
+    description:
+      "Why spreading risk across assets and holdings matters—and what diversification does not do.",
+    category: "Stocks",
+    readingMinutes: 5,
+    lastUpdated: UPDATED,
+    topicSlugs: ["stocks", "wealth-planning", "mutual-funds"],
+    sections: [
+      {
+        h2: "Don’t confuse activity with diversification",
+        paragraphs: [
+          "Owning ten stocks in the same sector is not broad diversification. Owning multiple funds that hold the same large companies may also overlap. Look at underlying exposure, not just product count.",
+        ],
+      },
+      {
+        h2: "What it cannot do",
+        paragraphs: [
+          "Diversification reduces idiosyncratic risk; it does not eliminate market risk. In a broad crash, many assets can fall together.",
+        ],
+      },
+    ],
+    relatedCalculators: [
+      { href: "/calculators/investment/xirr", title: "XIRR Calculator" },
+    ],
+    relatedGuides: ["equity-risk-basics", "asset-allocation-basics"],
+  },
+  {
+    slug: "emergency-fund-basics",
+    title: "Emergency fund basics",
+    description:
+      "How to think about cash buffers before aggressive investing or aggressive prepayment.",
+    category: "Wealth planning",
+    readingMinutes: 5,
+    lastUpdated: UPDATED,
+    topicSlugs: ["wealth-planning", "insurance"],
+    sections: [
+      {
+        h2: "What it is for",
+        paragraphs: [
+          "An emergency fund covers job loss, urgent medical gaps, or essential repairs without forced selling of long-term investments or high-cost borrowing.",
+        ],
+      },
+      {
+        h2: "Sizing is personal",
+        paragraphs: [
+          "Common illustrations use a few months of essential expenses. Dual-income stable jobs may need less buffer than single-income variable income—judge your risk, not a social-media number.",
+        ],
+      },
+      {
+        h2: "Where to keep it",
+        paragraphs: [
+          "Prioritise liquidity and safety over return. Chasing yield with emergency money often defeats the purpose.",
+        ],
+      },
+    ],
+    relatedCalculators: [
+      {
+        href: "/calculators/taxation/take-home-salary",
+        title: "Take-Home Salary",
+      },
+      { href: "/calculators/government/fd-rd", title: "FD / RD Calculator" },
+    ],
+    relatedGuides: ["asset-allocation-basics", "health-insurance-planning-basics"],
+  },
+  {
+    slug: "asset-allocation-basics",
+    title: "Asset allocation basics",
+    description:
+      "Splitting money across equity, debt and other buckets based on goals and risk—not tips.",
+    category: "Wealth planning",
+    readingMinutes: 7,
+    lastUpdated: UPDATED,
+    topicSlugs: ["wealth-planning", "stocks"],
+    sections: [
+      {
+        h2: "Allocation beats product hopping",
+        paragraphs: [
+          "The mix of growth assets vs stability assets usually drives outcomes more than frequent scheme switches. Rebalance occasionally; avoid constant tinkering.",
+        ],
+      },
+      {
+        h2: "Map buckets to timelines",
+        paragraphs: [],
+        bullets: [
+          "Near-term spending → higher safety/liquidity",
+          "Medium goals → balanced mix",
+          "Long goals → higher growth assets if you can hold through falls",
+        ],
+      },
+      {
+        h2: "Debt is part of the picture",
+        paragraphs: [
+          "High-interest loans can dominate “allocation” in practice. Sometimes prepaying is the highest risk-adjusted move—even if it is not labelled as an investment.",
+        ],
+      },
+    ],
+    relatedCalculators: [
+      { href: "/calculators/investment/sip", title: "SIP Calculator" },
+      { href: "/calculators/debt/advanced-prepayment", title: "Loan Prepayment" },
+      { href: "/calculators/retirement/goal-planner", title: "Goal Planner" },
+    ],
+    relatedGuides: ["emergency-fund-basics", "equity-risk-basics", "net-worth-and-goals"],
+  },
+  {
+    slug: "net-worth-and-goals",
+    title: "Net worth and goal-based investing",
+    description:
+      "Use a simple net-worth snapshot to prioritise goals, debt and investing surplus.",
+    category: "Wealth planning",
+    readingMinutes: 6,
+    lastUpdated: UPDATED,
+    topicSlugs: ["wealth-planning"],
+    sections: [
+      {
+        h2: "Net worth = assets − liabilities",
+        paragraphs: [
+          "List financial assets, important physical assets you would count, and all debts. The point is clarity—not a social score.",
+        ],
+      },
+      {
+        h2: "Goals turn the snapshot into a plan",
+        paragraphs: [
+          "Attach dates and amounts to goals, then use reverse-SIP / goal planners to estimate contributions. Update yearly when income or goals change.",
+        ],
+      },
+    ],
+    relatedCalculators: [
+      { href: "/calculators/retirement/goal-planner", title: "Goal Planner" },
+      { href: "/calculators/debt/emi", title: "EMI Calculator" },
+      { href: "/calculators/retirement/fire", title: "FIRE Planner" },
+    ],
+    relatedGuides: ["asset-allocation-basics", "how-to-plan-retirement-india"],
+  },
 ];
 
 export function getGuide(slug: string): Guide | undefined {

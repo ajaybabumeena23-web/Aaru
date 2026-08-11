@@ -7,7 +7,7 @@ import { SITE_NAME } from "@/lib/brand";
 
 type Props = { params: { scenario: string } };
 
-const HUB = "sip";
+const HUB = "wealth-planning";
 
 export function generateStaticParams() {
   return getScenariosForHub(HUB).map((s) => ({ scenario: s.slug }));

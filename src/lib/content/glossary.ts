@@ -219,6 +219,45 @@ export const GLOSSARY: GlossaryTerm[] = [
     definition:
       "Tax withheld by a payer (employer, bank, etc.) and deposited with the government. It is not always your final tax liability.",
   },
+  {
+    slug: "term-insurance",
+    term: "Term insurance",
+    short: "Pure life cover",
+    definition:
+      "Life insurance that pays a sum assured on death during the policy term, typically without a large savings component. Confirm exclusions and claim rules in the policy document.",
+    relatedGuides: ["term-vs-traditional-life-cover", "how-much-life-cover"],
+  },
+  {
+    slug: "sum-assured",
+    term: "Sum assured",
+    short: "Stated life cover amount",
+    definition:
+      "The amount an insurer agrees to pay on a covered event as defined in the policy. Riders and conditions can affect what is actually paid.",
+  },
+  {
+    slug: "emergency-fund",
+    term: "Emergency fund",
+    short: "Liquid cash buffer",
+    definition:
+      "Money set aside for unexpected essential expenses or income shocks, kept accessible and relatively safe rather than maximising return.",
+    relatedGuides: ["emergency-fund-basics"],
+  },
+  {
+    slug: "asset-allocation",
+    term: "Asset allocation",
+    short: "Mix of asset classes",
+    definition:
+      "How a portfolio is split across equity, debt, cash and other assets based on goals, timeline and risk capacity.",
+    relatedGuides: ["asset-allocation-basics"],
+  },
+  {
+    slug: "diversification",
+    term: "Diversification",
+    short: "Spreading risk",
+    definition:
+      "Holding exposures that do not all move together, to reduce the impact of any single holding or sector. Does not remove market-wide risk.",
+    relatedGuides: ["diversification-basics"],
+  },
 ];
 
 export function getGlossaryTerm(slug: string): GlossaryTerm | undefined {

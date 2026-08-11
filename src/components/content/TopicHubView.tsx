@@ -2,7 +2,7 @@ import Link from "next/link";
 import { getTopic } from "@/lib/content/topics";
 import { getGuide } from "@/lib/content/guides";
 import { getGlossaryTerm } from "@/lib/content/glossary";
-import { getSipScenario } from "@/lib/content/scenarios";
+import { getScenario, scenarioPath } from "@/lib/content/scenarios";
 import { ds } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
 import { SITE_NAME } from "@/lib/brand";
@@ -15,7 +15,7 @@ export function TopicHubView({ slug }: { slug: string }) {
     .map((s) => getGuide(s))
     .filter(Boolean);
   const scenarios = (topic.scenarioSlugs ?? [])
-    .map((s) => getSipScenario(s))
+    .map((s) => getScenario(s))
     .filter(Boolean);
   const terms = (topic.glossaryTerms ?? [])
     .map((s) => getGlossaryTerm(s))
@@ -93,7 +93,7 @@ export function TopicHubView({ slug }: { slug: string }) {
               s ? (
                 <Link
                   key={s.slug}
-                  href={`/sip/${s.slug}`}
+                  href={scenarioPath(s)}
                   className={cn(ds.cardInteractive, "block px-4 py-3")}
                 >
                   <p className="font-medium">{s.title}</p>

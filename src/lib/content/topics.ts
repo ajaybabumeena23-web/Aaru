@@ -57,8 +57,12 @@ export const TOPIC_HUBS: TopicHub[] = [
     ],
     scenarioSlugs: [
       "5000-sip-for-10-years",
+      "5000-sip-for-20-years",
       "10000-sip-for-20-years",
       "20000-sip-for-15-years",
+      "25000-sip-for-20-years",
+      "10000-sip-15-years-with-inflation",
+      "10000-flat-vs-10pct-step-up-15-years",
     ],
     glossaryTerms: ["sip", "nav", "cagr", "xirr", "ltcg"],
     faqs: [
@@ -122,6 +126,11 @@ export const TOPIC_HUBS: TopicHub[] = [
       },
     ],
     guideSlugs: ["how-emi-works", "loan-prepayment-strategies"],
+    scenarioSlugs: [
+      "50-lakh-home-loan-20-years",
+      "75-lakh-home-loan-25-years",
+      "5-lakh-personal-loan-4-years",
+    ],
     glossaryTerms: ["emi", "reducing-balance", "flat-rate", "prepayment"],
     faqs: [
       {
@@ -209,6 +218,7 @@ export const TOPIC_HUBS: TopicHub[] = [
       },
     ],
     guideSlugs: ["how-to-plan-retirement-india", "what-is-fire"],
+    scenarioSlugs: ["1-crore-in-15-years", "50-lakh-in-10-years"],
     glossaryTerms: ["fire", "swr", "corpus", "inflation"],
     faqs: [
       {
@@ -343,6 +353,141 @@ export const TOPIC_HUBS: TopicHub[] = [
       {
         q: "Is FD interest tax-free?",
         a: "Generally no for most resident individuals—interest is typically taxable as per your slab (check current rules and TDS thresholds). This site does not replace tax advice.",
+      },
+    ],
+  },
+  {
+    slug: "insurance",
+    title: "Insurance",
+    h1: "Insurance planning basics for Indian households",
+    description:
+      "Guides on life and health cover sizing concepts—paired with income and goal calculators. Not a policy marketplace.",
+    intro:
+      "Insurance is for transferring risks you cannot afford to bear—not an investment shortcut. Use the guides below for frameworks, then verify premiums, exclusions and claim rules with licensed advisors and insurers.",
+    calculators: [
+      {
+        href: "/calculators/taxation/take-home-salary",
+        title: "Take-Home Salary",
+        blurb: "Understand cash flow before sizing premiums",
+      },
+      {
+        href: "/calculators/retirement/goal-planner",
+        title: "Goal Planner",
+        blurb: "Separate protection needs from wealth goals",
+      },
+      {
+        href: "/calculators/retirement/fire",
+        title: "FIRE Planner",
+        blurb: "Long-term expense context",
+      },
+    ],
+    guideSlugs: [
+      "term-vs-traditional-life-cover",
+      "how-much-life-cover",
+      "health-insurance-planning-basics",
+    ],
+    glossaryTerms: ["term-insurance", "sum-assured", "emergency-fund"],
+    faqs: [
+      {
+        q: "Is life insurance a good investment?",
+        a: "Pure term cover is primarily protection. Bundled savings+insurance products can be harder to compare—separate protection and investing unless you have a clear reason not to.",
+      },
+      {
+        q: "Do you sell policies here?",
+        a: "No. Aaru Wealth provides education and calculators only.",
+      },
+    ],
+  },
+  {
+    slug: "stocks",
+    title: "Stocks",
+    h1: "Stocks & equity investing — risk, SIPs and measurement",
+    description:
+      "Plain-language guides on equity risk, stocks vs mutual funds, and tools to measure SIP/XIRR outcomes.",
+    intro:
+      "Equity can grow wealth over long horizons and can also fall sharply. These pages help you frame risk and measure results—not pick tips or guarantee returns.",
+    calculators: [
+      {
+        href: "/calculators/investment/sip",
+        title: "SIP Calculator",
+        blurb: "Model equity-style return assumptions carefully",
+      },
+      {
+        href: "/calculators/investment/xirr",
+        title: "XIRR Calculator",
+        blurb: "Measure irregular stock/MF cash flows",
+      },
+      {
+        href: "/calculators/investment/lump-sum",
+        title: "Lump Sum",
+        blurb: "One-time equity deployment illustration",
+      },
+      {
+        href: "/calculators/taxation/capital-gains",
+        title: "Capital Gains",
+        blurb: "Illustrative tax framing on gains",
+      },
+    ],
+    guideSlugs: [
+      "stocks-vs-mutual-funds",
+      "equity-risk-basics",
+      "diversification-basics",
+    ],
+    glossaryTerms: ["nav", "xirr", "cagr", "ltcg", "expense-ratio"],
+    faqs: [
+      {
+        q: "Should beginners buy individual stocks?",
+        a: "Many beginners start with diversified funds via SIP because stock selection needs research time and risk tolerance. There is no single right answer—match complexity to your process.",
+      },
+    ],
+  },
+  {
+    slug: "wealth-planning",
+    title: "Wealth planning",
+    h1: "Wealth planning — emergency funds, allocation & goals",
+    description:
+      "Practical frameworks for emergency reserves, asset allocation and goal-based investing in India.",
+    intro:
+      "Wealth planning is sequencing: protect cash flow, cover catastrophic risks, then invest for goals. Calculators size the numbers; behaviour and allocation keep the plan alive.",
+    calculators: [
+      {
+        href: "/calculators/retirement/goal-planner",
+        title: "Goal Planner",
+        blurb: "SIP needed for a target corpus",
+      },
+      {
+        href: "/calculators/retirement/fire",
+        title: "FIRE Planner",
+        blurb: "Independence corpus illustration",
+      },
+      {
+        href: "/calculators/investment/sip",
+        title: "SIP Calculator",
+        blurb: "Contribution growth scenarios",
+      },
+      {
+        href: "/calculators/debt/emi",
+        title: "EMI Calculator",
+        blurb: "Debt obligations vs surplus",
+      },
+    ],
+    guideSlugs: [
+      "emergency-fund-basics",
+      "asset-allocation-basics",
+      "net-worth-and-goals",
+    ],
+    scenarioSlugs: ["2-crore-in-20-years"],
+    glossaryTerms: [
+      "emergency-fund",
+      "asset-allocation",
+      "corpus",
+      "inflation",
+      "diversification",
+    ],
+    faqs: [
+      {
+        q: "What should I do first—SIP or emergency fund?",
+        a: "Usually build a basic emergency buffer alongside high-interest debt repayment, then increase goal SIPs. Exact order depends on job stability and obligations.",
       },
     ],
   },

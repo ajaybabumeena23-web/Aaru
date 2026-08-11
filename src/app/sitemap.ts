@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { CALCULATOR_CATEGORIES } from "@/lib/calculators";
 import { GUIDES } from "@/lib/content/guides";
 import { TOPIC_HUBS } from "@/lib/content/topics";
-import { SIP_SCENARIOS } from "@/lib/content/scenarios";
+import { SCENARIOS } from "@/lib/content/scenarios";
 import { getSiteUrl } from "@/lib/site";
 
 const TRUST_PATHS = [
@@ -46,8 +46,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.85,
     }));
 
-    const scenarioRoutes: MetadataRoute.Sitemap = SIP_SCENARIOS.map((s) => ({
-      url: `${base}/sip/${s.slug}`,
+    const scenarioRoutes: MetadataRoute.Sitemap = SCENARIOS.map((s) => ({
+      url: `${base}/${s.hub}/${s.slug}`,
       lastModified,
       changeFrequency: "monthly" as const,
       priority: 0.65,
