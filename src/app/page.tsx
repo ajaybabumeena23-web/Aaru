@@ -1,5 +1,9 @@
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { CALCULATOR_CATEGORIES } from "@/lib/calculators";
+import { POPULAR_CALCULATORS, SITE_NAME, SITE_TAGLINE } from "@/lib/brand";
+import { SiteSearch } from "@/components/layout/SiteSearch";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -10,43 +14,94 @@ import {
 
 export default function HomePage() {
   return (
-    <div className="space-y-8">
-      <header className="space-y-3">
+    <div className="space-y-12 sm:space-y-16">
+      <section className="space-y-6">
         <p className="text-sm font-medium uppercase tracking-wider text-gold">
-          IndiaCalc
+          {SITE_NAME}
         </p>
-        <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-          Plan money decisions for the Indian market
+        <h1 className="max-w-3xl text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
+          Make smarter money decisions with simple financial tools
         </h1>
-        <p className="max-w-2xl text-muted-foreground">
-          Zero-latency SIP, EMI, FIRE, tax, and government scheme calculators.
-          Share exact scenarios via URL — everything runs in your browser.
+        <p className="max-w-2xl text-base text-muted-foreground sm:text-lg">
+          Free calculators and practical financial resources for SIPs, loans,
+          taxes, retirement, savings and wealth planning in India.{" "}
+          <span className="text-foreground/90">{SITE_TAGLINE}.</span>
         </p>
-      </header>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <Button asChild size="lg" className="w-full sm:w-auto">
+            <Link href="/calculators">
+              Explore Calculators
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </Button>
+          <Button asChild variant="outline" size="lg" className="w-full sm:w-auto">
+            <Link href="/about">About {SITE_NAME}</Link>
+          </Button>
+        </div>
+        <div className="max-w-xl pt-2">
+          <label className="mb-2 block text-sm font-medium text-foreground">
+            What do you want to calculate?
+          </label>
+          <SiteSearch large />
+          <p className="mt-2 text-xs text-muted-foreground">
+            Try SIP, EMI, Income Tax, PPF, NPS, FD, XIRR…
+          </p>
+        </div>
+      </section>
 
-      <div className="grid gap-6">
+      <section className="space-y-4">
+        <div className="flex items-end justify-between gap-3">
+          <h2 className="text-xl font-semibold sm:text-2xl">
+            Popular calculators
+          </h2>
+          <Link
+            href="/calculators"
+            className="shrink-0 text-sm text-gold hover:underline"
+          >
+            View all
+          </Link>
+        </div>
+        <div className="grid grid-cols-1 gap-3 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          {POPULAR_CALCULATORS.map((c) => (
+            <Link
+              key={`${c.category}-${c.slug}`}
+              href={`/calculators/${c.category}/${c.slug}`}
+              className="rounded-lg border border-border/70 bg-card/80 px-4 py-3 text-sm font-medium transition-colors hover:border-gold/40 hover:text-gold"
+            >
+              {c.title}
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className="space-y-8">
         {CALCULATOR_CATEGORIES.map((category) => {
           const Icon = category.icon;
+          const preview = category.calculators.slice(0, 6);
           return (
-            <section key={category.id} className="space-y-3">
-              <div className="flex items-center gap-2">
-                <Icon className="h-5 w-5 text-gold" />
-                <h2 className="text-xl font-semibold text-foreground">
-                  {category.label}
-                </h2>
+            <div key={category.id} className="space-y-3">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <Icon className="h-5 w-5 text-gold" />
+                  <h2 className="text-xl font-semibold">{category.label}</h2>
+                </div>
+                <Link
+                  href={`/calculators/${category.id}`}
+                  className="text-sm text-gold hover:underline"
+                >
+                  View all
+                </Link>
               </div>
-              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                {category.calculators.map((calc) => (
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {preview.map((calc) => (
                   <Link
                     key={calc.slug}
                     href={`/calculators/${category.id}/${calc.slug}`}
                     className="group"
                   >
-                    <Card className="h-full transition-colors group-hover:border-gold/40 group-hover:bg-gold/[0.03]">
+                    <Card className="h-full transition-colors group-hover:border-gold/40">
                       <CardHeader className="pb-2">
-                        <CardTitle className="text-base text-card-foreground">
-                          {calc.title}
-                        </CardTitle>
+                        <CardTitle className="text-base">{calc.title}</CardTitle>
                         <CardDescription>{calc.h1}</CardDescription>
                       </CardHeader>
                       <CardContent>
@@ -58,10 +113,50 @@ export default function HomePage() {
                   </Link>
                 ))}
               </div>
-            </section>
+            </div>
           );
         })}
-      </div>
+      </section>
+
+      <section className="space-y-4 rounded-xl border border-border/70 illustrative-gradient p-6 sm:p-8">
+        <h2 className="text-xl font-semibold sm:text-2xl">
+          Why use {SITE_NAME}?
+        </h2>
+        <div className="grid gap-4 sm:grid-cols-3">
+          <div>
+            <p className="font-medium text-gold">Instant & private</p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Calculations run in your browser. Share exact scenarios via URL —
+              no account required.
+            </p>
+          </div>
+          <div>
+            <p className="font-medium text-gold">Built for India</p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Tax regimes, STCG/LTCG, PPF, NPS, EPF, SSY and post-office schemes
+              with transparent assumptions.
+            </p>
+          </div>
+          <div>
+            <p className="font-medium text-gold">Clear explanations</p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Charts, breakdowns and methodology so you understand the number —
+              not just see it.
+            </p>
+          </div>
+        </div>
+        <p className="text-xs text-muted-foreground">
+          Estimates only. Not investment, tax or legal advice. See our{" "}
+          <Link href="/disclaimer" className="text-gold hover:underline">
+            Disclaimer
+          </Link>{" "}
+          and{" "}
+          <Link href="/methodology" className="text-gold hover:underline">
+            Calculator Methodology
+          </Link>
+          .
+        </p>
+      </section>
     </div>
   );
 }

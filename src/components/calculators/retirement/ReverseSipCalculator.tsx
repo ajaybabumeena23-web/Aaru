@@ -115,7 +115,7 @@ function ReverseSipInner() {
             footer={
               <ExportPDFButton
                 title="Find the SIP That Hits Your Goal"
-                subtitle="Reverse SIP — IndiaCalc"
+                subtitle="Reverse SIP — Aaru Wealth"
                 inputs={[
                   { label: "Target", value: formatINR(values.target) },
                   { label: "Return", value: formatPercent(values.rate) },

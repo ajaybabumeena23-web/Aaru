@@ -163,7 +163,7 @@ function ChildEducationInner() {
             footer={
               <ExportPDFButton
                 title="Fund Your Child's Education"
-                subtitle="Child Education — IndiaCalc"
+                subtitle="Child Education — Aaru Wealth"
                 inputs={[
                   { label: "Current cost", value: formatINR(values.cost) },
                   { label: "Years", value: String(values.years) },

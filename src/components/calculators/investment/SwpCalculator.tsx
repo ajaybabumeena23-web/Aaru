@@ -141,7 +141,7 @@ function SwpInner() {
             footer={
               <ExportPDFButton
                 title="Plan Systematic Withdrawals"
-                subtitle="SWP — IndiaCalc"
+                subtitle="SWP — Aaru Wealth"
                 inputs={[
                   { label: "Corpus", value: formatINR(values.corpus) },
                   { label: "Withdrawal", value: formatINR(values.withdrawal) },

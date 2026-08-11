@@ -174,7 +174,7 @@ function XirrInner() {
             footer={
               <ExportPDFButton
                 title="Measure True Portfolio Returns"
-                subtitle="XIRR — IndiaCalc"
+                subtitle="XIRR — Aaru Wealth"
                 inputs={rows.map((r, i) => ({
                   label: `Flow ${i + 1}`,
                   value: `${r.date}: ${formatINR(r.amount)}`,

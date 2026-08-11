@@ -136,7 +136,7 @@ function LumpSumInner() {
             footer={
               <ExportPDFButton
                 title="Grow a One-Time Investment"
-                subtitle="Lump Sum — IndiaCalc"
+                subtitle="Lump Sum — Aaru Wealth"
                 inputs={[
                   { label: "Principal", value: formatINR(values.principal) },
                   { label: "Return", value: formatPercent(values.rate) },

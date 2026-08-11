@@ -104,7 +104,7 @@ function SsyInner() {
             footer={
               <ExportPDFButton
                 title="Save for Your Girl Child (SSY)"
-                subtitle="SSY — IndiaCalc"
+                subtitle="SSY — Aaru Wealth"
                 inputs={[
                   { label: "Annual", value: formatINR(values.annual) },
                   { label: "Rate", value: formatPercent(values.rate) },

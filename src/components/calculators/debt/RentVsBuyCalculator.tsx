@@ -165,7 +165,7 @@ function RentVsBuyInner() {
             footer={
               <ExportPDFButton
                 title="Decide: Rent or Buy Your Home?"
-                subtitle="Rent vs Buy — IndiaCalc"
+                subtitle="Rent vs Buy — Aaru Wealth"
                 inputs={[
                   { label: "Home price", value: formatINR(values.price) },
                   { label: "Rent", value: formatINR(values.rent) },

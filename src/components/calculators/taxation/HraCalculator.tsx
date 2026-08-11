@@ -132,7 +132,7 @@ function HraInner() {
             footer={
               <ExportPDFButton
                 title="Maximise Your HRA Exemption"
-                subtitle="HRA — IndiaCalc"
+                subtitle="HRA — Aaru Wealth"
                 inputs={[
                   { label: "Basic (mo)", value: formatINR(values.basic) },
                   { label: "HRA (mo)", value: formatINR(values.hra) },

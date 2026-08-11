@@ -158,7 +158,7 @@ function RefinanceInner() {
             footer={
               <ExportPDFButton
                 title="Should You Refinance Your Loan?"
-                subtitle="Refinance Analyzer — IndiaCalc"
+                subtitle="Refinance Analyzer — Aaru Wealth"
                 inputs={[
                   {
                     label: "Outstanding",

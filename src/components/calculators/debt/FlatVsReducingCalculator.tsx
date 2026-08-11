@@ -125,7 +125,7 @@ function FlatVsReducingInner() {
             footer={
               <ExportPDFButton
                 title="Unmask Flat Rate Loans"
-                subtitle="Flat vs Reducing — IndiaCalc"
+                subtitle="Flat vs Reducing — Aaru Wealth"
                 inputs={[
                   { label: "Principal", value: formatINR(values.principal) },
                   { label: "Flat rate", value: formatPercent(values.flatRate) },

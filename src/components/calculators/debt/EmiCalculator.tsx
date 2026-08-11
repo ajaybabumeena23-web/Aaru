@@ -114,7 +114,7 @@ function EmiInner() {
             footer={
               <ExportPDFButton
                 title="Know Your Exact Monthly EMI"
-                subtitle="EMI Calculator — IndiaCalc"
+                subtitle="EMI Calculator — Aaru Wealth"
                 inputs={[
                   { label: "Principal", value: formatINR(values.principal) },
                   { label: "Rate", value: formatPercent(values.rate) },

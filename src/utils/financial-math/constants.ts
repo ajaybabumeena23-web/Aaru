@@ -1,5 +1,5 @@
 /**
- * Shared types & constants for the IndiaCalc financial engine.
+ * Shared types & constants for the Aaru Wealth financial engine.
  * Rates reflect FY 2025-26 / AY 2026-27 (Budget 2025) unless noted.
  */
 

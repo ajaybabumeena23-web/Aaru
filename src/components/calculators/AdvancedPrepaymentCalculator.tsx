@@ -275,7 +275,7 @@ function AdvancedPrepaymentInner() {
             footer={
               <ExportPDFButton
                 title="Crush Debt Faster with Smart Prepayments"
-                subtitle="Advanced Prepayment — IndiaCalc"
+                subtitle="Advanced Prepayment — Aaru Wealth"
                 inputs={[
                   { label: "Principal", value: formatINR(values.principal) },
                   { label: "Rate", value: `${values.rate}%` },

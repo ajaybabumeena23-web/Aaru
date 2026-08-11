@@ -123,7 +123,7 @@ function EpfInner() {
             footer={
               <ExportPDFButton
                 title="Project Your EPF Balance"
-                subtitle="EPF — IndiaCalc"
+                subtitle="EPF — Aaru Wealth"
                 inputs={[
                   { label: "Basic", value: formatINR(values.basic) },
                   { label: "Years", value: String(values.years) },

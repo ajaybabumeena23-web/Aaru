@@ -157,7 +157,7 @@ function FdRdInner() {
             footer={
               <ExportPDFButton
                 title="Bank FD & RD Returns"
-                subtitle={`${mode.toUpperCase()} — IndiaCalc`}
+                subtitle={`${mode.toUpperCase()} — Aaru Wealth`}
                 inputs={[
                   { label: "Type", value: mode.toUpperCase() },
                   { label: "Amount", value: formatINR(values.amount) },

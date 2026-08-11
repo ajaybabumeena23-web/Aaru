@@ -1,5 +1,5 @@
 /**
- * IndiaCalc financial math engine — pure functions only.
+ * Aaru Wealth financial math engine — pure functions only.
  * Entry point for Step 3+. Re-exports modular calculators.
  */
 

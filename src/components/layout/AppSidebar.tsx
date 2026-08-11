@@ -109,7 +109,7 @@ export function AppSidebar() {
         </Button>
         <div className="flex items-center gap-2 font-semibold">
           <Calculator className="h-5 w-5 text-gold" />
-          IndiaCalc
+          Aaru Wealth
         </div>
       </div>
 
@@ -123,7 +123,7 @@ export function AppSidebar() {
           />
           <aside className="absolute inset-y-0 left-0 flex w-72 flex-col bg-[hsl(var(--sidebar))] text-[hsl(var(--sidebar-foreground))] shadow-xl">
             <div className="flex h-14 items-center justify-between border-b border-white/10 px-4">
-              <span className="font-semibold text-gold">IndiaCalc</span>
+              <span className="font-semibold text-gold">Aaru Wealth</span>
               <Button
                 type="button"
                 variant="ghost"
@@ -146,7 +146,7 @@ export function AppSidebar() {
         <div className="flex h-16 items-center gap-2 border-b border-white/10 px-5">
           <Calculator className="h-5 w-5 text-gold" />
           <div>
-            <p className="font-semibold leading-tight text-gold">IndiaCalc</p>
+            <p className="font-semibold leading-tight text-gold">Aaru Wealth</p>
             <p className="text-xs text-[hsl(var(--sidebar-muted))]">
               Indian finance tools
             </p>

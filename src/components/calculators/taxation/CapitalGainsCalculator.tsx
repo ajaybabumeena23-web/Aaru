@@ -145,7 +145,7 @@ function CapitalGainsInner() {
             footer={
               <ExportPDFButton
                 title="Estimate STCG & LTCG Liability"
-                subtitle="Capital Gains — IndiaCalc"
+                subtitle="Capital Gains — Aaru Wealth"
                 inputs={[
                   { label: "Asset", value: asset },
                   { label: "Buy", value: formatINR(values.buy) },

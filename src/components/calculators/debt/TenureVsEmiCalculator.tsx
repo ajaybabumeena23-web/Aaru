@@ -160,7 +160,7 @@ function TenureVsEmiInner() {
           footer={
             <ExportPDFButton
               title="Choose Tenure Cut or EMI Cut"
-              subtitle="Tenure vs EMI — IndiaCalc"
+              subtitle="Tenure vs EMI — Aaru Wealth"
               inputs={[
                 { label: "Principal", value: formatINR(values.principal) },
                 { label: "Rate", value: formatPercent(values.rate) },

@@ -219,7 +219,7 @@ function StepUpSipCalculatorInner() {
             footer={
               <ExportPDFButton
                 title="Accelerate Wealth with Annual SIP Step-Ups"
-                subtitle="Step-Up SIP — IndiaCalc"
+                subtitle="Step-Up SIP — Aaru Wealth"
                 inputs={[
                   { label: "Monthly SIP", value: formatINR(values.monthly) },
                   { label: "Return p.a.", value: formatPercent(values.rate) },

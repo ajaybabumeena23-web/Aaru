@@ -116,7 +116,7 @@ function PpfInner() {
             footer={
               <ExportPDFButton
                 title="Grow Tax-Free with PPF"
-                subtitle="PPF — IndiaCalc"
+                subtitle="PPF — Aaru Wealth"
                 inputs={[
                   { label: "Annual", value: formatINR(values.annual) },
                   { label: "Years", value: String(values.years) },

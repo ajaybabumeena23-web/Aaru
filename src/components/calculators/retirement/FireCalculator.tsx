@@ -184,7 +184,7 @@ function FireInner() {
             footer={
               <ExportPDFButton
                 title="Retire Early (FIRE) Planner"
-                subtitle="FIRE — IndiaCalc"
+                subtitle="FIRE — Aaru Wealth"
                 inputs={[
                   {
                     label: "Age → Retire",

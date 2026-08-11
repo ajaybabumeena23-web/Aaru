@@ -133,7 +133,7 @@ function NpsInner() {
             footer={
               <ExportPDFButton
                 title="Plan Your NPS Retirement Corpus"
-                subtitle="NPS — IndiaCalc"
+                subtitle="NPS — Aaru Wealth"
                 inputs={[
                   { label: "Monthly", value: formatINR(values.monthly) },
                   { label: "Years", value: String(values.years) },

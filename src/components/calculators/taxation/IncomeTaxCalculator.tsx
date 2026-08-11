@@ -177,7 +177,7 @@ function IncomeTaxInner() {
           footer={
             <ExportPDFButton
               title="Old vs New Tax Regime Compared"
-              subtitle="Income Tax — IndiaCalc"
+              subtitle="Income Tax — Aaru Wealth"
               inputs={[
                 { label: "Gross income", value: formatINR(values.income) },
                 { label: "80C", value: formatINR(values.ded80c) },

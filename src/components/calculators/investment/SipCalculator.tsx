@@ -139,7 +139,7 @@ function SipInner() {
             footer={
               <ExportPDFButton
                 title="Build Wealth with Systematic Investing"
-                subtitle="SIP Calculator — IndiaCalc"
+                subtitle="SIP Calculator — Aaru Wealth"
                 inputs={[
                   { label: "Monthly SIP", value: formatINR(values.monthly) },
                   { label: "Return", value: formatPercent(values.rate) },

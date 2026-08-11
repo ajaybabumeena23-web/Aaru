@@ -166,7 +166,7 @@ function PostOfficeInner() {
             footer={
               <ExportPDFButton
                 title="Compare NSC, SCSS & KVP"
-                subtitle="Post Office — IndiaCalc"
+                subtitle="Post Office — Aaru Wealth"
                 inputs={[
                   { label: "Scheme", value: scheme.toUpperCase() },
                   {

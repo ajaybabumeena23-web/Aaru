@@ -147,7 +147,7 @@ function TakeHomeInner() {
             footer={
               <ExportPDFButton
                 title="See Your Real In-Hand Pay"
-                subtitle="Take-Home Salary — IndiaCalc"
+                subtitle="Take-Home Salary — Aaru Wealth"
                 inputs={[
                   { label: "Gross", value: formatINR(values.gross) },
                   { label: "Basic %", value: `${values.basicPct}%` },

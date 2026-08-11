@@ -61,7 +61,7 @@ export function FinancialDonutChart({
   centerLabel,
   centerValue,
   className,
-  height = 280,
+  height = 240,
   showLegend = true,
 }: FinancialDonutChartProps) {
   const chartData = React.useMemo(
