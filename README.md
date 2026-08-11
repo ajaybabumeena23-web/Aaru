@@ -42,16 +42,16 @@ src/
 
 ```bash
 # .env.local or host env
-NEXT_PUBLIC_SITE_URL=https://www.yourdomain.com
+NEXT_PUBLIC_SITE_URL=https://aaruwealth.com
 ```
 
 2. Deploy, then open:
-   - `https://www.yourdomain.com/sitemap.xml`
-   - `https://www.yourdomain.com/robots.txt`
+   - `https://aaruwealth.com/sitemap.xml`
+   - `https://aaruwealth.com/robots.txt`
 
 The sitemap includes the home page, 5 category pages, and all 24 calculator URLs.
 
 3. Submit in [Google Search Console](https://search.google.com/search-console):
-   - Add property → URL prefix → your domain
+   - Add property → URL prefix → `https://aaruwealth.com`
    - Verify ownership (HTML tag, DNS, or Google Analytics)
    - **Sitemaps** → enter `sitemap.xml` → **Submit**
