@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Poppins, JetBrains_Mono } from "next/font/google";
 import { AppSidebar } from "@/components/layout/AppSidebar";
+import { getSiteUrl } from "@/lib/site";
 import "./globals.css";
 
 const poppins = Poppins({
@@ -15,6 +16,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(getSiteUrl()),
   title: {
     default: "IndiaCalc — Indian Financial Calculators",
     template: "%s | IndiaCalc",

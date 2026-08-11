@@ -23,6 +23,8 @@ Open [http://localhost:3000](http://localhost:3000).
 src/
   app/
     calculators/[category]/[calculator-slug]/
+    sitemap.ts     # /sitemap.xml
+    robots.ts      # /robots.txt
     layout.tsx
   components/
     calculators/   # reusable calculator UI
@@ -30,5 +32,26 @@ src/
     ui/            # shadcn primitives
   lib/
     utils.ts
-  utils/           # financial-math (Step 3)
+    site.ts        # NEXT_PUBLIC_SITE_URL helper
+  utils/           # financial-math
 ```
+
+## SEO: Sitemap & Google Search Console
+
+1. Set your live domain (no trailing slash):
+
+```bash
+# .env.local or host env
+NEXT_PUBLIC_SITE_URL=https://www.yourdomain.com
+```
+
+2. Deploy, then open:
+   - `https://www.yourdomain.com/sitemap.xml`
+   - `https://www.yourdomain.com/robots.txt`
+
+The sitemap includes the home page, 5 category pages, and all 24 calculator URLs.
+
+3. Submit in [Google Search Console](https://search.google.com/search-console):
+   - Add property → URL prefix → your domain
+   - Verify ownership (HTML tag, DNS, or Google Analytics)
+   - **Sitemaps** → enter `sitemap.xml` → **Submit**
