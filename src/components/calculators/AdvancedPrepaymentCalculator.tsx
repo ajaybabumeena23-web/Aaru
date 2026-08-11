@@ -263,20 +263,41 @@ function AdvancedPrepaymentInner() {
             footer={
               <ExportPDFButton
                 title="Crush Debt Faster with Smart Prepayments"
+                tagline="Your personalized prepayment savings summary"
                 subtitle="Advanced Prepayment — Aaru Wealth"
+                hero={{
+                  label: "Interest Saved",
+                  value: formatINR(result.interestSavedVsBaseline ?? 0),
+                  hint: "Versus loan with no prepayments / EMI step-ups",
+                }}
                 inputs={[
-                  { label: "Principal", value: formatINR(values.principal) },
-                  { label: "Rate", value: `${values.rate}%` },
-                  { label: "Tenure", value: `${values.tenure} years` },
-                  { label: "EMI step-up", value: `${values.stepUp}%` },
+                  {
+                    label: "Loan Amount",
+                    value: formatINR(values.principal),
+                  },
+                  {
+                    label: "Interest Rate",
+                    value: `${values.rate}%`,
+                  },
+                  {
+                    label: "Loan Tenure",
+                    value: `${values.tenure} Year${values.tenure === 1 ? "" : "s"}`,
+                  },
+                  {
+                    label: "EMI Step-Up",
+                    value: `${values.stepUp}%`,
+                  },
                   ...prepayments.map((p, i) => ({
-                    label: `Prepay #${i + 1}`,
+                    label: `Prepayment #${i + 1}`,
                     value: `Month ${p.month}: ${formatINR(p.amount)}`,
                   })),
                 ]}
                 results={[
-                  { label: "EMI", value: formatINR(result.emi) },
-                  { label: "Months", value: String(result.monthsTaken) },
+                  { label: "Standard EMI", value: formatINR(result.emi) },
+                  {
+                    label: "Months to Clear",
+                    value: String(result.monthsTaken),
+                  },
                   {
                     label: "Total Interest",
                     value: formatINR(result.totalInterest),
@@ -286,7 +307,29 @@ function AdvancedPrepaymentInner() {
                     value: formatINR(result.interestSavedVsBaseline ?? 0),
                   },
                 ]}
+                chartSlices={[
+                  {
+                    label: "Principal",
+                    value: values.principal,
+                    color: "#13192B",
+                  },
+                  {
+                    label: "Interest Paid",
+                    value: result.totalInterest,
+                    color: "#F7C615",
+                  },
+                ]}
+                balanceSeries={result.schedule.map((r) => r.balance)}
+                balanceChartTitle="Outstanding loan balance"
+                journey={[
+                  `${formatINR(values.principal, true)} borrowed`,
+                  `${result.monthsTaken} months to clear`,
+                  `${formatINR(result.interestSavedVsBaseline ?? 0, true)} interest saved`,
+                ]}
                 table={{
+                  title: "Repayment schedule",
+                  groupByYear: true,
+                  monthKey: "month",
                   columns: [
                     { header: "Mo", key: "month" },
                     { header: "EMI", key: "emi" },

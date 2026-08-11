@@ -207,32 +207,79 @@ function StepUpSipCalculatorInner() {
             footer={
               <ExportPDFButton
                 title="Accelerate Wealth with Annual SIP Step-Ups"
+                tagline="Your personalized step-up investment summary"
                 subtitle="Step-Up SIP — Aaru Wealth"
+                hero={{
+                  label: values.postTax
+                    ? "Post-Tax Maturity"
+                    : values.adjustInflation
+                      ? "Real Maturity (Today ₹)"
+                      : "Maturity Value",
+                  value: formatINR(maturityDisplay),
+                  hint: `${formatPercent(values.stepUp, 0)} annual step-up`,
+                }}
                 inputs={[
                   { label: "Monthly SIP", value: formatINR(values.monthly) },
-                  { label: "Return p.a.", value: formatPercent(values.rate) },
-                  { label: "Years", value: String(values.years) },
-                  { label: "Step-Up", value: formatPercent(values.stepUp, 0) },
                   {
-                    label: "Inflation adjust",
+                    label: "Expected Return",
+                    value: formatPercent(values.rate),
+                  },
+                  {
+                    label: "Investment Period",
+                    value: `${values.years} Year${values.years === 1 ? "" : "s"}`,
+                  },
+                  {
+                    label: "Annual Step-Up",
+                    value: formatPercent(values.stepUp, 0),
+                  },
+                  {
+                    label: "Inflation Adjustment",
                     value: values.adjustInflation
                       ? formatPercent(values.inflation)
                       : "Off",
                   },
                   {
-                    label: "Post-tax",
+                    label: "Post-Tax View",
                     value: values.postTax ? "On" : "Off",
                   },
                 ]}
                 results={[
-                  { label: "Invested", value: formatINR(result.invested) },
-                  { label: "Maturity", value: formatINR(maturityDisplay) },
+                  {
+                    label: "Invested Amount",
+                    value: formatINR(result.invested),
+                  },
+                  {
+                    label: "Maturity Value",
+                    value: formatINR(maturityDisplay),
+                  },
                   {
                     label: "Wealth Gained",
                     value: formatINR(maturityDisplay - result.invested),
                   },
                 ]}
+                chartSlices={[
+                  {
+                    label: "Principal",
+                    value: chartPrincipal,
+                    color: "#13192B",
+                  },
+                  {
+                    label: "Wealth Gained",
+                    value: Math.max(0, chartGain),
+                    color: "#F7C615",
+                  },
+                ]}
+                balanceSeries={result.monthlySeries.map((r) => r.value)}
+                balanceChartTitle="Portfolio value over time"
+                journey={[
+                  `${formatINR(values.monthly, true)} starting SIP`,
+                  `${formatPercent(values.stepUp, 0)} annual step-ups`,
+                  `${formatINR(maturityDisplay, true)} at maturity`,
+                ]}
                 table={{
+                  title: "Investment schedule",
+                  groupByYear: true,
+                  monthKey: "month",
                   columns: [
                     { header: "Month", key: "month" },
                     { header: "Invested", key: "invested" },

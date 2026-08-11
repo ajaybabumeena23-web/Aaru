@@ -116,17 +116,61 @@ function ReverseSipInner() {
             footer={
               <ExportPDFButton
                 title="Find the SIP That Hits Your Goal"
+                tagline="Your personalized reverse SIP plan"
                 subtitle="Reverse SIP — Aaru Wealth"
+                hero={{
+                  label: "Required Monthly SIP",
+                  value: formatINR(result.monthlySip),
+                  hint: `To reach ${formatINR(values.target, true)}`,
+                }}
                 inputs={[
-                  { label: "Target", value: formatINR(values.target) },
-                  { label: "Return", value: formatPercent(values.rate) },
-                  { label: "Years", value: String(values.years) },
+                  {
+                    label: "Target Corpus",
+                    value: formatINR(values.target),
+                  },
+                  {
+                    label: "Expected Return",
+                    value: formatPercent(values.rate),
+                  },
+                  {
+                    label: "Time Horizon",
+                    value: `${values.years} Year${values.years === 1 ? "" : "s"}`,
+                  },
                 ]}
                 results={[
                   {
-                    label: "Monthly SIP",
+                    label: "Required Monthly SIP",
                     value: formatINR(result.monthlySip),
                   },
+                  {
+                    label: "Total Invested",
+                    value: formatINR(result.totalInvested),
+                  },
+                  {
+                    label: "Target Corpus",
+                    value: formatINR(values.target),
+                  },
+                  {
+                    label: "Wealth Gained",
+                    value: formatINR(Math.max(0, gain)),
+                  },
+                ]}
+                chartSlices={[
+                  {
+                    label: "Total Invested",
+                    value: result.totalInvested,
+                    color: "#13192B",
+                  },
+                  {
+                    label: "Wealth Gained",
+                    value: Math.max(0, gain),
+                    color: "#F7C615",
+                  },
+                ]}
+                journey={[
+                  `${formatINR(values.target, true)} target corpus`,
+                  `${values.years} year horizon`,
+                  `${formatINR(result.monthlySip, true)} monthly SIP`,
                 ]}
                 fileName="reverse-sip.pdf"
               />

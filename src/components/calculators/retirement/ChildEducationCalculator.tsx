@@ -164,24 +164,76 @@ function ChildEducationInner() {
             footer={
               <ExportPDFButton
                 title="Fund Your Child's Education"
+                tagline="Your personalized education funding plan"
                 subtitle="Child Education — Aaru Wealth"
+                hero={{
+                  label: "Total Program Cost",
+                  value: formatINR(result.totalProgramCost),
+                  hint: `${values.programYears}-year program after inflation`,
+                }}
                 inputs={[
-                  { label: "Current cost", value: formatINR(values.cost) },
-                  { label: "Years", value: String(values.years) },
                   {
-                    label: "Edu inflation",
+                    label: "Current Annual Education Cost",
+                    value: formatINR(values.cost),
+                  },
+                  {
+                    label: "Years Until College",
+                    value: `${values.years} Year${values.years === 1 ? "" : "s"}`,
+                  },
+                  {
+                    label: "Education Inflation",
                     value: formatPercent(values.eduInflation),
+                  },
+                  {
+                    label: "Program Duration",
+                    value: `${values.programYears} Year${values.programYears === 1 ? "" : "s"}`,
+                  },
+                  {
+                    label: "Existing Education Corpus",
+                    value: formatINR(values.existing),
+                  },
+                  {
+                    label: "Expected Investment Return",
+                    value: formatPercent(values.returnPct),
                   },
                 ]}
                 results={[
                   {
-                    label: "Program cost",
+                    label: "First-Year Future Cost",
+                    value: formatINR(result.futureCost),
+                  },
+                  {
+                    label: "Total Program Cost",
                     value: formatINR(result.totalProgramCost),
                   },
                   {
-                    label: "Required SIP",
+                    label: "Corpus Gap",
+                    value: formatINR(result.corpusGap),
+                  },
+                  {
+                    label: "Required Monthly SIP",
                     value: formatINR(result.requiredMonthlySip),
                   },
+                ]}
+                chartSlices={[
+                  {
+                    label: "Covered (projected)",
+                    value: Math.max(
+                      0,
+                      result.totalProgramCost - result.corpusGap
+                    ),
+                    color: "#13192B",
+                  },
+                  {
+                    label: "Funding gap",
+                    value: result.corpusGap,
+                    color: "#F7C615",
+                  },
+                ]}
+                journey={[
+                  `${formatINR(values.cost, true)} current annual cost`,
+                  `${formatINR(result.totalProgramCost, true)} future program cost`,
+                  `${formatINR(result.requiredMonthlySip, true)} monthly SIP needed`,
                 ]}
                 fileName="child-education.pdf"
               />

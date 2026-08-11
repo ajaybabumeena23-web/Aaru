@@ -158,18 +158,70 @@ function FdRdInner() {
             footer={
               <ExportPDFButton
                 title="Bank FD & RD Returns"
+                tagline={
+                  mode === "fd"
+                    ? "Your personalized fixed deposit summary"
+                    : "Your personalized recurring deposit summary"
+                }
                 subtitle={`${mode.toUpperCase()} — Aaru Wealth`}
+                hero={{
+                  label: "Maturity Value",
+                  value: formatINR(result.maturityValue),
+                  hint: mode === "fd" ? "Fixed Deposit" : "Recurring Deposit",
+                }}
                 inputs={[
-                  { label: "Type", value: mode.toUpperCase() },
-                  { label: "Amount", value: formatINR(values.amount) },
-                  { label: "Rate", value: formatPercent(values.rate) },
+                  {
+                    label: "Product Type",
+                    value: mode === "fd" ? "Fixed Deposit" : "Recurring Deposit",
+                  },
+                  {
+                    label: mode === "fd" ? "Principal" : "Monthly Deposit",
+                    value: formatINR(values.amount),
+                  },
+                  {
+                    label: "Interest Rate",
+                    value: formatPercent(values.rate),
+                  },
+                  {
+                    label: "Tenure",
+                    value:
+                      mode === "fd"
+                        ? `${values.years} Year${values.years === 1 ? "" : "s"}`
+                        : `${values.months} Month${values.months === 1 ? "" : "s"}`,
+                  },
                 ]}
                 results={[
                   {
-                    label: "Maturity",
+                    label: "Maturity Value",
                     value: formatINR(result.maturityValue),
                   },
-                  { label: "Interest", value: formatINR(result.interest) },
+                  {
+                    label: "Invested Amount",
+                    value: formatINR(result.invested),
+                  },
+                  {
+                    label: "Interest Earned",
+                    value: formatINR(result.interest),
+                  },
+                ]}
+                chartSlices={[
+                  {
+                    label: "Invested",
+                    value: result.invested,
+                    color: "#13192B",
+                  },
+                  {
+                    label: "Interest",
+                    value: result.interest,
+                    color: "#F7C615",
+                  },
+                ]}
+                journey={[
+                  mode === "fd"
+                    ? `${formatINR(values.amount, true)} principal`
+                    : `${formatINR(values.amount, true)} monthly deposit`,
+                  `${formatPercent(values.rate)} interest`,
+                  `${formatINR(result.maturityValue, true)} at maturity`,
                 ]}
                 fileName="fd-rd.pdf"
               />

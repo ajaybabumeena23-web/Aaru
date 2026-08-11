@@ -105,16 +105,53 @@ function SsyInner() {
             footer={
               <ExportPDFButton
                 title="Save for Your Girl Child (SSY)"
+                tagline="Your personalized SSY maturity summary"
                 subtitle="SSY — Aaru Wealth"
+                hero={{
+                  label: "Maturity at Year 21",
+                  value: formatINR(result.maturityValue),
+                  hint: "Deposits for 15 years",
+                }}
                 inputs={[
-                  { label: "Annual", value: formatINR(values.annual) },
-                  { label: "Rate", value: formatPercent(values.rate) },
+                  {
+                    label: "Annual Deposit",
+                    value: formatINR(values.annual),
+                  },
+                  {
+                    label: "Interest Rate",
+                    value: formatPercent(values.rate),
+                  },
                 ]}
                 results={[
                   {
-                    label: "Maturity",
+                    label: "Maturity at Year 21",
                     value: formatINR(result.maturityValue),
                   },
+                  {
+                    label: "Total Deposited (15 yrs)",
+                    value: formatINR(result.totalDeposited),
+                  },
+                  {
+                    label: "Interest Earned",
+                    value: formatINR(result.interestEarned),
+                  },
+                ]}
+                chartSlices={[
+                  {
+                    label: "Deposited",
+                    value: result.totalDeposited,
+                    color: "#13192B",
+                  },
+                  {
+                    label: "Interest",
+                    value: result.interestEarned,
+                    color: "#F7C615",
+                  },
+                ]}
+                journey={[
+                  `${formatINR(values.annual, true)} annual deposit`,
+                  `15 years of deposits`,
+                  `${formatINR(result.maturityValue, true)} at year 21`,
                 ]}
                 fileName="ssy.pdf"
               />

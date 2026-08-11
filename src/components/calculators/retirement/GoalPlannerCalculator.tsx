@@ -176,22 +176,74 @@ function GoalPlannerInner() {
             footer={
               <ExportPDFButton
                 title="Goal Planner"
+                tagline="Your personalized goal funding plan"
                 subtitle="Aaru Wealth"
+                hero={{
+                  label: "Required Monthly SIP",
+                  value: formatINR(reverse.monthlySip),
+                  hint: "For remaining target after current savings",
+                }}
                 inputs={[
-                  { label: "Target", value: formatINR(values.target) },
-                  { label: "Current", value: formatINR(values.current) },
-                  { label: "Return", value: formatPercent(values.rate) },
-                  { label: "Years", value: String(values.years) },
+                  {
+                    label: "Target Corpus",
+                    value: formatINR(values.target),
+                  },
+                  {
+                    label: "Already Saved",
+                    value: formatINR(values.current),
+                  },
+                  {
+                    label: "Expected Return",
+                    value: formatPercent(values.rate),
+                  },
+                  {
+                    label: "Years to Goal",
+                    value: `${values.years} Year${values.years === 1 ? "" : "s"}`,
+                  },
+                  {
+                    label: "What-If Monthly SIP",
+                    value: formatINR(values.whatIfMonthly),
+                  },
                 ]}
                 results={[
                   {
-                    label: "Required SIP",
+                    label: "Required Monthly SIP",
                     value: formatINR(reverse.monthlySip),
                   },
                   {
-                    label: "What-if combined",
+                    label: "Total Invested at That SIP",
+                    value: formatINR(reverse.totalInvested),
+                  },
+                  {
+                    label: "What-If Combined Corpus",
                     value: formatINR(whatIf.total),
                   },
+                  {
+                    label:
+                      whatIf.gap > 0
+                        ? "Shortfall vs Target"
+                        : "Surplus vs Target",
+                    value: formatINR(Math.abs(whatIf.gap)),
+                  },
+                ]}
+                chartSlices={[
+                  {
+                    label: "Already saved",
+                    value: values.current,
+                    color: "#13192B",
+                  },
+                  {
+                    label: "Remaining target",
+                    value: remainingTarget,
+                    color: "#F7C615",
+                  },
+                ]}
+                journey={[
+                  `${formatINR(values.target, true)} goal`,
+                  `${formatINR(reverse.monthlySip, true)} SIP needed`,
+                  whatIf.gap > 0
+                    ? `${formatINR(Math.abs(whatIf.gap), true)} shortfall at what-if SIP`
+                    : `${formatINR(Math.abs(whatIf.gap), true)} surplus at what-if SIP`,
                 ]}
                 fileName="goal-planner.pdf"
               />

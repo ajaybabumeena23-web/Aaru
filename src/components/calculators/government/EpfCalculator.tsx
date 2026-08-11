@@ -124,17 +124,61 @@ function EpfInner() {
             footer={
               <ExportPDFButton
                 title="Project Your EPF Balance"
+                tagline="Your personalized EPF corpus summary"
                 subtitle="EPF — Aaru Wealth"
+                hero={{
+                  label: "Projected EPF Corpus",
+                  value: formatINR(result.maturityValue),
+                  hint: `${values.years} years remaining`,
+                }}
                 inputs={[
-                  { label: "Basic", value: formatINR(values.basic) },
-                  { label: "Years", value: String(values.years) },
-                  { label: "Rate", value: formatPercent(values.rate) },
+                  {
+                    label: "Monthly Basic + DA",
+                    value: formatINR(values.basic),
+                  },
+                  {
+                    label: "Years Remaining",
+                    value: `${values.years} Year${values.years === 1 ? "" : "s"}`,
+                  },
+                  {
+                    label: "EPF Interest Rate",
+                    value: formatPercent(values.rate),
+                  },
                 ]}
                 results={[
                   {
-                    label: "Corpus",
+                    label: "Projected EPF Corpus",
                     value: formatINR(result.maturityValue),
                   },
+                  {
+                    label: "Employee Share",
+                    value: formatINR(result.employeeContribution),
+                  },
+                  {
+                    label: "Employer Share (EPF Portion)",
+                    value: formatINR(result.employerContribution),
+                  },
+                  {
+                    label: "Interest Earned",
+                    value: formatINR(result.interestEarned),
+                  },
+                ]}
+                chartSlices={[
+                  {
+                    label: "Contributions",
+                    value: contributed,
+                    color: "#13192B",
+                  },
+                  {
+                    label: "Interest",
+                    value: result.interestEarned,
+                    color: "#F7C615",
+                  },
+                ]}
+                journey={[
+                  `${formatINR(values.basic, true)} monthly basic + DA`,
+                  `${formatINR(contributed, true)} total contributions`,
+                  `${formatINR(result.maturityValue, true)} projected corpus`,
                 ]}
                 fileName="epf.pdf"
               />

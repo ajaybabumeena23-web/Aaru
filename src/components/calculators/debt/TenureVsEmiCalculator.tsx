@@ -161,24 +161,65 @@ function TenureVsEmiInner() {
           footer={
             <ExportPDFButton
               title="Choose Tenure Cut or EMI Cut"
+              tagline="Your personalized prepayment strategy comparison"
               subtitle="Tenure vs EMI — Aaru Wealth"
+              hero={{
+                label: "Interest Saved (Tenure Cut)",
+                value: formatINR(t.interestSavedVsBaseline ?? 0),
+                hint: "Same prepayment, shorter tenure",
+              }}
               inputs={[
-                { label: "Principal", value: formatINR(values.principal) },
-                { label: "Rate", value: formatPercent(values.rate) },
                 {
-                  label: "Prepay",
+                  label: "Loan Amount",
+                  value: formatINR(values.principal),
+                },
+                {
+                  label: "Interest Rate",
+                  value: formatPercent(values.rate),
+                },
+                {
+                  label: "Loan Tenure",
+                  value: `${values.tenure} Year${values.tenure === 1 ? "" : "s"}`,
+                },
+                {
+                  label: "Prepayment",
                   value: `Month ${values.prepayMonth}: ${formatINR(values.prepayAmount)}`,
                 },
               ]}
               results={[
                 {
-                  label: "Tenure-cut interest",
+                  label: "Tenure-Cut Interest",
                   value: formatINR(t.totalInterest),
                 },
                 {
-                  label: "EMI-cut interest",
+                  label: "EMI-Cut Interest",
                   value: formatINR(e.totalInterest),
                 },
+                {
+                  label: "Interest Saved (Tenure Cut)",
+                  value: formatINR(t.interestSavedVsBaseline ?? 0),
+                },
+                {
+                  label: "Interest Saved (EMI Cut)",
+                  value: formatINR(e.interestSavedVsBaseline ?? 0),
+                },
+              ]}
+              chartSlices={[
+                {
+                  label: "Tenure-cut interest",
+                  value: t.totalInterest,
+                  color: "#13192B",
+                },
+                {
+                  label: "EMI-cut interest",
+                  value: e.totalInterest,
+                  color: "#F7C615",
+                },
+              ]}
+              journey={[
+                `${formatINR(values.prepayAmount, true)} prepaid`,
+                `Tenure cut clears in ${t.monthsTaken} months`,
+                `${formatINR(t.interestSavedVsBaseline ?? 0, true)} saved via tenure cut`,
               ]}
               fileName="tenure-vs-emi.pdf"
             />

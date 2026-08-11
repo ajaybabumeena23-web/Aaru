@@ -126,17 +126,41 @@ export function CalculatorShell({
             footer={
               <ExportPDFButton
                 title={calculator.h1}
+                tagline="Your personalized investment summary"
                 subtitle={calculator.description}
+                hero={{
+                  label: "Maturity Value",
+                  value: formatINR(demoPrincipal + demoGain),
+                  hint: "Demo figures — replace with live engine output",
+                }}
                 inputs={[
-                  { label: "Principal", value: formatINR(demoPrincipal) },
-                  { label: "Rate", value: "12%" },
+                  {
+                    label: "Invested Amount",
+                    value: formatINR(demoPrincipal),
+                  },
+                  { label: "Expected Return", value: "12%" },
                 ]}
                 results={[
-                  { label: "Invested", value: formatINR(demoPrincipal) },
+                  {
+                    label: "Invested Amount",
+                    value: formatINR(demoPrincipal),
+                  },
                   { label: "Wealth Gained", value: formatINR(demoGain) },
                   {
-                    label: "Maturity",
+                    label: "Maturity Value",
                     value: formatINR(demoPrincipal + demoGain),
+                  },
+                ]}
+                chartSlices={[
+                  {
+                    label: "Principal",
+                    value: demoPrincipal,
+                    color: "#13192B",
+                  },
+                  {
+                    label: "Wealth Gained",
+                    value: demoGain,
+                    color: "#F7C615",
                   },
                 ]}
                 fileName={`${calculator.slug}-demo.pdf`}

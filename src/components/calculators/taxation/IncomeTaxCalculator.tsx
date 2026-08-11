@@ -178,15 +178,87 @@ function IncomeTaxInner() {
           footer={
             <ExportPDFButton
               title="Old vs New Tax Regime Compared"
+              tagline="Your personalized tax regime comparison"
               subtitle="Income Tax — Aaru Wealth"
+              hero={{
+                label:
+                  result.better === "same"
+                    ? "Tax Liability (Tie)"
+                    : result.better === "new"
+                      ? "New Regime Tax"
+                      : "Old Regime Tax",
+                value: formatINR(
+                  result.better === "old"
+                    ? result.old.totalTax
+                    : result.new.totalTax
+                ),
+                hint:
+                  result.better === "same"
+                    ? "Both regimes similar"
+                    : `${result.better === "new" ? "New" : "Old"} regime is better`,
+              }}
               inputs={[
-                { label: "Gross income", value: formatINR(values.income) },
-                { label: "80C", value: formatINR(values.ded80c) },
+                {
+                  label: "Gross Annual Income",
+                  value: formatINR(values.income),
+                },
+                {
+                  label: "Salaried",
+                  value: values.salaried ? "Yes" : "No",
+                },
+                {
+                  label: "80C Deductions",
+                  value: formatINR(values.ded80c),
+                },
+                {
+                  label: "Other Deductions",
+                  value: formatINR(values.otherDed),
+                },
+                {
+                  label: "Exemptions (e.g. HRA)",
+                  value: formatINR(values.exemptions),
+                },
               ]}
               results={[
-                { label: "Old tax", value: formatINR(result.old.totalTax) },
-                { label: "New tax", value: formatINR(result.new.totalTax) },
-                { label: "Better", value: result.better },
+                {
+                  label: "Old Regime Tax",
+                  value: formatINR(result.old.totalTax),
+                },
+                {
+                  label: "New Regime Tax",
+                  value: formatINR(result.new.totalTax),
+                },
+                {
+                  label: "Better Regime",
+                  value: result.better,
+                },
+                {
+                  label: "Old Effective Rate",
+                  value: formatPercent(result.old.effectiveRate),
+                },
+                {
+                  label: "New Effective Rate",
+                  value: formatPercent(result.new.effectiveRate),
+                },
+              ]}
+              chartSlices={[
+                {
+                  label: "Old regime tax",
+                  value: result.old.totalTax,
+                  color: "#13192B",
+                },
+                {
+                  label: "New regime tax",
+                  value: result.new.totalTax,
+                  color: "#F7C615",
+                },
+              ]}
+              journey={[
+                `${formatINR(values.income, true)} gross income`,
+                `Old tax ${formatINR(result.old.totalTax, true)}`,
+                result.better === "same"
+                  ? "Regimes roughly equal"
+                  : `${result.better === "new" ? "New" : "Old"} regime wins`,
               ]}
               fileName="income-tax.pdf"
             />

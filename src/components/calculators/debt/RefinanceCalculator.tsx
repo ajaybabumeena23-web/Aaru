@@ -159,20 +159,73 @@ function RefinanceInner() {
             footer={
               <ExportPDFButton
                 title="Should You Refinance Your Loan?"
+                tagline="Your personalized refinance analysis"
                 subtitle="Refinance Analyzer — Aaru Wealth"
+                hero={{
+                  label: "Net Savings",
+                  value: formatINR(result.netSavings),
+                  hint:
+                    result.breakEvenMonths != null
+                      ? `Break-even in ~${result.breakEvenMonths} months`
+                      : "No monthly EMI reduction",
+                }}
                 inputs={[
                   {
-                    label: "Outstanding",
+                    label: "Outstanding Principal",
                     value: formatINR(values.outstanding),
                   },
                   {
-                    label: "Current → New rate",
-                    value: `${formatPercent(values.currentRate)} → ${formatPercent(values.newRate)}`,
+                    label: "Current Interest Rate",
+                    value: formatPercent(values.currentRate),
+                  },
+                  {
+                    label: "New Interest Rate",
+                    value: formatPercent(values.newRate),
+                  },
+                  {
+                    label: "Remaining Tenure",
+                    value: `${values.remainingYears} Year${values.remainingYears === 1 ? "" : "s"}`,
+                  },
+                  {
+                    label: "New Tenure",
+                    value: `${values.newYears} Year${values.newYears === 1 ? "" : "s"}`,
+                  },
+                  {
+                    label: "Processing Fee",
+                    value: formatPercent(values.feePct),
                   },
                 ]}
                 results={[
-                  { label: "Net savings", value: formatINR(result.netSavings) },
-                  { label: "Fees", value: formatINR(result.fees) },
+                  {
+                    label: "Current EMI",
+                    value: formatINR(result.currentEmi),
+                  },
+                  { label: "New EMI", value: formatINR(result.newEmi) },
+                  {
+                    label: "Switching Fees",
+                    value: formatINR(result.fees),
+                  },
+                  {
+                    label: "Net Savings",
+                    value: formatINR(result.netSavings),
+                  },
+                ]}
+                chartSlices={[
+                  {
+                    label: "Current interest",
+                    value: result.currentTotalInterest,
+                    color: "#13192B",
+                  },
+                  {
+                    label: "New interest",
+                    value: result.newTotalInterest,
+                    color: "#F7C615",
+                  },
+                ]}
+                journey={[
+                  `${formatINR(values.outstanding, true)} outstanding`,
+                  `${formatPercent(values.currentRate)} → ${formatPercent(values.newRate)}`,
+                  `${formatINR(result.netSavings, true)} net savings`,
                 ]}
                 fileName="refinance.pdf"
               />

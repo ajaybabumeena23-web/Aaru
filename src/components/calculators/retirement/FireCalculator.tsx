@@ -185,21 +185,74 @@ function FireInner() {
             footer={
               <ExportPDFButton
                 title="Retire Early (FIRE) Planner"
+                tagline="Your personalized retirement plan"
                 subtitle="FIRE — Aaru Wealth"
+                hero={{
+                  label: "FIRE Target Corpus",
+                  value: formatINR(result.targetCorpus),
+                  hint: `${result.yearsToRetirement} years to age ${result.retirementAge}`,
+                }}
                 inputs={[
+                  { label: "Current Age", value: String(values.age) },
                   {
-                    label: "Age → Retire",
-                    value: `${values.age} → ${values.retireAge}`,
+                    label: "Target Retirement Age",
+                    value: String(values.retireAge),
                   },
-                  { label: "Expenses", value: formatINR(values.expenses) },
-                  { label: "SWR", value: formatPercent(values.swr) },
+                  {
+                    label: "Monthly Expenses (today)",
+                    value: formatINR(values.expenses),
+                  },
+                  {
+                    label: "Safe Withdrawal Rate",
+                    value: formatPercent(values.swr),
+                  },
+                  {
+                    label: "Current Invested Corpus",
+                    value: formatINR(values.corpus),
+                  },
+                  {
+                    label: "Expected Return",
+                    value: formatPercent(values.returnPct),
+                  },
+                  {
+                    label: "Inflation",
+                    value: formatPercent(values.inflation),
+                  },
                 ]}
                 results={[
-                  { label: "Target", value: formatINR(result.targetCorpus) },
                   {
-                    label: "Required SIP",
+                    label: "FIRE Target Corpus",
+                    value: formatINR(result.targetCorpus),
+                  },
+                  {
+                    label: "Expenses at Retirement",
+                    value: formatINR(result.annualExpensesAtRetirement),
+                  },
+                  {
+                    label: "Corpus Gap",
+                    value: formatINR(result.corpusGap),
+                  },
+                  {
+                    label: "Required Monthly SIP",
                     value: formatINR(result.requiredMonthlySip),
                   },
+                ]}
+                chartSlices={[
+                  {
+                    label: "Already covered (projected)",
+                    value: Math.max(0, result.targetCorpus - result.corpusGap),
+                    color: "#F7C615",
+                  },
+                  {
+                    label: "Corpus gap",
+                    value: result.corpusGap,
+                    color: "#26D6C6",
+                  },
+                ]}
+                journey={[
+                  `Age ${values.age} → retire at ${result.retirementAge}`,
+                  `${formatINR(result.targetCorpus, true)} FIRE target`,
+                  `${formatINR(result.requiredMonthlySip, true)} monthly SIP needed`,
                 ]}
                 fileName="fire.pdf"
               />

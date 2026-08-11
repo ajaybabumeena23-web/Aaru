@@ -134,27 +134,73 @@ function EmiInner({ config }: { config: EmiVariantConfig }) {
             ]}
             footer={
               <ExportPDFButton
-                title={config.title}
+                title={
+                  config.seoKey === "debt/personal-loan-emi"
+                    ? "Personal Loan EMI Calculator"
+                    : config.seoKey === "debt/home-loan-emi"
+                      ? "Home Loan EMI Calculator"
+                      : config.seoKey === "debt/car-loan-emi"
+                        ? "Car Loan EMI Calculator"
+                        : "EMI Calculator"
+                }
+                tagline="Your personalized loan repayment summary"
                 subtitle={`${config.crumb} — Aaru Wealth`}
+                hero={{
+                  label: "Your Monthly EMI",
+                  value: formatINR(result.emi),
+                  hint: "per month",
+                }}
                 inputs={[
-                  { label: "Principal", value: formatINR(values.principal) },
-                  { label: "Rate", value: formatPercent(values.rate) },
-                  { label: "Tenure", value: `${values.tenure} yrs` },
+                  { label: "Loan Amount", value: formatINR(values.principal) },
+                  { label: "Interest Rate", value: formatPercent(values.rate) },
+                  {
+                    label: "Loan Tenure",
+                    value: `${values.tenure} Year${values.tenure === 1 ? "" : "s"}`,
+                  },
                 ]}
                 results={[
-                  { label: "EMI", value: formatINR(result.emi) },
+                  {
+                    label: "Principal (Loan Amount)",
+                    value: formatINR(values.principal),
+                  },
                   {
                     label: "Total Interest",
                     value: formatINR(result.totalInterest),
                   },
+                  {
+                    label: "Total Repayment",
+                    value: formatINR(result.totalPayment),
+                  },
+                ]}
+                chartSlices={[
+                  {
+                    label: "Principal",
+                    value: values.principal,
+                    color: "#13192B",
+                  },
+                  {
+                    label: "Interest",
+                    value: result.totalInterest,
+                    color: "#F7C615",
+                  },
+                ]}
+                balanceSeries={result.schedule.map((r) => r.balance)}
+                balanceChartTitle="Outstanding loan balance"
+                journey={[
+                  `${formatINR(values.principal, true)} borrowed`,
+                  `${result.schedule.length} monthly payments`,
+                  "Loan fully repaid",
                 ]}
                 table={{
+                  title: "Repayment schedule",
+                  groupByYear: true,
+                  monthKey: "month",
                   columns: [
-                    { header: "Mo", key: "month" },
+                    { header: "Month", key: "month" },
                     { header: "EMI", key: "emi" },
                     { header: "Principal", key: "p" },
                     { header: "Interest", key: "i" },
-                    { header: "Balance", key: "b" },
+                    { header: "Outstanding Balance", key: "b" },
                   ],
                   rows: result.schedule.map((r) => ({
                     month: r.month,
@@ -163,7 +209,7 @@ function EmiInner({ config }: { config: EmiVariantConfig }) {
                     i: formatNumber(r.interestComponent),
                     b: formatNumber(r.balance),
                   })),
-                  maxRows: 240,
+                  maxRows: 400,
                 }}
                 fileName={config.fileName}
               />

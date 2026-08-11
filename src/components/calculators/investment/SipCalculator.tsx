@@ -175,17 +175,61 @@ function SipInner() {
             footer={
               <ExportPDFButton
                 title="Build Wealth with Systematic Investing"
+                tagline="Your personalized investment summary"
                 subtitle="SIP Calculator — Aaru Wealth"
+                hero={{
+                  label: maturityLabel,
+                  value: formatINR(maturityDisplay),
+                  hint: `${values.years} year${values.years === 1 ? "" : "s"} horizon`,
+                }}
                 inputs={[
                   { label: "Monthly SIP", value: formatINR(values.monthly) },
-                  { label: "Return", value: formatPercent(values.rate) },
-                  { label: "Years", value: String(values.years) },
+                  {
+                    label: "Expected Return",
+                    value: formatPercent(values.rate),
+                  },
+                  {
+                    label: "Investment Period",
+                    value: `${values.years} Year${values.years === 1 ? "" : "s"}`,
+                  },
                 ]}
                 results={[
-                  { label: "Invested", value: formatINR(result.invested) },
-                  { label: "Maturity", value: formatINR(maturityDisplay) },
+                  {
+                    label: "Invested Amount",
+                    value: formatINR(result.invested),
+                  },
+                  {
+                    label: maturityLabel,
+                    value: formatINR(maturityDisplay),
+                  },
+                  {
+                    label: "Wealth Gained",
+                    value: formatINR(maturityDisplay - result.invested),
+                  },
+                ]}
+                chartSlices={[
+                  {
+                    label: "Principal",
+                    value: result.invested,
+                    color: "#13192B",
+                  },
+                  {
+                    label: "Wealth Gained",
+                    value: Math.max(0, chartGain),
+                    color: "#F7C615",
+                  },
+                ]}
+                balanceSeries={result.monthlySeries.map((r) => r.value)}
+                balanceChartTitle="Portfolio value over time"
+                journey={[
+                  `${formatINR(values.monthly, true)} monthly SIP`,
+                  `${values.years} year investment journey`,
+                  `${formatINR(maturityDisplay, true)} at maturity`,
                 ]}
                 table={{
+                  title: "Investment schedule",
+                  groupByYear: true,
+                  monthKey: "month",
                   columns: [
                     { header: "Month", key: "month" },
                     { header: "Invested", key: "invested" },

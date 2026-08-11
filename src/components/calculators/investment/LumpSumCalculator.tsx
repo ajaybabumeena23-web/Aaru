@@ -137,18 +137,59 @@ function LumpSumInner() {
             footer={
               <ExportPDFButton
                 title="Grow a One-Time Investment"
+                tagline="Your personalized lump-sum investment summary"
                 subtitle="Lump Sum — Aaru Wealth"
+                hero={{
+                  label: maturityLabel,
+                  value: formatINR(maturityDisplay),
+                  hint: `${values.years} year${values.years === 1 ? "" : "s"} horizon`,
+                }}
                 inputs={[
-                  { label: "Principal", value: formatINR(values.principal) },
-                  { label: "Return", value: formatPercent(values.rate) },
-                  { label: "Years", value: String(values.years) },
+                  {
+                    label: "Invested Amount",
+                    value: formatINR(values.principal),
+                  },
+                  {
+                    label: "Expected Return",
+                    value: formatPercent(values.rate),
+                  },
+                  {
+                    label: "Investment Period",
+                    value: `${values.years} Year${values.years === 1 ? "" : "s"}`,
+                  },
                 ]}
                 results={[
-                  { label: "Maturity", value: formatINR(maturityDisplay) },
                   {
-                    label: "Gain",
+                    label: "Invested Amount",
+                    value: formatINR(result.invested),
+                  },
+                  {
+                    label: maturityLabel,
+                    value: formatINR(maturityDisplay),
+                  },
+                  {
+                    label: "Wealth Gained",
                     value: formatINR(maturityDisplay - result.invested),
                   },
+                ]}
+                chartSlices={[
+                  {
+                    label: "Principal",
+                    value: result.invested,
+                    color: "#13192B",
+                  },
+                  {
+                    label: "Wealth Gained",
+                    value: Math.max(0, chartGain),
+                    color: "#F7C615",
+                  },
+                ]}
+                balanceSeries={result.monthlySeries.map((r) => r.value)}
+                balanceChartTitle="Corpus growth over time"
+                journey={[
+                  `${formatINR(values.principal, true)} invested once`,
+                  `${values.years} years of compounding`,
+                  `${formatINR(maturityDisplay, true)} at maturity`,
                 ]}
                 fileName="lump-sum.pdf"
               />

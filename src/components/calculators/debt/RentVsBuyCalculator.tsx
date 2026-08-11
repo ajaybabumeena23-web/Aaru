@@ -166,19 +166,71 @@ function RentVsBuyInner() {
             footer={
               <ExportPDFButton
                 title="Decide: Rent or Buy Your Home?"
+                tagline="Your personalized rent vs buy comparison"
                 subtitle="Rent vs Buy — Aaru Wealth"
+                hero={{
+                  label: "Better Path Advantage",
+                  value:
+                    result.advantage === "same"
+                      ? "Roughly equal"
+                      : formatINR(result.advantageAmount),
+                  hint:
+                    result.advantage === "same"
+                      ? `Over ${values.years} years`
+                      : `${result.advantage === "buy" ? "Buy" : "Rent"} leads by ${formatINR(result.advantageAmount)}`,
+                }}
                 inputs={[
-                  { label: "Home price", value: formatINR(values.price) },
-                  { label: "Rent", value: formatINR(values.rent) },
-                  { label: "Horizon", value: `${values.years} yrs` },
+                  { label: "Home Price", value: formatINR(values.price) },
+                  { label: "Down Payment", value: formatINR(values.down) },
+                  {
+                    label: "Home Loan Rate",
+                    value: formatPercent(values.loanRate),
+                  },
+                  {
+                    label: "Monthly Rent",
+                    value: formatINR(values.rent),
+                  },
+                  {
+                    label: "Comparison Horizon",
+                    value: `${values.years} Year${values.years === 1 ? "" : "s"}`,
+                  },
+                  {
+                    label: "Investment Return (if renting)",
+                    value: formatPercent(values.investReturn),
+                  },
                 ]}
                 results={[
-                  { label: "Buy NW", value: formatINR(result.buyNetWorth) },
-                  { label: "Rent NW", value: formatINR(result.rentNetWorth) },
+                  {
+                    label: "Buy Net Worth",
+                    value: formatINR(result.buyNetWorth),
+                  },
+                  {
+                    label: "Rent + Invest Net Worth",
+                    value: formatINR(result.rentNetWorth),
+                  },
                   {
                     label: "Advantage",
                     value: `${result.advantage} by ${formatINR(result.advantageAmount)}`,
                   },
+                ]}
+                chartSlices={[
+                  {
+                    label: "Buy path",
+                    value: Math.max(0, result.buyNetWorth),
+                    color: "#13192B",
+                  },
+                  {
+                    label: "Rent + invest",
+                    value: Math.max(0, result.rentNetWorth),
+                    color: "#F7C615",
+                  },
+                ]}
+                journey={[
+                  `${formatINR(values.price, true)} home price`,
+                  `${values.years}-year comparison`,
+                  result.advantage === "same"
+                    ? "Paths roughly equal"
+                    : `${result.advantage === "buy" ? "Buy" : "Rent"} wins by ${formatINR(result.advantageAmount, true)}`,
                 ]}
                 fileName="rent-vs-buy.pdf"
               />

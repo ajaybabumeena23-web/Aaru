@@ -117,19 +117,62 @@ function PpfInner() {
             footer={
               <ExportPDFButton
                 title="Grow Tax-Free with PPF"
+                tagline="Your personalized PPF maturity summary"
                 subtitle="PPF — Aaru Wealth"
+                hero={{
+                  label: "Maturity Value",
+                  value: formatINR(result.maturityValue),
+                  hint: `${values.years}-year PPF tenure`,
+                }}
                 inputs={[
-                  { label: "Annual", value: formatINR(values.annual) },
-                  { label: "Years", value: String(values.years) },
-                  { label: "Rate", value: formatPercent(values.rate) },
+                  {
+                    label: "Annual Deposit",
+                    value: formatINR(values.annual),
+                  },
+                  {
+                    label: "Tenure",
+                    value: `${values.years} Year${values.years === 1 ? "" : "s"}`,
+                  },
+                  {
+                    label: "Interest Rate",
+                    value: formatPercent(values.rate),
+                  },
                 ]}
                 results={[
                   {
-                    label: "Maturity",
+                    label: "Maturity Value",
                     value: formatINR(result.maturityValue),
                   },
+                  {
+                    label: "Total Deposited",
+                    value: formatINR(result.totalDeposited),
+                  },
+                  {
+                    label: "Interest Earned",
+                    value: formatINR(result.interestEarned),
+                  },
+                ]}
+                chartSlices={[
+                  {
+                    label: "Deposited",
+                    value: result.totalDeposited,
+                    color: "#13192B",
+                  },
+                  {
+                    label: "Interest",
+                    value: result.interestEarned,
+                    color: "#F7C615",
+                  },
+                ]}
+                balanceSeries={result.yearly.map((y) => y.balance)}
+                balanceChartTitle="PPF balance over years"
+                journey={[
+                  `${formatINR(values.annual, true)} deposited yearly`,
+                  `${values.years} years of compounding`,
+                  `${formatINR(result.maturityValue, true)} at maturity`,
                 ]}
                 table={{
+                  title: "Yearly PPF schedule",
                   columns: [
                     { header: "Year", key: "year" },
                     { header: "Deposit", key: "deposit" },

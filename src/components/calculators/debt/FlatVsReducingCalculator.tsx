@@ -126,20 +126,61 @@ function FlatVsReducingInner() {
             footer={
               <ExportPDFButton
                 title="Unmask Flat Rate Loans"
+                tagline="Your personalized flat vs reducing comparison"
                 subtitle="Flat vs Reducing — Aaru Wealth"
+                hero={{
+                  label: "Equivalent Reducing Rate",
+                  value: formatPercent(result.equivalentReducingRatePct),
+                  hint: "True cost of the quoted flat rate",
+                }}
                 inputs={[
-                  { label: "Principal", value: formatINR(values.principal) },
-                  { label: "Flat rate", value: formatPercent(values.flatRate) },
+                  {
+                    label: "Loan Amount",
+                    value: formatINR(values.principal),
+                  },
+                  {
+                    label: "Quoted Flat Rate",
+                    value: formatPercent(values.flatRate),
+                  },
+                  {
+                    label: "Loan Tenure",
+                    value: `${values.tenure} Year${values.tenure === 1 ? "" : "s"}`,
+                  },
                 ]}
                 results={[
                   {
-                    label: "Equivalent reducing",
+                    label: "Flat EMI",
+                    value: formatINR(result.flatEmi),
+                  },
+                  {
+                    label: "Flat Total Interest",
+                    value: formatINR(result.flatTotalInterest),
+                  },
+                  {
+                    label: "Equivalent Reducing Rate",
                     value: formatPercent(result.equivalentReducingRatePct),
                   },
                   {
-                    label: "Flat interest",
-                    value: formatINR(result.flatTotalInterest),
+                    label: "Reducing EMI (same % quote)",
+                    value: formatINR(result.reducingEmi),
                   },
+                ]}
+                chartSlices={[
+                  {
+                    label: "Flat interest",
+                    value: result.flatTotalInterest,
+                    color: "#13192B",
+                  },
+                  {
+                    label: "Reducing interest (same %)",
+                    value: result.reducingTotalInterest,
+                    color: "#F7C615",
+                  },
+                ]}
+                journey={[
+                  `${formatPercent(values.flatRate)} quoted flat`,
+                  `${formatPercent(result.equivalentReducingRatePct)} true reducing rate`,
+                  `${formatINR(result.flatTotalInterest, true)} flat interest`,
                 ]}
                 fileName="flat-vs-reducing.pdf"
               />

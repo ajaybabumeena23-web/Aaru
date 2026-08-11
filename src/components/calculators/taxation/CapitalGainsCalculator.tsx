@@ -146,16 +146,64 @@ function CapitalGainsInner() {
             footer={
               <ExportPDFButton
                 title="Estimate STCG & LTCG Liability"
+                tagline="Your personalized capital gains summary"
                 subtitle="Capital Gains — Aaru Wealth"
+                hero={{
+                  label: result.isLongTerm ? "LTCG Tax" : "STCG Tax",
+                  value: formatINR(result.tax),
+                  hint:
+                    asset === "equity" && result.isLongTerm
+                      ? `Exemption used: ${formatINR(result.exemptionUsed)}`
+                      : undefined,
+                }}
                 inputs={[
-                  { label: "Asset", value: asset },
-                  { label: "Buy", value: formatINR(values.buy) },
-                  { label: "Sell", value: formatINR(values.sell) },
-                  { label: "Holding", value: `${values.months} mo` },
+                  {
+                    label: "Asset Type",
+                    value: asset === "real-estate" ? "Real Estate" : "Equity / MF",
+                  },
+                  {
+                    label: "Purchase Price",
+                    value: formatINR(values.buy),
+                  },
+                  {
+                    label: "Sale Price",
+                    value: formatINR(values.sell),
+                  },
+                  {
+                    label: "Holding Period",
+                    value: `${values.months} Month${values.months === 1 ? "" : "s"}`,
+                  },
                 ]}
                 results={[
-                  { label: "Gain", value: formatINR(result.gain) },
-                  { label: "Tax", value: formatINR(result.tax) },
+                  {
+                    label: "Capital Gain",
+                    value: formatINR(result.gain),
+                  },
+                  {
+                    label: result.isLongTerm ? "LTCG Tax" : "STCG Tax",
+                    value: formatINR(result.tax),
+                  },
+                  {
+                    label: "Net Proceeds",
+                    value: formatINR(result.netProceeds),
+                  },
+                ]}
+                chartSlices={[
+                  {
+                    label: "Net gain after tax",
+                    value: Math.max(0, result.gain - result.tax),
+                    color: "#13192B",
+                  },
+                  {
+                    label: "Tax",
+                    value: result.tax,
+                    color: "#F7C615",
+                  },
+                ]}
+                journey={[
+                  `${formatINR(values.buy, true)} → ${formatINR(values.sell, true)}`,
+                  `${formatINR(result.gain, true)} capital gain`,
+                  `${formatINR(result.tax, true)} tax liability`,
                 ]}
                 fileName="capital-gains.pdf"
               />

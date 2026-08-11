@@ -175,9 +175,19 @@ function XirrInner() {
             footer={
               <ExportPDFButton
                 title="Measure True Portfolio Returns"
+                tagline="Your personalized portfolio return summary"
                 subtitle="XIRR — Aaru Wealth"
+                hero={{
+                  label: "XIRR",
+                  value: result.converged
+                    ? formatPercent(result.xirrPct)
+                    : "Did not converge",
+                  hint: result.converged
+                    ? `Converged in ${result.iterations} iterations`
+                    : "Check cash flows include investments and returns",
+                }}
                 inputs={rows.map((r, i) => ({
-                  label: `Flow ${i + 1}`,
+                  label: `Cash Flow ${i + 1}`,
                   value: `${r.date}: ${formatINR(r.amount)}`,
                 }))}
                 results={[
@@ -187,8 +197,34 @@ function XirrInner() {
                       ? formatPercent(result.xirrPct)
                       : "N/A",
                   },
-                  { label: "Invested", value: formatINR(invested) },
-                  { label: "Returned", value: formatINR(returned) },
+                  {
+                    label: "Total Invested",
+                    value: formatINR(invested),
+                  },
+                  {
+                    label: "Total Returned",
+                    value: formatINR(returned),
+                  },
+                  { label: "Net P&L", value: formatINR(net) },
+                ]}
+                chartSlices={[
+                  {
+                    label: "Invested",
+                    value: invested,
+                    color: "#13192B",
+                  },
+                  {
+                    label: net >= 0 ? "Net Gain" : "Net Loss",
+                    value: Math.abs(net),
+                    color: "#F7C615",
+                  },
+                ]}
+                journey={[
+                  `${formatINR(invested, true)} invested`,
+                  `${formatINR(returned, true)} returned`,
+                  result.converged
+                    ? `${formatPercent(result.xirrPct)} XIRR`
+                    : "XIRR did not converge",
                 ]}
                 fileName="xirr.pdf"
               />

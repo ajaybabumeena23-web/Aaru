@@ -142,16 +142,69 @@ function SwpInner() {
             footer={
               <ExportPDFButton
                 title="Plan Systematic Withdrawals"
+                tagline="Your personalized withdrawal plan"
                 subtitle="SWP — Aaru Wealth"
+                hero={{
+                  label: result.depleted ? "Months Lasted" : "Ending Corpus",
+                  value: result.depleted
+                    ? `${result.monthsLasted} mo`
+                    : formatINR(remaining),
+                  hint: result.depleted
+                    ? "Corpus depleted before horizon"
+                    : "Corpus survives the full horizon",
+                }}
                 inputs={[
-                  { label: "Corpus", value: formatINR(values.corpus) },
-                  { label: "Withdrawal", value: formatINR(values.withdrawal) },
-                  { label: "Return", value: formatPercent(values.rate) },
-                  { label: "Years", value: String(values.years) },
+                  {
+                    label: "Starting Corpus",
+                    value: formatINR(values.corpus),
+                  },
+                  {
+                    label: "Monthly Withdrawal",
+                    value: formatINR(values.withdrawal),
+                  },
+                  {
+                    label: "Expected Return",
+                    value: formatPercent(values.rate),
+                  },
+                  {
+                    label: "Withdrawal Horizon",
+                    value: `${values.years} Year${values.years === 1 ? "" : "s"}`,
+                  },
                 ]}
                 results={[
-                  { label: "Ending Corpus", value: formatINR(remaining) },
-                  { label: "Withdrawn", value: formatINR(withdrawn) },
+                  {
+                    label: "Ending Corpus",
+                    value: formatINR(remaining),
+                  },
+                  {
+                    label: "Total Withdrawn",
+                    value: formatINR(withdrawn),
+                  },
+                  {
+                    label: "Months Lasted",
+                    value: `${result.monthsLasted} / ${values.years * 12}`,
+                  },
+                ]}
+                chartSlices={[
+                  {
+                    label: "Total Withdrawn",
+                    value: withdrawn,
+                    color: "#13192B",
+                  },
+                  {
+                    label: result.depleted ? "Depleted" : "Ending Corpus",
+                    value: Math.max(remaining, result.depleted ? 0 : remaining),
+                    color: "#F7C615",
+                  },
+                ]}
+                balanceSeries={result.series.map((r) => r.corpus)}
+                balanceChartTitle="Corpus balance over time"
+                journey={[
+                  `${formatINR(values.corpus, true)} starting corpus`,
+                  `${formatINR(values.withdrawal, true)} monthly withdrawals`,
+                  result.depleted
+                    ? `Lasted ${result.monthsLasted} months`
+                    : `${formatINR(remaining, true)} remaining`,
                 ]}
                 fileName="swp.pdf"
               />

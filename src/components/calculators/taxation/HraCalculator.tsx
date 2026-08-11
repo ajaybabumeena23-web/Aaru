@@ -133,16 +133,61 @@ function HraInner() {
             footer={
               <ExportPDFButton
                 title="Maximise Your HRA Exemption"
+                tagline="Your personalized HRA exemption summary"
                 subtitle="HRA — Aaru Wealth"
+                hero={{
+                  label: "Annual HRA Exemption",
+                  value: formatINR(result.exemption),
+                  hint: values.metro ? "Metro city rules" : "Non-metro rules",
+                }}
                 inputs={[
-                  { label: "Basic (mo)", value: formatINR(values.basic) },
-                  { label: "HRA (mo)", value: formatINR(values.hra) },
-                  { label: "Rent (mo)", value: formatINR(values.rent) },
-                  { label: "Metro", value: values.metro ? "Yes" : "No" },
+                  {
+                    label: "Basic Salary (Monthly)",
+                    value: formatINR(values.basic),
+                  },
+                  {
+                    label: "HRA Received (Monthly)",
+                    value: formatINR(values.hra),
+                  },
+                  {
+                    label: "Rent Paid (Monthly)",
+                    value: formatINR(values.rent),
+                  },
+                  {
+                    label: "Metro City",
+                    value: values.metro ? "Yes" : "No",
+                  },
                 ]}
                 results={[
-                  { label: "Exemption", value: formatINR(result.exemption) },
-                  { label: "Taxable", value: formatINR(result.taxableHra) },
+                  {
+                    label: "Annual HRA Exemption",
+                    value: formatINR(result.exemption),
+                  },
+                  {
+                    label: "Taxable HRA",
+                    value: formatINR(result.taxableHra),
+                  },
+                  ...result.components.map((c) => ({
+                    label: c.rule,
+                    value: formatINR(c.amount),
+                  })),
+                ]}
+                chartSlices={[
+                  {
+                    label: "Exempt HRA",
+                    value: result.exemption,
+                    color: "#13192B",
+                  },
+                  {
+                    label: "Taxable HRA",
+                    value: result.taxableHra,
+                    color: "#F7C615",
+                  },
+                ]}
+                journey={[
+                  `${formatINR(values.hra * 12, true)} annual HRA`,
+                  `${formatINR(result.exemption, true)} exempt`,
+                  `${formatINR(result.taxableHra, true)} taxable`,
                 ]}
                 fileName="hra.pdf"
               />

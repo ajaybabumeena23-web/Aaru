@@ -167,24 +167,76 @@ function PostOfficeInner() {
             footer={
               <ExportPDFButton
                 title="Compare NSC, SCSS & KVP"
+                tagline="Your personalized post office scheme summary"
                 subtitle="Post Office — Aaru Wealth"
+                hero={{
+                  label:
+                    scheme === "scss" && result.periodicPayout
+                      ? "Quarterly Payout"
+                      : scheme === "scss"
+                        ? "Principal Returned"
+                        : "Maturity Value",
+                  value:
+                    scheme === "scss" && result.periodicPayout
+                      ? formatINR(result.periodicPayout)
+                      : formatINR(result.maturityValue),
+                  hint: scheme.toUpperCase(),
+                }}
                 inputs={[
-                  { label: "Scheme", value: scheme.toUpperCase() },
                   {
-                    label: "Principal",
+                    label: "Scheme",
+                    value: scheme.toUpperCase(),
+                  },
+                  {
+                    label: "Invested Amount",
                     value: formatINR(values.principal),
                   },
-                  { label: "Rate", value: formatPercent(values.rate) },
+                  {
+                    label: "Interest Rate",
+                    value: formatPercent(values.rate),
+                  },
+                  {
+                    label: "Tenure",
+                    value: `${values.years} Year${values.years === 1 ? "" : "s"}`,
+                  },
                 ]}
                 results={[
                   {
-                    label: "Maturity",
+                    label:
+                      scheme === "scss" ? "Principal Returned" : "Maturity Value",
                     value: formatINR(result.maturityValue),
                   },
                   {
-                    label: "Interest",
+                    label: "Total Interest",
                     value: formatINR(result.totalInterest),
                   },
+                  ...(result.periodicPayout
+                    ? [
+                        {
+                          label: "Quarterly Payout",
+                          value: formatINR(result.periodicPayout),
+                        },
+                      ]
+                    : []),
+                ]}
+                chartSlices={[
+                  {
+                    label: "Principal",
+                    value: values.principal,
+                    color: "#13192B",
+                  },
+                  {
+                    label: "Interest",
+                    value: result.totalInterest,
+                    color: "#F7C615",
+                  },
+                ]}
+                journey={[
+                  `${scheme.toUpperCase()} investment`,
+                  `${formatINR(values.principal, true)} principal`,
+                  scheme === "scss" && result.periodicPayout
+                    ? `${formatINR(result.periodicPayout, true)} quarterly`
+                    : `${formatINR(result.maturityValue, true)} at maturity`,
                 ]}
                 fileName="post-office.pdf"
               />

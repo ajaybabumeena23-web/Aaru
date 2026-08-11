@@ -148,18 +148,65 @@ function TakeHomeInner() {
             footer={
               <ExportPDFButton
                 title="See Your Real In-Hand Pay"
+                tagline="Your personalized take-home salary summary"
                 subtitle="Take-Home Salary — Aaru Wealth"
+                hero={{
+                  label: "Monthly Take-Home",
+                  value: formatINR(result.netMonthly),
+                  hint: "After EPF, TDS & professional tax",
+                }}
                 inputs={[
-                  { label: "Gross", value: formatINR(values.gross) },
-                  { label: "Basic %", value: `${values.basicPct}%` },
+                  {
+                    label: "Monthly Gross",
+                    value: formatINR(values.gross),
+                  },
+                  {
+                    label: "Basic as % of Gross",
+                    value: `${values.basicPct}%`,
+                  },
+                  {
+                    label: "Employee EPF %",
+                    value: `${values.epfPct}%`,
+                  },
+                  {
+                    label: "Professional Tax",
+                    value: formatINR(values.pt),
+                  },
                 ]}
                 results={[
                   {
-                    label: "Take-home",
+                    label: "Monthly Take-Home",
                     value: formatINR(result.netMonthly),
                   },
-                  { label: "EPF", value: formatINR(result.epfEmployee) },
-                  { label: "TDS", value: formatINR(result.tds) },
+                  {
+                    label: "EPF (Employee)",
+                    value: formatINR(result.epfEmployee),
+                  },
+                  {
+                    label: "Est. TDS",
+                    value: formatINR(result.tds),
+                  },
+                  {
+                    label: "Professional Tax",
+                    value: formatINR(result.professionalTax),
+                  },
+                ]}
+                chartSlices={[
+                  {
+                    label: "Take-home",
+                    value: result.netMonthly,
+                    color: "#13192B",
+                  },
+                  {
+                    label: "Deductions",
+                    value: deductions,
+                    color: "#F7C615",
+                  },
+                ]}
+                journey={[
+                  `${formatINR(values.gross, true)} monthly gross`,
+                  `${formatINR(deductions, true)} deductions`,
+                  `${formatINR(result.netMonthly, true)} in-hand`,
                 ]}
                 fileName="take-home.pdf"
               />

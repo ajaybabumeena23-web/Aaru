@@ -134,15 +134,65 @@ function NpsInner() {
             footer={
               <ExportPDFButton
                 title="Plan Your NPS Retirement Corpus"
+                tagline="Your personalized NPS retirement summary"
                 subtitle="NPS — Aaru Wealth"
+                hero={{
+                  label: "Projected Corpus",
+                  value: formatINR(result.corpus),
+                  hint: `${values.annuity}% allocated to annuity`,
+                }}
                 inputs={[
-                  { label: "Monthly", value: formatINR(values.monthly) },
-                  { label: "Years", value: String(values.years) },
-                  { label: "Return", value: formatPercent(values.rate) },
+                  {
+                    label: "Monthly Contribution",
+                    value: formatINR(values.monthly),
+                  },
+                  {
+                    label: "Years to Retirement",
+                    value: `${values.years} Year${values.years === 1 ? "" : "s"}`,
+                  },
+                  {
+                    label: "Expected Return",
+                    value: formatPercent(values.rate),
+                  },
+                  {
+                    label: "Annuity Purchase %",
+                    value: `${values.annuity}%`,
+                  },
                 ]}
                 results={[
-                  { label: "Corpus", value: formatINR(result.corpus) },
-                  { label: "Lump sum", value: formatINR(result.lumpSum) },
+                  {
+                    label: "Projected Corpus",
+                    value: formatINR(result.corpus),
+                  },
+                  {
+                    label: "Lump Sum",
+                    value: formatINR(result.lumpSum),
+                  },
+                  {
+                    label: "Annuity Amount",
+                    value: formatINR(result.annuityAmount),
+                  },
+                  {
+                    label: "Total Invested",
+                    value: formatINR(result.totalInvested),
+                  },
+                ]}
+                chartSlices={[
+                  {
+                    label: "Lump sum",
+                    value: result.lumpSum,
+                    color: "#13192B",
+                  },
+                  {
+                    label: "Annuity corpus",
+                    value: result.annuityAmount,
+                    color: "#F7C615",
+                  },
+                ]}
+                journey={[
+                  `${formatINR(values.monthly, true)} monthly contribution`,
+                  `${formatINR(result.corpus, true)} projected corpus`,
+                  `${formatINR(result.lumpSum, true)} lump sum at exit`,
                 ]}
                 fileName="nps.pdf"
               />
