@@ -5,12 +5,18 @@ import { SipCalculator } from "@/components/calculators/investment/SipCalculator
 import { LumpSumCalculator } from "@/components/calculators/investment/LumpSumCalculator";
 import { SwpCalculator } from "@/components/calculators/investment/SwpCalculator";
 import { XirrCalculator } from "@/components/calculators/investment/XirrCalculator";
-import { EmiCalculator } from "@/components/calculators/debt/EmiCalculator";
+import {
+  CarLoanEmiCalculator,
+  EmiCalculator,
+  HomeLoanEmiCalculator,
+  PersonalLoanEmiCalculator,
+} from "@/components/calculators/debt/EmiCalculator";
 import { TenureVsEmiCalculator } from "@/components/calculators/debt/TenureVsEmiCalculator";
 import { RefinanceCalculator } from "@/components/calculators/debt/RefinanceCalculator";
 import { FlatVsReducingCalculator } from "@/components/calculators/debt/FlatVsReducingCalculator";
 import { RentVsBuyCalculator } from "@/components/calculators/debt/RentVsBuyCalculator";
 import { FireCalculator } from "@/components/calculators/retirement/FireCalculator";
+import { GoalPlannerCalculator } from "@/components/calculators/retirement/GoalPlannerCalculator";
 import { ReverseSipCalculator } from "@/components/calculators/retirement/ReverseSipCalculator";
 import { ChildEducationCalculator } from "@/components/calculators/retirement/ChildEducationCalculator";
 import { IncomeTaxCalculator } from "@/components/calculators/taxation/IncomeTaxCalculator";
@@ -32,12 +38,16 @@ export const CALCULATOR_REGISTRY: Record<string, ComponentType> = {
   "investment/swp": SwpCalculator,
   "investment/xirr": XirrCalculator,
   "debt/emi": EmiCalculator,
+  "debt/home-loan-emi": HomeLoanEmiCalculator,
+  "debt/personal-loan-emi": PersonalLoanEmiCalculator,
+  "debt/car-loan-emi": CarLoanEmiCalculator,
   "debt/advanced-prepayment": AdvancedPrepaymentCalculator,
   "debt/tenure-vs-emi": TenureVsEmiCalculator,
   "debt/refinance": RefinanceCalculator,
   "debt/flat-vs-reducing": FlatVsReducingCalculator,
   "debt/rent-vs-buy": RentVsBuyCalculator,
   "retirement/fire": FireCalculator,
+  "retirement/goal-planner": GoalPlannerCalculator,
   "retirement/reverse-sip": ReverseSipCalculator,
   "retirement/child-education": ChildEducationCalculator,
   "taxation/income-tax": IncomeTaxCalculator,

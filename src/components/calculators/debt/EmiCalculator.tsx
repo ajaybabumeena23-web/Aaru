@@ -16,11 +16,31 @@ import { useCalculatorParams } from "@/hooks/useCalculatorParams";
 import { basicEmi } from "@/utils/financial-math";
 import { formatINR, formatNumber, formatPercent } from "@/lib/utils";
 
-function EmiInner() {
+export type EmiVariantConfig = {
+  seoKey: string;
+  crumb: string;
+  title: string;
+  description: string;
+  defaults: { principal: number; rate: number; tenure: number };
+  principalMax?: number;
+  fileName: string;
+};
+
+const GENERAL: EmiVariantConfig = {
+  seoKey: "debt/emi",
+  crumb: "EMI",
+  title: "Know Your Exact Monthly EMI",
+  description:
+    "Calculate EMI, total interest, and principal vs interest breakup instantly.",
+  defaults: { principal: 50_00_000, rate: 8.5, tenure: 20 },
+  fileName: "emi.pdf",
+};
+
+function EmiInner({ config }: { config: EmiVariantConfig }) {
   const { values, setParam } = useCalculatorParams({
-    principal: { default: 50_00_000 },
-    rate: { default: 8.5 },
-    tenure: { default: 20 },
+    principal: { default: config.defaults.principal },
+    rate: { default: config.defaults.rate },
+    tenure: { default: config.defaults.tenure },
   });
 
   const result = useMemo(
@@ -35,12 +55,12 @@ function EmiInner() {
 
   return (
     <CalculatorPageLayout
-      seoKey="debt/emi"
+      seoKey={config.seoKey}
       categoryHref="/calculators/debt"
       categoryLabel="Debt Management"
-      crumb="EMI"
-      title="Know Your Exact Monthly EMI"
-      description="Calculate EMI, total interest, and principal vs interest breakup instantly."
+      crumb={config.crumb}
+      title={config.title}
+      description={config.description}
     >
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
@@ -53,9 +73,9 @@ function EmiInner() {
               label="Loan Amount"
               value={values.principal}
               onChange={(v) => setParam("principal", v)}
-              min={1_00_000}
-              max={5_00_00_000}
-              step={50_000}
+              min={50_000}
+              max={config.principalMax ?? 5_00_00_000}
+              step={10_000}
               prefix="₹"
             />
             <DraggableSlider
@@ -64,7 +84,7 @@ function EmiInner() {
               value={values.rate}
               onChange={(v) => setParam("rate", v)}
               min={5}
-              max={18}
+              max={24}
               step={0.05}
               suffix="%"
             />
@@ -81,7 +101,7 @@ function EmiInner() {
           </CardContent>
         </Card>
 
-        <div className="space-y-6">
+        <div className="space-y-6 calculator-results-sticky">
           <Card>
             <CardHeader>
               <CardTitle className="text-lg">Principal vs Interest Paid</CardTitle>
@@ -114,8 +134,8 @@ function EmiInner() {
             ]}
             footer={
               <ExportPDFButton
-                title="Know Your Exact Monthly EMI"
-                subtitle="EMI Calculator — Aaru Wealth"
+                title={config.title}
+                subtitle={`${config.crumb} — Aaru Wealth`}
                 inputs={[
                   { label: "Principal", value: formatINR(values.principal) },
                   { label: "Rate", value: formatPercent(values.rate) },
@@ -145,7 +165,7 @@ function EmiInner() {
                   })),
                   maxRows: 240,
                 }}
-                fileName="emi.pdf"
+                fileName={config.fileName}
               />
             }
           />
@@ -193,5 +213,55 @@ function EmiInner() {
 }
 
 export function EmiCalculator() {
-  return withCalculatorSuspense(<EmiInner />);
+  return withCalculatorSuspense(<EmiInner config={GENERAL} />);
+}
+
+export function HomeLoanEmiCalculator() {
+  return withCalculatorSuspense(
+    <EmiInner
+      config={{
+        seoKey: "debt/home-loan-emi",
+        crumb: "Home Loan EMI",
+        title: "Home Loan EMI Calculator",
+        description:
+          "Estimate home loan EMI, total interest and amortisation. Defaults suit longer housing tenures—adjust to your sanction letter.",
+        defaults: { principal: 50_00_000, rate: 8.5, tenure: 20 },
+        fileName: "home-loan-emi.pdf",
+      }}
+    />
+  );
+}
+
+export function PersonalLoanEmiCalculator() {
+  return withCalculatorSuspense(
+    <EmiInner
+      config={{
+        seoKey: "debt/personal-loan-emi",
+        crumb: "Personal Loan EMI",
+        title: "Personal Loan EMI Calculator",
+        description:
+          "Estimate personal loan EMI with shorter-tenure defaults. Confirm your lender’s rate, fees and foreclosure rules separately.",
+        defaults: { principal: 5_00_000, rate: 14, tenure: 4 },
+        principalMax: 50_00_000,
+        fileName: "personal-loan-emi.pdf",
+      }}
+    />
+  );
+}
+
+export function CarLoanEmiCalculator() {
+  return withCalculatorSuspense(
+    <EmiInner
+      config={{
+        seoKey: "debt/car-loan-emi",
+        crumb: "Car Loan EMI",
+        title: "Car Loan EMI Calculator",
+        description:
+          "Estimate car loan EMI and total interest. Defaults reflect typical auto-loan tenures—edit to match your quote.",
+        defaults: { principal: 8_00_000, rate: 10, tenure: 5 },
+        principalMax: 50_00_000,
+        fileName: "car-loan-emi.pdf",
+      }}
+    />
+  );
 }

@@ -71,6 +71,24 @@ export const CALCULATOR_CATEGORIES: CalculatorCategory[] = [
         description: "Calculate EMI, total interest, and payment breakup.",
       },
       {
+        slug: "home-loan-emi",
+        title: "Home Loan EMI",
+        h1: "Home Loan EMI Calculator",
+        description: "Housing loan EMI with longer-tenure defaults.",
+      },
+      {
+        slug: "personal-loan-emi",
+        title: "Personal Loan EMI",
+        h1: "Personal Loan EMI Calculator",
+        description: "Personal loan EMI with shorter-tenure defaults.",
+      },
+      {
+        slug: "car-loan-emi",
+        title: "Car Loan EMI",
+        h1: "Car Loan EMI Calculator",
+        description: "Auto loan EMI estimate with typical tenure defaults.",
+      },
+      {
         slug: "advanced-prepayment",
         title: "Advanced Prepayment",
         h1: "Crush Debt Faster with Smart Prepayments",
@@ -112,6 +130,12 @@ export const CALCULATOR_CATEGORIES: CalculatorCategory[] = [
         title: "FIRE Planner",
         h1: "Retire Early (FIRE) Planner",
         description: "Target corpus from expenses, SWR, and retirement age 42.",
+      },
+      {
+        slug: "goal-planner",
+        title: "Goal Planner",
+        h1: "Plan the SIP Behind Your Money Goal",
+        description: "Required SIP for a target corpus plus what-if projection.",
       },
       {
         slug: "reverse-sip",

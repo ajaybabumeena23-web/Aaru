@@ -1,10 +1,12 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Search } from "lucide-react";
 import { CALCULATOR_CATEGORIES } from "@/lib/calculators";
+import { GUIDES } from "@/lib/content/guides";
+import { GLOSSARY } from "@/lib/content/glossary";
+import { TOPIC_HUBS } from "@/lib/content/topics";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
@@ -18,19 +20,60 @@ function searchCatalog(query: string): Hit[] {
   const q = query.trim().toLowerCase();
   if (!q) return [];
   const hits: Hit[] = [];
+
   for (const category of CALCULATOR_CATEGORIES) {
     for (const calc of category.calculators) {
-      const hay = `${calc.title} ${calc.h1} ${calc.description} ${category.label}`.toLowerCase();
+      const hay =
+        `${calc.title} ${calc.h1} ${calc.description} ${category.label}`.toLowerCase();
       if (hay.includes(q)) {
         hits.push({
           href: `/calculators/${category.id}/${calc.slug}`,
           title: calc.title,
-          category: category.label,
+          category: "Calculator",
         });
       }
     }
   }
-  return hits.slice(0, 8);
+
+  for (const topic of TOPIC_HUBS) {
+    const hay = `${topic.title} ${topic.h1} ${topic.description}`.toLowerCase();
+    if (hay.includes(q)) {
+      hits.push({
+        href: `/${topic.slug}`,
+        title: `${topic.title} hub`,
+        category: "Topic",
+      });
+    }
+  }
+
+  for (const guide of GUIDES) {
+    const hay =
+      `${guide.title} ${guide.description} ${guide.category}`.toLowerCase();
+    if (hay.includes(q)) {
+      hits.push({
+        href: `/guides/${guide.slug}`,
+        title: guide.title,
+        category: "Guide",
+      });
+    }
+  }
+
+  for (const term of GLOSSARY) {
+    const hay = `${term.term} ${term.short} ${term.definition}`.toLowerCase();
+    if (hay.includes(q)) {
+      hits.push({
+        href: `/glossary#${term.slug}`,
+        title: term.term,
+        category: "Glossary",
+      });
+    }
+  }
+
+  // Prefer calculators, then topics, then guides
+  const rank = (c: string) =>
+    c === "Calculator" ? 0 : c === "Topic" ? 1 : c === "Guide" ? 2 : 3;
+  hits.sort((a, b) => rank(a.category) - rank(b.category));
+  return hits.slice(0, 10);
 }
 
 export function SiteSearch({
@@ -76,10 +119,10 @@ export function SiteSearch({
           autoFocus={autoFocus}
           placeholder={
             large
-              ? "What do you want to calculate? SIP, EMI, Tax…"
+              ? "Search calculators, guides, glossary…"
               : compact
                 ? "Search…"
-                : "Search calculators…"
+                : "Search calculators & guides…"
           }
           className={cn(
             "border-border/70 bg-navy/40 pl-9 text-foreground placeholder:text-muted-foreground",
@@ -97,27 +140,24 @@ export function SiteSearch({
             }
             if (e.key === "Escape") setOpen(false);
           }}
-          aria-label="Search calculators"
-          autoComplete="off"
+          aria-label="Search site"
         />
       </div>
-      {open && query.trim() ? (
-        <ul className="absolute z-50 mt-1 max-h-72 w-full overflow-auto rounded-md border border-border bg-popover py-1 shadow-card">
+      {open && query.trim() && (
+        <ul className="absolute z-50 mt-1 max-h-80 w-full overflow-auto rounded-lg border border-border/70 bg-[#0f1422] py-1 shadow-xl">
           {hits.length === 0 ? (
             <li className="px-3 py-2 text-sm text-muted-foreground">
-              No matches. Try SIP, EMI, PPF, tax…
+              No matches
             </li>
           ) : (
             hits.map((hit) => (
-              <li key={hit.href}>
+              <li key={`${hit.category}-${hit.href}`}>
                 <button
                   type="button"
-                  className="flex w-full flex-col px-3 py-2 text-left hover:bg-gold/10"
+                  className="flex w-full flex-col items-start gap-0.5 px-3 py-2 text-left text-sm hover:bg-white/5"
                   onClick={() => go(hit.href)}
                 >
-                  <span className="text-sm font-medium text-foreground">
-                    {hit.title}
-                  </span>
+                  <span className="font-medium text-foreground">{hit.title}</span>
                   <span className="text-xs text-muted-foreground">
                     {hit.category}
                   </span>
@@ -125,20 +165,8 @@ export function SiteSearch({
               </li>
             ))
           )}
-          <li className="border-t border-border/60">
-            <Link
-              href="/calculators"
-              className="block px-3 py-2 text-sm text-gold hover:bg-gold/10"
-              onClick={() => {
-                setOpen(false);
-                onNavigate?.();
-              }}
-            >
-              Browse all calculators
-            </Link>
-          </li>
         </ul>
-      ) : null}
+      )}
     </div>
   );
 }

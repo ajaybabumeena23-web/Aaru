@@ -8,6 +8,8 @@ import { ds } from "@/lib/design-system";
 import { getSiteUrl } from "@/lib/site";
 import { cn } from "@/lib/utils";
 import { ShareResultButtons } from "@/components/calculators/ShareResultButtons";
+import { getGuide } from "@/lib/content/guides";
+import { CALCULATOR_GUIDE_LINKS } from "@/lib/content/guide-links";
 
 export type CalculatorPageLayoutProps = {
   /** e.g. investment/sip */
@@ -31,6 +33,9 @@ export function CalculatorPageLayout({
 }: CalculatorPageLayoutProps) {
   const seo = getCalculatorSeo(seoKey);
   const base = getSiteUrl();
+  const relatedGuides = (CALCULATOR_GUIDE_LINKS[seoKey] ?? [])
+    .map((slug) => getGuide(slug))
+    .filter(Boolean);
 
   const breadcrumbLd = {
     "@context": "https://schema.org",
@@ -210,6 +215,32 @@ export function CalculatorPageLayout({
               ))}
             </div>
           </section>
+
+          {relatedGuides.length ? (
+            <section className={ds.section} aria-labelledby="related-guides">
+              <h2 id="related-guides" className={ds.h2}>
+                Related guides
+              </h2>
+              <ul className="space-y-2">
+                {relatedGuides.map((g) =>
+                  g ? (
+                    <li key={g.slug}>
+                      <Link
+                        href={`/guides/${g.slug}`}
+                        className="text-gold hover:underline"
+                      >
+                        {g.title}
+                      </Link>
+                      <span className="text-sm text-muted-foreground">
+                        {" "}
+                        — {g.description}
+                      </span>
+                    </li>
+                  ) : null
+                )}
+              </ul>
+            </section>
+          ) : null}
 
           <section className="rounded-lg border border-border/50 bg-navy/30 p-4 text-xs text-muted-foreground sm:text-sm">
             <p>

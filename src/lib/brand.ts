@@ -5,7 +5,7 @@ export const SITE_DESCRIPTION =
 
 export const POPULAR_CALCULATORS = [
   { category: "investment", slug: "sip", title: "SIP Calculator" },
-  { category: "debt", slug: "emi", title: "EMI Calculator" },
+  { category: "debt", slug: "home-loan-emi", title: "Home Loan EMI" },
   { category: "taxation", slug: "income-tax", title: "Income Tax Calculator" },
   { category: "investment", slug: "step-up-sip", title: "Step-Up SIP" },
   { category: "government", slug: "fd-rd", title: "FD / RD Calculator" },
@@ -13,9 +13,9 @@ export const POPULAR_CALCULATORS = [
   { category: "government", slug: "nps", title: "NPS Calculator" },
   { category: "investment", slug: "swp", title: "SWP Calculator" },
   { category: "retirement", slug: "fire", title: "FIRE Planner" },
+  { category: "retirement", slug: "goal-planner", title: "Goal Planner" },
   { category: "investment", slug: "xirr", title: "XIRR Calculator" },
   { category: "debt", slug: "advanced-prepayment", title: "Loan Prepayment" },
-  { category: "taxation", slug: "take-home-salary", title: "Take-Home Salary" },
 ] as const;
 
 export const TRUST_LINKS = [

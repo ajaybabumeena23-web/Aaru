@@ -1,0 +1,26 @@
+/** Maps calculator seoKey → related guide slugs for internal linking. */
+export const CALCULATOR_GUIDE_LINKS: Record<string, string[]> = {
+  "investment/sip": ["how-sip-works", "sip-vs-lump-sum", "sip-for-beginners"],
+  "investment/step-up-sip": ["how-sip-works", "sip-vs-lump-sum"],
+  "investment/lump-sum": ["sip-vs-lump-sum", "how-sip-works"],
+  "investment/swp": ["how-swp-works", "how-to-plan-retirement-india"],
+  "investment/xirr": ["xirr-explained", "how-sip-works"],
+  "debt/emi": ["how-emi-works", "loan-prepayment-strategies"],
+  "debt/home-loan-emi": ["how-emi-works", "loan-prepayment-strategies"],
+  "debt/personal-loan-emi": ["how-emi-works"],
+  "debt/car-loan-emi": ["how-emi-works"],
+  "debt/advanced-prepayment": ["loan-prepayment-strategies", "how-emi-works"],
+  "debt/tenure-vs-emi": ["loan-prepayment-strategies"],
+  "retirement/fire": ["what-is-fire", "how-to-plan-retirement-india"],
+  "retirement/goal-planner": [
+    "how-to-plan-retirement-india",
+    "how-sip-works",
+  ],
+  "retirement/reverse-sip": ["how-sip-works", "how-to-plan-retirement-india"],
+  "taxation/income-tax": ["old-vs-new-tax-regime"],
+  "taxation/take-home-salary": ["understanding-take-home-salary"],
+  "taxation/capital-gains": ["sip-taxation-basics"],
+  "government/ppf": ["ppf-basics"],
+  "government/nps": ["nps-basics", "how-to-plan-retirement-india"],
+  "government/fd-rd": ["fd-vs-rd"],
+};

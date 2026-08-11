@@ -44,7 +44,15 @@ export default function HomePage() {
           </label>
           <SiteSearch large />
           <p className="mt-2 text-xs text-muted-foreground">
-            Try SIP, EMI, Income Tax, PPF, NPS, FD, XIRR…
+            Try SIP, EMI, Income Tax, PPF, NPS, FD, XIRR — or browse{" "}
+            <Link href="/guides" className="text-gold hover:underline">
+              money guides
+            </Link>{" "}
+            and the{" "}
+            <Link href="/sip" className="text-gold hover:underline">
+              SIP hub
+            </Link>
+            .
           </p>
         </div>
       </section>

@@ -128,6 +128,27 @@ function MobileNav({
               );
             })}
             <Link
+              href="/guides"
+              onClick={onClose}
+              className="block rounded-md px-3 py-2.5 text-sm hover:bg-white/5"
+            >
+              Money Guides
+            </Link>
+            <Link
+              href="/glossary"
+              onClick={onClose}
+              className="block rounded-md px-3 py-2.5 text-sm hover:bg-white/5"
+            >
+              Glossary
+            </Link>
+            <Link
+              href="/sip"
+              onClick={onClose}
+              className="block rounded-md px-3 py-2.5 text-sm hover:bg-white/5"
+            >
+              SIP Hub
+            </Link>
+            <Link
               href="/about"
               onClick={onClose}
               className="block rounded-md px-3 py-2.5 text-sm hover:bg-white/5"
@@ -199,6 +220,17 @@ export function SiteHeader() {
                 {category.label.split(" ")[0]}
               </Link>
             ))}
+            <Link
+              href="/guides"
+              className={cn(
+                "rounded-md px-2.5 py-1.5 text-sm transition-colors hover:text-gold",
+                pathname.startsWith("/guides")
+                  ? "text-gold"
+                  : "text-muted-foreground"
+              )}
+            >
+              Guides
+            </Link>
             <Link
               href="/about"
               className="rounded-md px-2.5 py-1.5 text-sm text-muted-foreground hover:text-gold"

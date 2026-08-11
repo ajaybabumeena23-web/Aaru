@@ -225,9 +225,100 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeo> = {
       },
     ],
     related: [
+      { category: "debt", slug: "home-loan-emi", title: "Home Loan EMI" },
       { category: "debt", slug: "advanced-prepayment", title: "Advanced Prepayment" },
       { category: "debt", slug: "flat-vs-reducing", title: "Flat vs Reducing" },
       { category: "debt", slug: "refinance", title: "Refinance Analyzer" },
+    ],
+    lastUpdated: UPDATED,
+  },
+  "debt/home-loan-emi": {
+    seoSlug: "home-loan-emi-calculator",
+    metaTitle: "Home Loan EMI Calculator – Housing Loan EMI India | Aaru Wealth",
+    metaDescription:
+      "Calculate home loan EMI, total interest and amortisation. Adjust loan amount, rate and tenure. Free housing loan EMI calculator.",
+    intro:
+      "Home loans typically run longer tenures than personal loans. This calculator uses reducing-balance EMI math with housing-oriented defaults—edit to match your sanction letter.",
+    howToUse: [
+      "Enter loan amount, interest rate and tenure in years.",
+      "Review EMI, total interest and the monthly schedule.",
+      "Explore prepayment scenarios with the Loan Prepayment calculator.",
+    ],
+    formula:
+      "EMI = P × r × (1+r)^n / ((1+r)^n − 1), where r is monthly rate and n is months.",
+    example:
+      "A ₹50 lakh home loan at 8.5% for 20 years has a fixed EMI; early payments are interest-heavy.",
+    factors: ["Principal", "Rate", "Tenure", "Prepayments", "Fees (not modelled)"],
+    faqs: [
+      {
+        q: "Does this include processing fees?",
+        a: "No. Add fees separately when comparing lender offers.",
+      },
+      {
+        q: "Floating vs fixed rate?",
+        a: "The math is the same for a given rate. Floating rates can change later—re-run when your rate resets.",
+      },
+    ],
+    related: [
+      { category: "debt", slug: "emi", title: "EMI Calculator" },
+      { category: "debt", slug: "advanced-prepayment", title: "Advanced Prepayment" },
+      { category: "debt", slug: "rent-vs-buy", title: "Rent vs Buy" },
+    ],
+    lastUpdated: UPDATED,
+  },
+  "debt/personal-loan-emi": {
+    seoSlug: "personal-loan-emi-calculator",
+    metaTitle: "Personal Loan EMI Calculator | Aaru Wealth",
+    metaDescription:
+      "Estimate personal loan EMI and total interest with shorter-tenure defaults. Free personal loan EMI calculator for India.",
+    intro:
+      "Personal loans usually carry higher rates and shorter tenures than home loans. Use this page for a quick reducing-balance EMI estimate.",
+    howToUse: [
+      "Enter principal, rate and tenure.",
+      "Check EMI affordability against your monthly surplus.",
+    ],
+    formula:
+      "EMI = P × r × (1+r)^n / ((1+r)^n − 1), where r is monthly rate and n is months.",
+    example:
+      "A ₹5 lakh personal loan at 14% for 4 years has a higher EMI share of interest early on.",
+    factors: ["Rate", "Tenure", "Fees", "Foreclosure charges"],
+    faqs: [
+      {
+        q: "Why is my quoted EMI different?",
+        a: "Lenders may include insurance, fees or different day-count conventions. Treat this as an estimate.",
+      },
+    ],
+    related: [
+      { category: "debt", slug: "emi", title: "EMI Calculator" },
+      { category: "debt", slug: "flat-vs-reducing", title: "Flat vs Reducing" },
+    ],
+    lastUpdated: UPDATED,
+  },
+  "debt/car-loan-emi": {
+    seoSlug: "car-loan-emi-calculator",
+    metaTitle: "Car Loan EMI Calculator | Aaru Wealth",
+    metaDescription:
+      "Calculate car loan EMI, total interest and payment breakup. Free auto loan EMI calculator for India.",
+    intro:
+      "Car loans often sit between personal and home loans on tenure. Adjust amount, rate and years to match your dealer/bank quote.",
+    howToUse: [
+      "Enter on-road funding need, rate and tenure.",
+      "Compare total interest before choosing a longer tenure for a lower EMI.",
+    ],
+    formula:
+      "EMI = P × r × (1+r)^n / ((1+r)^n − 1), where r is monthly rate and n is months.",
+    example:
+      "An ₹8 lakh car loan at 10% for 5 years shows EMI and total interest instantly.",
+    factors: ["Down payment", "Rate", "Tenure", "Insurance add-ons"],
+    faqs: [
+      {
+        q: "Should I take a longer car loan?",
+        a: "Lower EMI can cost more interest and leave you owing after the car depreciates. Compare total payment, not only EMI.",
+      },
+    ],
+    related: [
+      { category: "debt", slug: "emi", title: "EMI Calculator" },
+      { category: "debt", slug: "personal-loan-emi", title: "Personal Loan EMI" },
     ],
     lastUpdated: UPDATED,
   },
@@ -387,8 +478,45 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeo> = {
       },
     ],
     related: [
+      { category: "retirement", slug: "goal-planner", title: "Goal Planner" },
       { category: "retirement", slug: "reverse-sip", title: "Reverse SIP" },
       { category: "investment", slug: "swp", title: "SWP Calculator" },
+      { category: "investment", slug: "sip", title: "SIP Calculator" },
+    ],
+    lastUpdated: UPDATED,
+  },
+  "retirement/goal-planner": {
+    seoSlug: "goal-planner",
+    metaTitle: "Goal Planner – SIP Needed for Target Corpus | Aaru Wealth",
+    metaDescription:
+      "Plan any money goal: enter target corpus and timeline to estimate required SIP, then stress-test a what-if contribution.",
+    intro:
+      "The Goal Planner reverse-solves the monthly SIP needed for a target corpus (after optional current savings), and compares a what-if SIP path against the goal.",
+    howToUse: [
+      "Enter target corpus, years and expected return.",
+      "Optionally subtract money already saved.",
+      "Read the required SIP, then adjust the what-if SIP to see surplus or shortfall.",
+    ],
+    formula:
+      "Required SIP from reverse annuity: P = FV × r / (((1+r)^n − 1) × (1+r)). Current savings grow as a lump sum alongside SIP FV.",
+    example:
+      "A ₹1 crore goal in 15 years at 12% needs a much smaller SIP if you already have a head start saved.",
+    factors: [
+      "Target",
+      "Time",
+      "Return assumption",
+      "Current savings",
+      "Contribution discipline",
+    ],
+    faqs: [
+      {
+        q: "How is this different from Reverse SIP?",
+        a: "Reverse SIP focuses on the required instalment. Goal Planner adds current savings and an explicit what-if contribution comparison.",
+      },
+    ],
+    related: [
+      { category: "retirement", slug: "reverse-sip", title: "Reverse SIP" },
+      { category: "retirement", slug: "fire", title: "FIRE Planner" },
       { category: "investment", slug: "sip", title: "SIP Calculator" },
     ],
     lastUpdated: UPDATED,

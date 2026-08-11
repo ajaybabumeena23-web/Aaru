@@ -16,9 +16,12 @@ import {
   resolveMaturityDisplay,
 } from "@/components/calculators/InflationTaxToggles";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { useCalculatorParams } from "@/hooks/useCalculatorParams";
 import { calculateSip } from "@/utils/financial-math";
 import { formatINR, formatPercent } from "@/lib/utils";
+import Link from "next/link";
 
 function SipInner() {
   const { values, setParam } = useCalculatorParams({
@@ -28,6 +31,7 @@ function SipInner() {
     inflation: { default: 6 },
     adjustInflation: { default: false },
     postTax: { default: false },
+    advanced: { default: false },
   });
 
   const result = useMemo(
@@ -36,16 +40,17 @@ function SipInner() {
         monthlyInvestment: values.monthly,
         annualRatePct: values.rate,
         years: values.years,
-        inflationPct: values.adjustInflation ? values.inflation : 0,
-        postTax: values.postTax,
+        inflationPct:
+          values.advanced && values.adjustInflation ? values.inflation : 0,
+        postTax: values.advanced && values.postTax,
       }),
     [values]
   );
 
   const { maturityDisplay, chartGain, maturityLabel } = resolveMaturityDisplay({
     ...result,
-    adjustInflation: values.adjustInflation,
-    postTax: values.postTax,
+    adjustInflation: values.advanced && values.adjustInflation,
+    postTax: values.advanced && values.postTax,
   });
 
   return (
@@ -63,6 +68,22 @@ function SipInner() {
             <CardTitle className="text-lg">Inputs</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
+            <div className="flex items-center justify-between gap-3 rounded-lg border border-border/60 bg-navy/30 px-3 py-2">
+              <div>
+                <Label htmlFor="advanced" className="text-sm font-medium">
+                  Advanced options
+                </Label>
+                <p className="text-xs text-muted-foreground">
+                  Inflation adjustment & stylised post-tax view
+                </p>
+              </div>
+              <Switch
+                id="advanced"
+                checked={values.advanced}
+                onCheckedChange={(v) => setParam("advanced", v)}
+              />
+            </div>
+
             <DraggableSlider
               id="monthly"
               label="Monthly SIP"
@@ -93,18 +114,32 @@ function SipInner() {
               step={1}
               suffix="yrs"
             />
-            <InflationTaxToggles
-              adjustInflation={values.adjustInflation}
-              onAdjustInflation={(v) => setParam("adjustInflation", v)}
-              inflation={values.inflation}
-              onInflation={(v) => setParam("inflation", v)}
-              postTax={values.postTax}
-              onPostTax={(v) => setParam("postTax", v)}
-            />
+
+            {values.advanced ? (
+              <InflationTaxToggles
+                adjustInflation={values.adjustInflation}
+                onAdjustInflation={(v) => setParam("adjustInflation", v)}
+                inflation={values.inflation}
+                onInflation={(v) => setParam("inflation", v)}
+                postTax={values.postTax}
+                onPostTax={(v) => setParam("postTax", v)}
+              />
+            ) : (
+              <p className="text-xs text-muted-foreground">
+                Need annual increases? Try the{" "}
+                <Link
+                  href="/calculators/investment/step-up-sip"
+                  className="text-gold hover:underline"
+                >
+                  Step-Up SIP calculator
+                </Link>
+                .
+              </p>
+            )}
           </CardContent>
         </Card>
 
-        <div className="space-y-6">
+        <div className="space-y-6 calculator-results-sticky">
           <Card>
             <CardHeader>
               <CardTitle className="text-lg">Principal vs Wealth Gained</CardTitle>
@@ -133,7 +168,7 @@ function SipInner() {
                 label: "Wealth Gained",
                 value: formatINR(maturityDisplay - result.invested),
               },
-              ...(values.postTax && result.taxOnGains > 0
+              ...(values.advanced && values.postTax && result.taxOnGains > 0
                 ? [{ label: "Est. LTCG Tax", value: formatINR(result.taxOnGains) }]
                 : []),
             ]}
