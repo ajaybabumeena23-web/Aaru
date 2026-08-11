@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test:math": "npx --yes tsx scripts/smoke-math.ts"
+    "test:math": "npx --yes tsx scripts/smoke-math.ts",
+    "sitemap": "python scripts/generate-sitemap.py"
   },
   "dependencies": {
     "@radix-ui/react-label": "^2.1.15",
