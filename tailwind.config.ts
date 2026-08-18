@@ -15,9 +15,10 @@ const config: Config = {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
-        navy: "#13192B",
-        gold: "#F7C615",
-        turquoise: "#26D6C6",
+        /* Remapped brand aliases → blue/white financial palette */
+        navy: "#083B7A",
+        gold: "#0B5ED7",
+        turquoise: "#198754",
         highlight: {
           DEFAULT: "hsl(var(--highlight))",
           foreground: "hsl(var(--highlight-foreground))",
@@ -67,8 +68,8 @@ const config: Config = {
       },
       boxShadow: {
         "gold-glow":
-          "0 0 0 4px rgba(247, 198, 21, 0.18), 0 0 18px rgba(247, 198, 21, 0.45)",
-        card: "0 8px 32px rgba(0, 0, 0, 0.35)",
+          "0 0 0 4px rgba(11, 94, 215, 0.15), 0 0 18px rgba(11, 94, 215, 0.25)",
+        card: "0 4px 24px rgba(8, 59, 122, 0.08)",
       },
     },
   },

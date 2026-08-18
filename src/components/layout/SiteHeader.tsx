@@ -10,6 +10,14 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { SiteSearch } from "@/components/layout/SiteSearch";
 
+const TOP_NAV = [
+  { href: "/calculators", label: "Calculators", match: "/calculators" },
+  { href: "/topics", label: "Topics", match: "/topics" },
+  { href: "/guides", label: "Guides", match: "/guides" },
+  { href: "/glossary", label: "Glossary", match: "/glossary" },
+  { href: "/about", label: "About", match: "/about" },
+] as const;
+
 function MobileNav({
   open,
   onClose,
@@ -23,11 +31,7 @@ function MobileNav({
   );
 
   React.useEffect(() => {
-    if (open) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
+    document.body.style.overflow = open ? "hidden" : "";
     return () => {
       document.body.style.overflow = "";
     };
@@ -39,20 +43,19 @@ function MobileNav({
     <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true">
       <button
         type="button"
-        className="absolute inset-0 bg-black/60"
+        className="absolute inset-0 bg-navy/40"
         aria-label="Close menu"
         onClick={onClose}
       />
-      <aside className="absolute inset-y-0 left-0 flex w-[min(100%,20rem)] max-w-full flex-col bg-[#0f1422] text-white shadow-2xl">
-        <div className="flex h-14 shrink-0 items-center justify-between border-b border-white/10 px-4">
-          <Link href="/" onClick={onClose} className="font-semibold text-gold">
+      <aside className="absolute inset-y-0 left-0 flex w-[min(100%,20rem)] max-w-full flex-col bg-white text-foreground shadow-2xl">
+        <div className="flex h-14 shrink-0 items-center justify-between border-b border-border px-4">
+          <Link href="/" onClick={onClose} className="font-semibold text-primary">
             {SITE_NAME}
           </Link>
           <Button
             type="button"
             variant="ghost"
             size="icon"
-            className="text-white hover:bg-white/10"
             aria-label="Close menu"
             onClick={onClose}
           >
@@ -70,8 +73,8 @@ function MobileNav({
               className={cn(
                 "flex items-center gap-2 rounded-md px-3 py-2.5 text-sm font-medium",
                 pathname === "/calculators"
-                  ? "bg-gold/15 text-gold"
-                  : "hover:bg-white/5"
+                  ? "bg-primary/10 text-primary"
+                  : "hover:bg-secondary"
               )}
             >
               <Calculator className="h-4 w-4" />
@@ -84,7 +87,7 @@ function MobileNav({
                 <div key={category.id}>
                   <button
                     type="button"
-                    className="flex w-full items-center gap-2 rounded-md px-3 py-2.5 text-left text-sm font-semibold hover:bg-white/5"
+                    className="flex w-full items-center gap-2 rounded-md px-3 py-2.5 text-left text-sm font-semibold hover:bg-secondary"
                     onClick={() =>
                       setExpanded((p) => ({
                         ...p,
@@ -92,7 +95,7 @@ function MobileNav({
                       }))
                     }
                   >
-                    <Icon className="h-4 w-4 opacity-80" />
+                    <Icon className="h-4 w-4 text-primary" />
                     <span className="flex-1">{category.label}</span>
                     <ChevronDown
                       className={cn(
@@ -102,7 +105,7 @@ function MobileNav({
                     />
                   </button>
                   {isOpen ? (
-                    <ul className="ml-4 space-y-0.5 border-l border-white/10 pl-2 pb-2">
+                    <ul className="ml-4 space-y-0.5 border-l border-border pl-2 pb-2">
                       {category.calculators.map((calc) => {
                         const href = `/calculators/${category.id}/${calc.slug}`;
                         return (
@@ -113,8 +116,8 @@ function MobileNav({
                               className={cn(
                                 "block rounded-md px-2.5 py-2 text-sm",
                                 pathname === href
-                                  ? "bg-gold/15 text-gold"
-                                  : "text-white/70 hover:bg-white/5 hover:text-white"
+                                  ? "bg-primary/10 text-primary"
+                                  : "text-muted-foreground hover:bg-secondary hover:text-foreground"
                               )}
                             >
                               {calc.title}
@@ -127,48 +130,23 @@ function MobileNav({
                 </div>
               );
             })}
-            <Link
-              href="/guides"
-              onClick={onClose}
-              className="block rounded-md px-3 py-2.5 text-sm hover:bg-white/5"
-            >
-              Money Guides
-            </Link>
-            <Link
-              href="/glossary"
-              onClick={onClose}
-              className="block rounded-md px-3 py-2.5 text-sm hover:bg-white/5"
-            >
-              Glossary
-            </Link>
-            <Link
-              href="/sip"
-              onClick={onClose}
-              className="block rounded-md px-3 py-2.5 text-sm hover:bg-white/5"
-            >
-              SIP Hub
-            </Link>
-            <Link
-              href="/about"
-              onClick={onClose}
-              className="block rounded-md px-3 py-2.5 text-sm hover:bg-white/5"
-            >
-              About
-            </Link>
-            <Link
-              href="/disclaimer"
-              onClick={onClose}
-              className="block rounded-md px-3 py-2.5 text-sm hover:bg-white/5"
-            >
-              Disclaimer
-            </Link>
-            <Link
-              href="/contact"
-              onClick={onClose}
-              className="block rounded-md px-3 py-2.5 text-sm hover:bg-white/5"
-            >
-              Contact
-            </Link>
+            {[
+              ["/topics", "Topics"],
+              ["/guides", "Money Guides"],
+              ["/glossary", "Glossary"],
+              ["/about", "About"],
+              ["/methodology", "Methodology"],
+              ["/contact", "Contact"],
+            ].map(([href, label]) => (
+              <Link
+                key={href}
+                href={href}
+                onClick={onClose}
+                className="block rounded-md px-3 py-2.5 text-sm hover:bg-secondary"
+              >
+                {label}
+              </Link>
+            ))}
           </nav>
         </div>
       </aside>
@@ -183,7 +161,7 @@ export function SiteHeader() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+      <header className="sticky top-0 z-40 w-full border-b border-border/80 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/90">
         <div className="mx-auto flex h-14 w-full max-w-6xl items-center gap-2 px-4 sm:h-16 sm:gap-4 sm:px-6 lg:px-8">
           <Button
             type="button"
@@ -197,7 +175,7 @@ export function SiteHeader() {
           </Button>
 
           <Link href="/" className="min-w-0 shrink">
-            <span className="block truncate text-base font-semibold text-gold sm:text-lg">
+            <span className="block truncate text-base font-semibold text-navy sm:text-lg">
               {SITE_NAME}
             </span>
             <span className="hidden text-xs text-muted-foreground sm:block">
@@ -206,37 +184,20 @@ export function SiteHeader() {
           </Link>
 
           <nav className="ml-4 hidden items-center gap-1 lg:flex">
-            {CALCULATOR_CATEGORIES.map((category) => (
+            {TOP_NAV.map((item) => (
               <Link
-                key={category.id}
-                href={`/calculators/${category.id}`}
+                key={item.href}
+                href={item.href}
                 className={cn(
-                  "rounded-md px-2.5 py-1.5 text-sm transition-colors hover:text-gold",
-                  pathname.startsWith(`/calculators/${category.id}`)
-                    ? "text-gold"
+                  "rounded-md px-2.5 py-1.5 text-sm transition-colors hover:text-primary",
+                  pathname === item.match || pathname.startsWith(`${item.match}/`)
+                    ? "font-medium text-primary"
                     : "text-muted-foreground"
                 )}
               >
-                {category.label.split(" ")[0]}
+                {item.label}
               </Link>
             ))}
-            <Link
-              href="/guides"
-              className={cn(
-                "rounded-md px-2.5 py-1.5 text-sm transition-colors hover:text-gold",
-                pathname.startsWith("/guides")
-                  ? "text-gold"
-                  : "text-muted-foreground"
-              )}
-            >
-              Guides
-            </Link>
-            <Link
-              href="/about"
-              className="rounded-md px-2.5 py-1.5 text-sm text-muted-foreground hover:text-gold"
-            >
-              About
-            </Link>
           </nav>
 
           <div className="ml-auto flex items-center gap-2">
@@ -260,7 +221,7 @@ export function SiteHeader() {
         </div>
 
         {searchOpen ? (
-          <div className="border-t border-border/60 px-4 py-3 md:hidden">
+          <div className="border-t border-border px-4 py-3 md:hidden">
             <SiteSearch onNavigate={() => setSearchOpen(false)} />
           </div>
         ) : null}

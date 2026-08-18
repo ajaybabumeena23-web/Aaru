@@ -54,7 +54,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
-  themeColor: "#13192B",
+  themeColor: "#0B5ED7",
 };
 
 export default function RootLayout({
@@ -63,12 +63,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en-IN" className="dark">
+    <html lang="en-IN">
       <body
         className={`${poppins.variable} ${jetbrainsMono.variable} min-h-dvh font-sans antialiased`}
       >
         <JsonLd />
-        <div className="flex min-h-dvh w-full max-w-[100vw] flex-col overflow-x-hidden">
+        <div className="flex min-h-dvh w-full max-w-[100vw] flex-col overflow-x-hidden bg-background">
           <SiteHeader />
           <main className="w-full flex-1">
             <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">

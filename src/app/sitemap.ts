@@ -1,8 +1,10 @@
 import type { MetadataRoute } from "next";
 import { CALCULATOR_CATEGORIES } from "@/lib/calculators";
 import { GUIDES } from "@/lib/content/guides";
+import { GUIDE_CATEGORIES } from "@/lib/content/guide-categories";
 import { TOPIC_HUBS } from "@/lib/content/topics";
 import { SCENARIOS } from "@/lib/content/scenarios";
+import { GLOSSARY } from "@/lib/content/glossary";
 import { getSiteUrl } from "@/lib/site";
 
 const TRUST_PATHS = [
@@ -16,6 +18,7 @@ const TRUST_PATHS = [
   "/calculators",
   "/guides",
   "/glossary",
+  "/topics",
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -53,11 +56,27 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.65,
     }));
 
+    const guideCategoryRoutes: MetadataRoute.Sitemap = GUIDE_CATEGORIES.map(
+      (c) => ({
+        url: `${base}/guides/${c.slug}`,
+        lastModified,
+        changeFrequency: "weekly" as const,
+        priority: 0.75,
+      })
+    );
+
     const guideRoutes: MetadataRoute.Sitemap = GUIDES.map((g) => ({
       url: `${base}/guides/${g.slug}`,
       lastModified,
       changeFrequency: "monthly" as const,
       priority: 0.7,
+    }));
+
+    const glossaryRoutes: MetadataRoute.Sitemap = GLOSSARY.map((t) => ({
+      url: `${base}/glossary/${t.slug}`,
+      lastModified,
+      changeFrequency: "monthly" as const,
+      priority: 0.55,
     }));
 
     const categoryRoutes: MetadataRoute.Sitemap = CALCULATOR_CATEGORIES.map(
@@ -83,7 +102,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
       ...staticRoutes,
       ...topicRoutes,
       ...scenarioRoutes,
+      ...guideCategoryRoutes,
       ...guideRoutes,
+      ...glossaryRoutes,
       ...categoryRoutes,
       ...calculatorRoutes,
     ];

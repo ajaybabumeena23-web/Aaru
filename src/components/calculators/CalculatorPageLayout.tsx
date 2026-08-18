@@ -10,6 +10,11 @@ import { cn } from "@/lib/utils";
 import { ShareResultButtons } from "@/components/calculators/ShareResultButtons";
 import { getGuide } from "@/lib/content/guides";
 import { CALCULATOR_GUIDE_LINKS } from "@/lib/content/guide-links";
+import {
+  RelatedCalculators,
+  RelatedGuides,
+  SourcesBlock,
+} from "@/components/seo/RelatedContent";
 
 export type CalculatorPageLayoutProps = {
   /** e.g. investment/sip */
@@ -87,19 +92,19 @@ export function CalculatorPageLayout({
       <nav aria-label="Breadcrumb" className="text-sm text-muted-foreground">
         <ol className="flex flex-wrap items-center gap-x-2 gap-y-1">
           <li>
-            <Link href="/" className="hover:text-gold">
+            <Link href="/" className="hover:text-primary">
               Home
             </Link>
           </li>
           <li aria-hidden>/</li>
           <li>
-            <Link href="/calculators" className="hover:text-gold">
+            <Link href="/calculators" className="hover:text-primary">
               Calculators
             </Link>
           </li>
           <li aria-hidden>/</li>
           <li>
-            <Link href={categoryHref} className="hover:text-gold">
+            <Link href={categoryHref} className="hover:text-primary">
               {categoryLabel}
             </Link>
           </li>
@@ -133,7 +138,7 @@ export function CalculatorPageLayout({
             <h2 id="formula" className={ds.h2}>
               Formula & assumptions
             </h2>
-            <p className="rounded-lg border border-border/60 bg-navy/40 p-4 font-mono text-sm text-turquoise">
+            <p className="rounded-lg border border-primary/20 bg-secondary p-4 font-mono text-sm text-navy">
               {seo.formula}
             </p>
             <p className={ds.muted}>
@@ -171,7 +176,7 @@ export function CalculatorPageLayout({
                   <summary className="cursor-pointer list-none font-medium text-foreground marker:content-none [&::-webkit-details-marker]:hidden">
                     <span className="flex items-center justify-between gap-2">
                       {item.q}
-                      <span className="text-gold transition group-open:rotate-45">
+                      <span className="text-primary transition group-open:rotate-45">
                         +
                       </span>
                     </span>
@@ -199,59 +204,57 @@ export function CalculatorPageLayout({
             />
           </section>
 
-          <section className={ds.section} aria-labelledby="related">
-            <h2 id="related" className={ds.h2}>
-              You may also find useful
-            </h2>
-            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
-              {seo.related.map((r) => (
-                <Link
-                  key={`${r.category}/${r.slug}`}
-                  href={`/calculators/${r.category}/${r.slug}`}
-                  className="rounded-lg border border-border/60 px-4 py-3 text-sm font-medium transition-colors hover:border-gold/40 hover:text-gold"
-                >
-                  {r.title}
-                </Link>
-              ))}
-            </div>
-          </section>
+          <RelatedCalculators
+            heading="You may also find useful"
+            items={seo.related.map((r) => ({
+              href: `/calculators/${r.category}/${r.slug}`,
+              title: r.title,
+            }))}
+          />
 
-          {relatedGuides.length ? (
-            <section className={ds.section} aria-labelledby="related-guides">
-              <h2 id="related-guides" className={ds.h2}>
-                Related guides
-              </h2>
-              <ul className="space-y-2">
-                {relatedGuides.map((g) =>
-                  g ? (
-                    <li key={g.slug}>
-                      <Link
-                        href={`/guides/${g.slug}`}
-                        className="text-gold hover:underline"
-                      >
-                        {g.title}
-                      </Link>
-                      <span className="text-sm text-muted-foreground">
-                        {" "}
-                        — {g.description}
-                      </span>
-                    </li>
-                  ) : null
-                )}
-              </ul>
-            </section>
-          ) : null}
+          <RelatedGuides
+            items={relatedGuides.flatMap((g) =>
+              g
+                ? [
+                    {
+                      href: `/guides/${g.slug}`,
+                      title: g.title,
+                      blurb: g.description,
+                    },
+                  ]
+                : []
+            )}
+          />
 
-          <section className="rounded-lg border border-border/50 bg-navy/30 p-4 text-xs text-muted-foreground sm:text-sm">
+          <SourcesBlock
+            sources={[
+              {
+                label: "Calculator Methodology",
+                href: "/methodology",
+                note: "how formulas and assumptions are documented",
+              },
+              {
+                label: "Income Tax Department",
+                href: "https://www.incometax.gov.in/",
+                note: "for tax rules (verify current assessment year)",
+              },
+              {
+                label: "RBI / SEBI / PFRDA / EPFO / India Post",
+                note: "for rates and scheme rules when applicable",
+              },
+            ]}
+          />
+
+          <section className="rounded-lg border border-border bg-secondary/60 p-4 text-xs text-muted-foreground sm:text-sm">
             <p>
               <strong className="text-foreground">Disclaimer: </strong>
               Results are illustrative estimates for education only — not
               investment, tax or legal advice, and not guaranteed. See our{" "}
-              <Link href="/disclaimer" className="text-gold hover:underline">
+              <Link href="/disclaimer" className="text-primary hover:underline">
                 Disclaimer
               </Link>{" "}
               and{" "}
-              <Link href="/methodology" className="text-gold hover:underline">
+              <Link href="/methodology" className="text-primary hover:underline">
                 Methodology
               </Link>
               .

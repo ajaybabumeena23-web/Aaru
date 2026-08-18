@@ -61,11 +61,11 @@ function searchCatalog(query: string): Hit[] {
   for (const term of GLOSSARY) {
     const hay = `${term.term} ${term.short} ${term.definition}`.toLowerCase();
     if (hay.includes(q)) {
-      hits.push({
-        href: `/glossary#${term.slug}`,
-        title: term.term,
-        category: "Glossary",
-      });
+        hits.push({
+          href: `/glossary/${term.slug}`,
+          title: term.term,
+          category: "Glossary",
+        });
     }
   }
 
@@ -125,7 +125,7 @@ export function SiteSearch({
                 : "Search calculators & guides…"
           }
           className={cn(
-            "border-border/70 bg-navy/40 pl-9 text-foreground placeholder:text-muted-foreground",
+            "border-border bg-white pl-9 text-foreground placeholder:text-muted-foreground",
             large && "h-12 text-base"
           )}
           onChange={(e) => {
@@ -144,7 +144,7 @@ export function SiteSearch({
         />
       </div>
       {open && query.trim() && (
-        <ul className="absolute z-50 mt-1 max-h-80 w-full overflow-auto rounded-lg border border-border/70 bg-[#0f1422] py-1 shadow-xl">
+        <ul className="absolute z-50 mt-1 max-h-80 w-full overflow-auto rounded-lg border border-border bg-white py-1 shadow-xl">
           {hits.length === 0 ? (
             <li className="px-3 py-2 text-sm text-muted-foreground">
               No matches
@@ -154,7 +154,7 @@ export function SiteSearch({
               <li key={`${hit.category}-${hit.href}`}>
                 <button
                   type="button"
-                  className="flex w-full flex-col items-start gap-0.5 px-3 py-2 text-left text-sm hover:bg-white/5"
+                  className="flex w-full flex-col items-start gap-0.5 px-3 py-2 text-left text-sm hover:bg-secondary"
                   onClick={() => go(hit.href)}
                 >
                   <span className="font-medium text-foreground">{hit.title}</span>

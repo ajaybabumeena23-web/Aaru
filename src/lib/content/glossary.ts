@@ -9,6 +9,30 @@ export type GlossaryTerm = {
 
 export const GLOSSARY: GlossaryTerm[] = [
   {
+    slug: "swp",
+    term: "SWP",
+    short: "Systematic Withdrawal Plan",
+    definition:
+      "A schedule of regular withdrawals from a mutual fund investment. Units are redeemed to fund each payout; remaining units stay invested.",
+    relatedCalculators: [
+      { href: "/calculators/investment/swp", title: "SWP Calculator" },
+    ],
+    relatedGuides: ["how-swp-works"],
+  },
+  {
+    slug: "hra",
+    term: "HRA",
+    short: "House Rent Allowance",
+    definition:
+      "A salary component that may qualify for tax exemption under rules that consider rent paid, salary and city classification. Exact computation depends on current law and your documents.",
+    relatedCalculators: [
+      {
+        href: "/calculators/taxation/hra-exemption",
+        title: "HRA Exemption Calculator",
+      },
+    ],
+  },
+  {
     slug: "sip",
     term: "SIP",
     short: "Systematic Investment Plan",

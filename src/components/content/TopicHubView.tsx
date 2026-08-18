@@ -1,11 +1,15 @@
 import Link from "next/link";
-import { getTopic } from "@/lib/content/topics";
+import { getTopic, TOPIC_HUBS } from "@/lib/content/topics";
 import { getGuide } from "@/lib/content/guides";
 import { getGlossaryTerm } from "@/lib/content/glossary";
 import { getScenario, scenarioPath } from "@/lib/content/scenarios";
 import { ds } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
 import { SITE_NAME } from "@/lib/brand";
+import {
+  SourcesBlock,
+  TopicNavigation,
+} from "@/components/seo/RelatedContent";
 
 export function TopicHubView({ slug }: { slug: string }) {
   const topic = getTopic(slug);
@@ -24,7 +28,7 @@ export function TopicHubView({ slug }: { slug: string }) {
   return (
     <div className={ds.page}>
       <nav className="text-sm text-muted-foreground">
-        <Link href="/" className="hover:text-gold">
+        <Link href="/" className="hover:text-primary">
           Home
         </Link>
         <span className="mx-2">/</span>
@@ -45,7 +49,7 @@ export function TopicHubView({ slug }: { slug: string }) {
               href={c.href}
               className={cn(ds.cardInteractive, "block px-4 py-3")}
             >
-              <p className="font-medium text-foreground hover:text-gold">
+              <p className="font-medium text-foreground hover:text-primary">
                 {c.title}
               </p>
               {c.blurb ? (
@@ -65,7 +69,7 @@ export function TopicHubView({ slug }: { slug: string }) {
                 <li key={g.slug}>
                   <Link
                     href={`/guides/${g.slug}`}
-                    className="text-gold hover:underline"
+                    className="text-primary hover:underline"
                   >
                     {g.title}
                   </Link>
@@ -78,7 +82,7 @@ export function TopicHubView({ slug }: { slug: string }) {
             )}
           </ul>
           <p className="text-sm">
-            <Link href="/guides" className="text-gold hover:underline">
+            <Link href="/guides" className="text-primary hover:underline">
               Browse all guides
             </Link>
           </p>
@@ -115,8 +119,8 @@ export function TopicHubView({ slug }: { slug: string }) {
               t ? (
                 <Link
                   key={t.slug}
-                  href={`/glossary#${t.slug}`}
-                  className="rounded-md border border-border/60 px-3 py-1.5 text-sm hover:border-gold/40 hover:text-gold"
+                  href={`/glossary/${t.slug}`}
+                  className="rounded-md border border-border bg-white px-3 py-1.5 text-sm hover:border-primary/40 hover:text-primary"
                 >
                   {t.term}
                 </Link>
@@ -132,7 +136,7 @@ export function TopicHubView({ slug }: { slug: string }) {
           {topic.faqs.map((f) => (
             <details
               key={f.q}
-              className="rounded-lg border border-border/60 bg-card/60 px-4 py-3"
+              className="rounded-lg border border-border bg-white px-4 py-3"
             >
               <summary className="cursor-pointer font-medium">{f.q}</summary>
               <p className="mt-2 text-sm text-muted-foreground">{f.a}</p>
@@ -140,6 +144,29 @@ export function TopicHubView({ slug }: { slug: string }) {
           ))}
         </div>
       </section>
+
+      <TopicNavigation
+        items={TOPIC_HUBS.filter((t) => t.slug !== topic.slug)
+          .slice(0, 8)
+          .map((t) => ({ href: `/${t.slug}`, title: t.title }))}
+      />
+
+      <SourcesBlock
+        sources={[
+          {
+            label: "Calculator Methodology",
+            href: "/methodology",
+          },
+          {
+            label: "Editorial Policy",
+            href: "/editorial-policy",
+          },
+          {
+            label: "Official scheme / tax portals",
+            note: "verify current rates and rules before acting",
+          },
+        ]}
+      />
 
       <p className="text-xs text-muted-foreground">
         Illustrative content from {SITE_NAME}. Not personalised financial advice.

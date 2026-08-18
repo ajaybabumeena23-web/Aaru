@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { GLOSSARY } from "@/lib/content/glossary";
-import { getGuide } from "@/lib/content/guides";
 import { ds } from "@/lib/design-system";
 import { getSiteUrl } from "@/lib/site";
 import { SITE_NAME } from "@/lib/brand";
+import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Financial Glossary",
@@ -22,70 +22,39 @@ export default function GlossaryPage() {
         <h1 className={ds.h1}>Financial glossary</h1>
         <p className={ds.lead}>
           Short definitions for terms you will see in our calculators and guides.
-          Not a substitute for official scheme documents or tax law.
+          Open any term for examples, related tools and links.
         </p>
       </header>
 
       <div className="flex flex-wrap gap-2">
         {terms.map((t) => (
-          <a
+          <Link
             key={t.slug}
-            href={`#${t.slug}`}
-            className="rounded-md border border-border/60 px-2.5 py-1 text-xs hover:border-gold/40 hover:text-gold"
+            href={`/glossary/${t.slug}`}
+            className="rounded-md border border-border bg-white px-2.5 py-1 text-xs font-medium hover:border-primary/40 hover:text-primary"
           >
             {t.term}
-          </a>
+          </Link>
         ))}
       </div>
 
-      <div className="space-y-6">
+      <div className="grid gap-3 sm:grid-cols-2">
         {terms.map((t) => (
-          <section
+          <Link
             key={t.slug}
-            id={t.slug}
-            className="scroll-mt-24 rounded-xl border border-border/60 bg-card/50 p-4 sm:p-5"
+            href={`/glossary/${t.slug}`}
+            className={cn(ds.cardInteractive, "block p-4")}
           >
-            <h2 className="text-lg font-semibold text-foreground">
+            <h2 className="text-base font-semibold text-navy">
               {t.term}{" "}
               <span className="text-sm font-normal text-muted-foreground">
                 — {t.short}
               </span>
             </h2>
-            <p className="mt-2 text-sm text-foreground/90">{t.definition}</p>
-            {t.relatedCalculators?.length ? (
-              <p className="mt-3 text-sm">
-                Calculators:{" "}
-                {t.relatedCalculators.map((c, i) => (
-                  <span key={c.href}>
-                    {i > 0 ? " · " : null}
-                    <Link href={c.href} className="text-gold hover:underline">
-                      {c.title}
-                    </Link>
-                  </span>
-                ))}
-              </p>
-            ) : null}
-            {t.relatedGuides?.length ? (
-              <p className="mt-1 text-sm">
-                Guides:{" "}
-                {t.relatedGuides.map((slug, i) => {
-                  const g = getGuide(slug);
-                  if (!g) return null;
-                  return (
-                    <span key={slug}>
-                      {i > 0 ? " · " : null}
-                      <Link
-                        href={`/guides/${slug}`}
-                        className="text-gold hover:underline"
-                      >
-                        {g.title}
-                      </Link>
-                    </span>
-                  );
-                })}
-              </p>
-            ) : null}
-          </section>
+            <p className="mt-2 line-clamp-3 text-sm text-muted-foreground">
+              {t.definition}
+            </p>
+          </Link>
         ))}
       </div>
 

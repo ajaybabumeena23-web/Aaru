@@ -30,7 +30,7 @@ function Stat({
       <p
         className={cn(
           "mt-1 text-xl font-semibold tabular-nums",
-          accent === "gold" && "text-gold",
+          accent === "gold" && "text-primary",
           accent === "turquoise" && "text-turquoise"
         )}
       >
@@ -115,13 +115,13 @@ export function ScenarioArticle({ scenario }: { scenario: ContentScenario }) {
           </div>
         ) : null}
         <div className="flex flex-wrap gap-4 text-sm">
-          <Link href={liveHref} className="font-medium text-gold hover:underline">
+          <Link href={liveHref} className="font-medium text-primary hover:underline">
             Open live SIP calculator →
           </Link>
           {scenario.stepUpPct ? (
             <Link
               href={`/calculators/investment/step-up-sip?monthly=${scenario.monthly}&rate=${scenario.rate}&years=${scenario.years}&stepUp=${scenario.stepUpPct}`}
-              className="font-medium text-gold hover:underline"
+              className="font-medium text-primary hover:underline"
             >
               Open Step-Up SIP →
             </Link>
@@ -156,7 +156,7 @@ export function ScenarioArticle({ scenario }: { scenario: ContentScenario }) {
             accent="turquoise"
           />
         </div>
-        <Link href={liveHref} className="text-sm font-medium text-gold hover:underline">
+        <Link href={liveHref} className="text-sm font-medium text-primary hover:underline">
           Open live EMI calculator with these inputs →
         </Link>
       </>
@@ -192,7 +192,7 @@ export function ScenarioArticle({ scenario }: { scenario: ContentScenario }) {
             accent="turquoise"
           />
         </div>
-        <Link href={liveHref} className="text-sm font-medium text-gold hover:underline">
+        <Link href={liveHref} className="text-sm font-medium text-primary hover:underline">
           Open Goal Planner with these inputs →
         </Link>
       </>
@@ -202,11 +202,11 @@ export function ScenarioArticle({ scenario }: { scenario: ContentScenario }) {
   return (
     <div className={ds.page}>
       <nav className="text-sm text-muted-foreground">
-        <Link href="/" className="hover:text-gold">
+        <Link href="/" className="hover:text-primary">
           Home
         </Link>
         <span className="mx-2">/</span>
-        <Link href={hubHref} className="hover:text-gold">
+        <Link href={hubHref} className="hover:text-primary">
           {hubLabel}
         </Link>
         <span className="mx-2">/</span>
@@ -242,7 +242,7 @@ export function ScenarioArticle({ scenario }: { scenario: ContentScenario }) {
                 <li key={slug}>
                   <Link
                     href={`/guides/${slug}`}
-                    className="text-gold hover:underline"
+                    className="text-primary hover:underline"
                   >
                     {g.title}
                   </Link>

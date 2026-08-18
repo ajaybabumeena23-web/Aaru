@@ -37,11 +37,30 @@ const seoRedirects = [
 const nextConfig = {
   reactStrictMode: true,
   async redirects() {
-    return seoRedirects.map(([seoSlug, path]) => ({
+    const flat = seoRedirects.map(([seoSlug, path]) => ({
       source: `/calculators/${seoSlug}`,
       destination: `/calculators/${path}`,
       permanent: true,
     }));
+    // Preferred /topics/* paths → existing canonical hubs (no URL breakage)
+    const topicAliases = [
+      "sip",
+      "loans",
+      "income-tax",
+      "retirement",
+      "ppf",
+      "nps",
+      "mutual-funds",
+      "fd-rd",
+      "insurance",
+      "stocks",
+      "wealth-planning",
+    ].map((slug) => ({
+      source: `/topics/${slug}`,
+      destination: `/${slug}`,
+      permanent: true,
+    }));
+    return [...flat, ...topicAliases];
   },
 };
 

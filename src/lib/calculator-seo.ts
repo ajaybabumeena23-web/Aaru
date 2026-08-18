@@ -47,16 +47,32 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeo> = {
     ],
     faqs: [
       {
+        q: "What is a SIP calculator?",
+        a: "It estimates the future value of regular investments under an assumed return rate. It does not predict markets or guarantee outcomes.",
+      },
+      {
+        q: "How is SIP maturity calculated?",
+        a: "We use a standard future-value of annuity model with monthly compounding. Actual mutual fund units and NAVs differ day to day.",
+      },
+      {
+        q: "What return should I enter in a SIP calculator?",
+        a: "Use a conservative range based on the asset class and your own research — not a single optimistic number. Equity outcomes vary widely year to year.",
+      },
+      {
         q: "Is SIP return guaranteed?",
         a: "No. Market-linked SIPs can fluctuate. The calculator only projects outcomes under the return you assume.",
       },
       {
-        q: "How is SIP return calculated here?",
-        a: "We use a standard future-value of annuity model with monthly compounding. Actual mutual fund units and NAVs differ day to day.",
+        q: "How much SIP is required for ₹1 crore?",
+        a: "It depends on tenure and assumed return. Try the Reverse SIP / Goal Planner tools, or our ₹1 crore scenario pages under the SIP topic hub.",
       },
       {
-        q: "Can I increase SIP every year?",
-        a: "Yes — use the Step-Up SIP calculator for an annual percentage increase.",
+        q: "Can I include inflation in a SIP calculation?",
+        a: "Yes — use the inflation toggle where available to view approximate purchasing power of the projected corpus.",
+      },
+      {
+        q: "What happens if I increase my SIP every year?",
+        a: "Use the Step-Up SIP calculator for an annual percentage increase. Higher contributions usually raise both invested amount and projected corpus.",
       },
       {
         q: "Does this include expense ratios?",
@@ -250,6 +266,26 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeo> = {
       "A ₹50 lakh home loan at 8.5% for 20 years has a fixed EMI; early payments are interest-heavy.",
     factors: ["Principal", "Rate", "Tenure", "Prepayments", "Fees (not modelled)"],
     faqs: [
+      {
+        q: "How is home loan EMI calculated?",
+        a: "Using the standard reducing-balance formula: EMI = P × r × (1+r)^n / ((1+r)^n − 1), with r as monthly rate and n as months.",
+      },
+      {
+        q: "What happens if the interest rate increases?",
+        a: "On floating-rate loans, EMI or tenure may reset per lender policy. Re-run this calculator with the new rate to see the impact.",
+      },
+      {
+        q: "Should I reduce EMI or tenure after prepayment?",
+        a: "Reducing tenure usually saves more interest; reducing EMI frees cash flow. Compare both with the Loan Prepayment calculator.",
+      },
+      {
+        q: "How much loan can I afford?",
+        a: "Start from a sustainable EMI (often framed as a share of take-home pay), then solve for principal — lenders also apply their own eligibility rules.",
+      },
+      {
+        q: "Does longer tenure reduce EMI?",
+        a: "Yes, EMI falls as tenure rises, but total interest usually rises. Balance affordability against lifetime interest cost.",
+      },
       {
         q: "Does this include processing fees?",
         a: "No. Add fees separately when comparing lender offers.",
@@ -699,8 +735,20 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeo> = {
     factors: ["Notified rate changes", "Deposit timing", "Extensions"],
     faqs: [
       {
-        q: "Is the rate fixed for 15 years?",
-        a: "No. PPF rates are notified periodically. Projections should be stress-tested.",
+        q: "What is a PPF calculator?",
+        a: "It projects the maturity value of Public Provident Fund contributions under an assumed interest rate and deposit schedule.",
+      },
+      {
+        q: "Is the PPF rate fixed for 15 years?",
+        a: "No. PPF rates are notified periodically by the government. Stress-test projections with higher and lower rates.",
+      },
+      {
+        q: "How is PPF interest calculated here?",
+        a: "This tool uses a simplified annual compounding model for planning. Official crediting rules and deposit cut-offs can differ — verify with your account provider.",
+      },
+      {
+        q: "What is the maximum annual PPF deposit?",
+        a: "Contribution limits are set by scheme rules and can change. Confirm the current ceiling on official government sources before depositing.",
       },
     ],
     related: [
@@ -726,8 +774,20 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeo> = {
     factors: ["Asset allocation", "Contribution consistency", "Annuity rules"],
     faqs: [
       {
-        q: "Is annuity % fixed?",
-        a: "Regulatory minimums can apply depending on exit type. Adjust the slider to explore scenarios.",
+        q: "What does an NPS calculator estimate?",
+        a: "Illustrative corpus from regular contributions and an assumed return, plus a simple split between lump sum and annuity purchase at exit.",
+      },
+      {
+        q: "Is the annuity percentage fixed?",
+        a: "Regulatory minimums can apply depending on exit type and rules in force. Adjust the slider to explore scenarios — not a compliance check.",
+      },
+      {
+        q: "Are NPS returns guaranteed?",
+        a: "No. NPS returns depend on asset allocation and market performance. Enter a conservative assumed return for planning.",
+      },
+      {
+        q: "Where can I verify NPS rules?",
+        a: "Prefer PFRDA / official NPS portals for contribution, tax and withdrawal rules — they change over time.",
       },
     ],
     related: [

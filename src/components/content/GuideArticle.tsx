@@ -8,11 +8,11 @@ export function GuideArticle({ guide }: { guide: Guide }) {
   return (
     <article className={ds.page}>
       <nav className="text-sm text-muted-foreground">
-        <Link href="/" className="hover:text-gold">
+        <Link href="/" className="hover:text-primary">
           Home
         </Link>
         <span className="mx-2">/</span>
-        <Link href="/guides" className="hover:text-gold">
+        <Link href="/guides" className="hover:text-primary">
           Guides
         </Link>
         <span className="mx-2">/</span>
@@ -53,7 +53,7 @@ export function GuideArticle({ guide }: { guide: Guide }) {
             <li key={c.href}>
               <Link
                 href={c.href}
-                className="inline-block rounded-md border border-border/60 px-3 py-2 text-sm hover:border-gold/40 hover:text-gold"
+                className="inline-block rounded-md border border-border/60 px-3 py-2 text-sm hover:border-primary/40 hover:text-primary"
               >
                 {c.title}
               </Link>
@@ -71,7 +71,7 @@ export function GuideArticle({ guide }: { guide: Guide }) {
               if (!g) return null;
               return (
                 <li key={slug}>
-                  <Link href={`/guides/${slug}`} className="text-gold hover:underline">
+                  <Link href={`/guides/${slug}`} className="text-primary hover:underline">
                     {g.title}
                   </Link>
                 </li>

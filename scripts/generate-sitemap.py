@@ -68,7 +68,28 @@ def main() -> None:
         "/calculators",
         "/guides",
         "/glossary",
+        "/topics",
     ]
+
+    gloss_txt = (ROOT / "src/lib/content/glossary.ts").read_text(encoding="utf-8")
+    glossary_slugs = unique(
+        re.findall(r'^\s*slug:\s*"([a-z0-9-]+)",\s*$', gloss_txt, flags=re.M)
+    )
+
+    cat_txt = (ROOT / "src/lib/content/guide-categories.ts").read_text(
+        encoding="utf-8"
+    )
+    guide_cat_slugs = unique(
+        re.findall(
+            r'^\s*slug:\s*"(investing|loans|tax|retirement|government-schemes|fixed-income|insurance|stocks|wealth-planning)",\s*$',
+            cat_txt,
+            flags=re.M,
+        )
+    )
+    if not guide_cat_slugs:
+        guide_cat_slugs = unique(
+            re.findall(r'slug:\s*"([a-z0-9-]+)"', cat_txt)
+        )
 
     entries: list[tuple[str, str, str]] = []
 
@@ -87,8 +108,14 @@ def main() -> None:
     for hub, slug in sc_pairs:
         add(f"/{hub}/{slug}", "monthly", "0.65")
 
+    for g in guide_cat_slugs:
+        add(f"/guides/{g}", "weekly", "0.75")
+
     for g in guide_slugs:
         add(f"/guides/{g}", "monthly", "0.7")
+
+    for t in glossary_slugs:
+        add(f"/glossary/{t}", "monthly", "0.55")
 
     for cid in order:
         add(f"/calculators/{cid}", "weekly", "0.8")
@@ -131,6 +158,8 @@ def main() -> None:
     print(f"URLs: {len(out)}")
     print(f"Hubs: {hub_slugs}")
     print(f"Guides: {len(guide_slugs)}")
+    print(f"Guide categories: {len(guide_cat_slugs)}")
+    print(f"Glossary: {len(glossary_slugs)}")
     print(f"Scenarios: {len(sc_pairs)}")
     print(f"Calculators: {sum(len(v) for v in cats.values())}")
     print(f"Wrote {primary}")
