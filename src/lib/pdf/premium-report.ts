@@ -1,5 +1,9 @@
 import { jsPDF } from "jspdf";
 import { SITE_NAME, SITE_TAGLINE } from "@/lib/brand";
+import {
+  NOTO_RUPEE_BOLD_BASE64,
+  NOTO_RUPEE_REGULAR_BASE64,
+} from "@/lib/pdf/noto-rupee-font-data";
 
 export type PdfInputRow = { label: string; value: string };
 export type PdfResultRow = { label: string; value: string };
@@ -208,53 +212,29 @@ function drawRoundedRect(
 
 /**
  * jsPDF standard fonts (Helvetica) use WinAnsi and cannot encode ₹ (U+20B9),
- * which incorrectly renders as ¹. Embed Noto Sans (Unicode) for currency text only.
+ * which incorrectly renders as ¹. Embed a tiny Noto Sans subset for currency text.
  */
-const UNICODE_FONT = "NotoSans";
+const UNICODE_FONT = "NotoSansRupee";
 let pdfFontStyle: "normal" | "bold" = "normal";
 let unicodeFontsReady = false;
-let unicodeFontCache: { regular: string; bold: string } | null = null;
 
-function arrayBufferToBinaryString(buffer: ArrayBuffer): string {
-  const bytes = new Uint8Array(buffer);
-  const chunk = 0x8000;
-  let out = "";
-  for (let i = 0; i < bytes.length; i += chunk) {
-    out += String.fromCharCode(...bytes.subarray(i, i + chunk));
+function base64ToBinaryString(base64: string): string {
+  // Prefer browser atob; fall back for Node/test environments.
+  if (typeof atob === "function") {
+    return atob(base64);
   }
-  return out;
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  return Buffer.from(base64, "base64").toString("binary");
 }
 
-async function loadUnicodePdfFonts(): Promise<{
-  regular: string;
-  bold: string;
-}> {
-  if (unicodeFontCache) return unicodeFontCache;
-  const [regularBuf, boldBuf] = await Promise.all([
-    fetch("/fonts/NotoSans-Regular.ttf").then((r) => {
-      if (!r.ok) throw new Error("Failed to load NotoSans-Regular.ttf");
-      return r.arrayBuffer();
-    }),
-    fetch("/fonts/NotoSans-Bold.ttf").then((r) => {
-      if (!r.ok) throw new Error("Failed to load NotoSans-Bold.ttf");
-      return r.arrayBuffer();
-    }),
-  ]);
-  unicodeFontCache = {
-    regular: arrayBufferToBinaryString(regularBuf),
-    bold: arrayBufferToBinaryString(boldBuf),
-  };
-  return unicodeFontCache;
-}
-
-function registerUnicodePdfFonts(
-  doc: jsPDF,
-  fonts: { regular: string; bold: string }
-) {
-  doc.addFileToVFS("NotoSans-Regular.ttf", fonts.regular);
-  doc.addFont("NotoSans-Regular.ttf", UNICODE_FONT, "normal");
-  doc.addFileToVFS("NotoSans-Bold.ttf", fonts.bold);
-  doc.addFont("NotoSans-Bold.ttf", UNICODE_FONT, "bold");
+function registerUnicodePdfFonts(doc: jsPDF) {
+  // Each jsPDF instance has its own VFS — register on every document.
+  const regular = base64ToBinaryString(NOTO_RUPEE_REGULAR_BASE64);
+  const bold = base64ToBinaryString(NOTO_RUPEE_BOLD_BASE64);
+  doc.addFileToVFS("NotoSans-Rupee.ttf", regular);
+  doc.addFont("NotoSans-Rupee.ttf", UNICODE_FONT, "normal");
+  doc.addFileToVFS("NotoSans-Rupee-Bold.ttf", bold);
+  doc.addFont("NotoSans-Rupee-Bold.ttf", UNICODE_FONT, "bold");
   unicodeFontsReady = true;
 }
 
@@ -278,11 +258,12 @@ function pdfText(
 ) {
   if (unicodeFontsReady && textHasRupee(text)) {
     doc.setFont(UNICODE_FONT, pdfFontStyle);
-    jsPDF.prototype.text.call(doc, text, x, y, options);
+    // Use instance method — jsPDF.prototype.text is undefined in some bundles.
+    doc.text(text, x, y, options);
     doc.setFont("helvetica", pdfFontStyle);
     return;
   }
-  jsPDF.prototype.text.call(doc, text, x, y, options);
+  doc.text(text, x, y, options);
 }
 
 function pdfSplitTextToSize(doc: jsPDF, text: string, size: number): string[] {
@@ -298,9 +279,8 @@ function pdfSplitTextToSize(doc: jsPDF, text: string, size: number): string[] {
 export async function generatePremiumPdf(
   options: PremiumPdfOptions
 ): Promise<void> {
-  const doc = new jsPDF({ unit: "pt", format: "a4" });
-  const fonts = await loadUnicodePdfFonts();
-  registerUnicodePdfFonts(doc, fonts);
+  const doc = new jsPDF({ unit: "pt", format: "a4", putOnlyUsedFonts: true });
+  registerUnicodePdfFonts(doc);
   pdfFontStyle = "normal";
 
   const pageWidth = doc.internal.pageSize.getWidth();

@@ -98,6 +98,8 @@ export function ExportPDFButton({
         journey,
         fileName,
       });
+    } catch (err) {
+      console.error("PDF export failed:", err);
     } finally {
       setBusy(false);
     }
