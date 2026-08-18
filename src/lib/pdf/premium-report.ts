@@ -206,8 +206,103 @@ function drawRoundedRect(
   doc.roundedRect(x, y, w, h, r, r, style);
 }
 
-export function generatePremiumPdf(options: PremiumPdfOptions): void {
+/**
+ * jsPDF standard fonts (Helvetica) use WinAnsi and cannot encode ₹ (U+20B9),
+ * which incorrectly renders as ¹. Embed Noto Sans (Unicode) for currency text only.
+ */
+const UNICODE_FONT = "NotoSans";
+let pdfFontStyle: "normal" | "bold" = "normal";
+let unicodeFontsReady = false;
+let unicodeFontCache: { regular: string; bold: string } | null = null;
+
+function arrayBufferToBinaryString(buffer: ArrayBuffer): string {
+  const bytes = new Uint8Array(buffer);
+  const chunk = 0x8000;
+  let out = "";
+  for (let i = 0; i < bytes.length; i += chunk) {
+    out += String.fromCharCode(...bytes.subarray(i, i + chunk));
+  }
+  return out;
+}
+
+async function loadUnicodePdfFonts(): Promise<{
+  regular: string;
+  bold: string;
+}> {
+  if (unicodeFontCache) return unicodeFontCache;
+  const [regularBuf, boldBuf] = await Promise.all([
+    fetch("/fonts/NotoSans-Regular.ttf").then((r) => {
+      if (!r.ok) throw new Error("Failed to load NotoSans-Regular.ttf");
+      return r.arrayBuffer();
+    }),
+    fetch("/fonts/NotoSans-Bold.ttf").then((r) => {
+      if (!r.ok) throw new Error("Failed to load NotoSans-Bold.ttf");
+      return r.arrayBuffer();
+    }),
+  ]);
+  unicodeFontCache = {
+    regular: arrayBufferToBinaryString(regularBuf),
+    bold: arrayBufferToBinaryString(boldBuf),
+  };
+  return unicodeFontCache;
+}
+
+function registerUnicodePdfFonts(
+  doc: jsPDF,
+  fonts: { regular: string; bold: string }
+) {
+  doc.addFileToVFS("NotoSans-Regular.ttf", fonts.regular);
+  doc.addFont("NotoSans-Regular.ttf", UNICODE_FONT, "normal");
+  doc.addFileToVFS("NotoSans-Bold.ttf", fonts.bold);
+  doc.addFont("NotoSans-Bold.ttf", UNICODE_FONT, "bold");
+  unicodeFontsReady = true;
+}
+
+function setPdfFont(doc: jsPDF, style: "normal" | "bold" = "normal") {
+  pdfFontStyle = style;
+  doc.setFont("helvetica", style);
+}
+
+function textHasRupee(text: string | string[]): boolean {
+  if (Array.isArray(text)) return text.some((t) => t.includes("₹"));
+  return text.includes("₹");
+}
+
+/** Draw text; use embedded Unicode font when the string contains ₹. */
+function pdfText(
+  doc: jsPDF,
+  text: string | string[],
+  x: number,
+  y: number,
+  options?: Parameters<jsPDF["text"]>[3]
+) {
+  if (unicodeFontsReady && textHasRupee(text)) {
+    doc.setFont(UNICODE_FONT, pdfFontStyle);
+    jsPDF.prototype.text.call(doc, text, x, y, options);
+    doc.setFont("helvetica", pdfFontStyle);
+    return;
+  }
+  jsPDF.prototype.text.call(doc, text, x, y, options);
+}
+
+function pdfSplitTextToSize(doc: jsPDF, text: string, size: number): string[] {
+  if (unicodeFontsReady && text.includes("₹")) {
+    doc.setFont(UNICODE_FONT, pdfFontStyle);
+    const lines = doc.splitTextToSize(text, size);
+    doc.setFont("helvetica", pdfFontStyle);
+    return lines;
+  }
+  return doc.splitTextToSize(text, size);
+}
+
+export async function generatePremiumPdf(
+  options: PremiumPdfOptions
+): Promise<void> {
   const doc = new jsPDF({ unit: "pt", format: "a4" });
+  const fonts = await loadUnicodePdfFonts();
+  registerUnicodePdfFonts(doc, fonts);
+  pdfFontStyle = "normal";
+
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
   const contentW = pageWidth - MARGIN * 2;
@@ -227,11 +322,11 @@ export function generatePremiumPdf(options: PremiumPdfOptions): void {
     stroke(doc, COLORS.line);
     doc.setLineWidth(0.6);
     doc.line(MARGIN, footerY - 10, pageWidth - MARGIN, footerY - 10);
-    doc.setFont("helvetica", "normal");
+    setPdfFont(doc, "normal");
     doc.setFontSize(8);
     rgb(doc, COLORS.muted);
-    doc.text(SITE_NAME, MARGIN, footerY);
-    doc.text(options.title, pageWidth / 2, footerY, { align: "center" });
+    pdfText(doc,SITE_NAME, MARGIN, footerY);
+    pdfText(doc,options.title, pageWidth / 2, footerY, { align: "center" });
     // page numbers filled at end
   };
 
@@ -259,39 +354,39 @@ export function generatePremiumPdf(options: PremiumPdfOptions): void {
   fill(doc, COLORS.gold);
   doc.rect(0, 92, pageWidth, 3, "F");
 
-  doc.setFont("helvetica", "bold");
+  setPdfFont(doc, "bold");
   doc.setFontSize(11);
   rgb(doc, COLORS.gold);
-  doc.text(SITE_NAME.toUpperCase(), MARGIN, 28);
+  pdfText(doc,SITE_NAME.toUpperCase(), MARGIN, 28);
 
-  doc.setFont("helvetica", "normal");
+  setPdfFont(doc, "normal");
   doc.setFontSize(8);
   rgb(doc, [180, 190, 210]);
-  doc.text(SITE_TAGLINE, MARGIN, 42);
+  pdfText(doc,SITE_TAGLINE, MARGIN, 42);
 
-  doc.setFont("helvetica", "bold");
+  setPdfFont(doc, "bold");
   doc.setFontSize(20);
   rgb(doc, COLORS.white);
-  doc.text(options.title, MARGIN, 68);
+  pdfText(doc,options.title, MARGIN, 68);
 
-  doc.setFont("helvetica", "normal");
+  setPdfFont(doc, "normal");
   doc.setFontSize(8);
   rgb(doc, [160, 170, 190]);
-  doc.text(generated, pageWidth - MARGIN, 28, { align: "right" });
+  pdfText(doc,generated, pageWidth - MARGIN, 28, { align: "right" });
 
   y = 112;
 
   if (options.tagline) {
-    doc.setFont("helvetica", "normal");
+    setPdfFont(doc, "normal");
     doc.setFontSize(11);
     rgb(doc, COLORS.muted);
-    doc.text(options.tagline, MARGIN, y);
+    pdfText(doc,options.tagline, MARGIN, y);
     y += 18;
   } else if (options.subtitle) {
-    doc.setFont("helvetica", "normal");
+    setPdfFont(doc, "normal");
     doc.setFontSize(10);
     rgb(doc, COLORS.muted);
-    doc.text(options.subtitle, MARGIN, y);
+    pdfText(doc,options.subtitle, MARGIN, y);
     y += 16;
   }
 
@@ -313,21 +408,21 @@ export function generatePremiumPdf(options: PremiumPdfOptions): void {
     fill(doc, COLORS.gold);
     doc.roundedRect(MARGIN, y, 6, 78, 3, 3, "F");
 
-    doc.setFont("helvetica", "bold");
+    setPdfFont(doc, "bold");
     doc.setFontSize(9);
     rgb(doc, COLORS.gold);
-    doc.text(hero.label.toUpperCase(), MARGIN + 22, y + 24);
+    pdfText(doc,hero.label.toUpperCase(), MARGIN + 22, y + 24);
 
-    doc.setFont("helvetica", "bold");
+    setPdfFont(doc, "bold");
     doc.setFontSize(28);
     rgb(doc, COLORS.white);
-    doc.text(hero.value, MARGIN + 22, y + 54);
+    pdfText(doc,hero.value, MARGIN + 22, y + 54);
 
     if (hero.hint) {
-      doc.setFont("helvetica", "normal");
+      setPdfFont(doc, "normal");
       doc.setFontSize(9);
       rgb(doc, [180, 190, 210]);
-      doc.text(hero.hint, pageWidth - MARGIN - 16, y + 54, { align: "right" });
+      pdfText(doc,hero.hint, pageWidth - MARGIN - 16, y + 54, { align: "right" });
     }
     y += 94;
   }
@@ -335,10 +430,10 @@ export function generatePremiumPdf(options: PremiumPdfOptions): void {
   // —— INPUT SUMMARY CARDS ——
   if (options.inputs.length > 0) {
     ensureSpace(90);
-    doc.setFont("helvetica", "bold");
+    setPdfFont(doc, "bold");
     doc.setFontSize(11);
     rgb(doc, COLORS.ink);
-    doc.text("SUMMARY", MARGIN, y);
+    pdfText(doc,"SUMMARY", MARGIN, y);
     y += 12;
 
     const n = Math.min(options.inputs.length, 4);
@@ -351,16 +446,16 @@ export function generatePremiumPdf(options: PremiumPdfOptions): void {
       stroke(doc, COLORS.cardBorder);
       doc.setLineWidth(0.8);
       drawRoundedRect(doc, x, y, cardW, cardH, 8, "FD");
-      doc.setFont("helvetica", "normal");
+      setPdfFont(doc, "normal");
       doc.setFontSize(8);
       rgb(doc, COLORS.muted);
-      doc.text(input.label.toUpperCase(), x + 12, y + 18, {
+      pdfText(doc,input.label.toUpperCase(), x + 12, y + 18, {
         maxWidth: cardW - 20,
       });
-      doc.setFont("helvetica", "bold");
+      setPdfFont(doc, "bold");
       doc.setFontSize(12);
       rgb(doc, COLORS.ink);
-      doc.text(String(input.value), x + 12, y + 40, {
+      pdfText(doc,String(input.value), x + 12, y + 40, {
         maxWidth: cardW - 20,
       });
     });
@@ -373,10 +468,10 @@ export function generatePremiumPdf(options: PremiumPdfOptions): void {
   );
   if (breakdown.length > 0) {
     ensureSpace(90);
-    doc.setFont("helvetica", "bold");
+    setPdfFont(doc, "bold");
     doc.setFontSize(11);
     rgb(doc, COLORS.ink);
-    doc.text("KEY RESULTS", MARGIN, y);
+    pdfText(doc,"KEY RESULTS", MARGIN, y);
     y += 12;
 
     const n = Math.min(breakdown.length, 3);
@@ -389,16 +484,16 @@ export function generatePremiumPdf(options: PremiumPdfOptions): void {
       stroke(doc, COLORS.cardBorder);
       doc.setLineWidth(0.8);
       drawRoundedRect(doc, x, y, cardW, cardH, 8, "FD");
-      doc.setFont("helvetica", "normal");
+      setPdfFont(doc, "normal");
       doc.setFontSize(8);
       rgb(doc, COLORS.muted);
-      doc.text(row.label.toUpperCase(), x + 12, y + 18, {
+      pdfText(doc,row.label.toUpperCase(), x + 12, y + 18, {
         maxWidth: cardW - 20,
       });
-      doc.setFont("helvetica", "bold");
+      setPdfFont(doc, "bold");
       doc.setFontSize(13);
       rgb(doc, i === 0 ? COLORS.navy : COLORS.ink);
-      doc.text(String(row.value), x + 12, y + 40, { maxWidth: cardW - 20 });
+      pdfText(doc,String(row.value), x + 12, y + 40, { maxWidth: cardW - 20 });
     });
     y += cardH + 10;
 
@@ -406,13 +501,13 @@ export function generatePremiumPdf(options: PremiumPdfOptions): void {
     if (breakdown.length > n) {
       breakdown.slice(n).forEach((row) => {
         ensureSpace(16);
-        doc.setFont("helvetica", "normal");
+        setPdfFont(doc, "normal");
         doc.setFontSize(9);
         rgb(doc, COLORS.muted);
-        doc.text(row.label, MARGIN, y);
-        doc.setFont("helvetica", "bold");
+        pdfText(doc,row.label, MARGIN, y);
+        setPdfFont(doc, "bold");
         rgb(doc, COLORS.ink);
-        doc.text(String(row.value), pageWidth - MARGIN, y, { align: "right" });
+        pdfText(doc,String(row.value), pageWidth - MARGIN, y, { align: "right" });
         y += 14;
       });
       y += 6;
@@ -426,10 +521,10 @@ export function generatePremiumPdf(options: PremiumPdfOptions): void {
     const png = drawDonutPng(options.chartSlices);
     if (png) {
       ensureSpace(160);
-      doc.setFont("helvetica", "bold");
+      setPdfFont(doc, "bold");
       doc.setFontSize(11);
       rgb(doc, COLORS.ink);
-      doc.text("BREAKDOWN", MARGIN, y);
+      pdfText(doc,"BREAKDOWN", MARGIN, y);
       y += 8;
 
       const chartSize = 120;
@@ -445,14 +540,14 @@ export function generatePremiumPdf(options: PremiumPdfOptions): void {
         const c = SLICE_COLORS[i % SLICE_COLORS.length];
         fill(doc, c);
         doc.circle(MARGIN + chartSize + 28, ly - 3, 4, "F");
-        doc.setFont("helvetica", "normal");
+        setPdfFont(doc, "normal");
         doc.setFontSize(9);
         rgb(doc, COLORS.muted);
-        doc.text(slice.label, MARGIN + chartSize + 40, ly);
-        doc.setFont("helvetica", "bold");
+        pdfText(doc,slice.label, MARGIN + chartSize + 40, ly);
+        setPdfFont(doc, "bold");
         rgb(doc, COLORS.ink);
         const pct = total > 0 ? ((slice.value / total) * 100).toFixed(1) : "0";
-        doc.text(
+        pdfText(doc,
           `${formatCompact(slice.value)}  (${pct}%)`,
           MARGIN + chartSize + 40,
           ly + 12
@@ -466,10 +561,10 @@ export function generatePremiumPdf(options: PremiumPdfOptions): void {
   // —— JOURNEY ——
   if (options.journey && options.journey.length >= 2) {
     ensureSpace(56);
-    doc.setFont("helvetica", "bold");
+    setPdfFont(doc, "bold");
     doc.setFontSize(11);
     rgb(doc, COLORS.ink);
-    doc.text("JOURNEY", MARGIN, y);
+    pdfText(doc,"JOURNEY", MARGIN, y);
     y += 14;
 
     const steps = options.journey;
@@ -483,11 +578,11 @@ export function generatePremiumPdf(options: PremiumPdfOptions): void {
         doc.setLineWidth(1.2);
         doc.line(cx + 8, y + 6, cx + stepW - 8, y + 6);
       }
-      doc.setFont("helvetica", "normal");
+      setPdfFont(doc, "normal");
       doc.setFontSize(8);
       rgb(doc, COLORS.ink);
-      const lines = doc.splitTextToSize(step, stepW - 8);
-      doc.text(lines, cx, y + 22, { align: "center" });
+      const lines = pdfSplitTextToSize(doc, step, stepW - 8);
+      pdfText(doc, lines, cx, y + 22, { align: "center" });
     });
     y += 48;
   }
@@ -501,10 +596,10 @@ export function generatePremiumPdf(options: PremiumPdfOptions): void {
     );
     if (!png) return;
     ensureSpace(150);
-    doc.setFont("helvetica", "bold");
+    setPdfFont(doc, "bold");
     doc.setFontSize(11);
     rgb(doc, COLORS.ink);
-    doc.text(
+    pdfText(doc,
       (options.balanceChartTitle ?? "OUTSTANDING BALANCE").toUpperCase(),
       MARGIN,
       y
@@ -557,10 +652,10 @@ export function generatePremiumPdf(options: PremiumPdfOptions): void {
     }
 
     ensureSpace(40);
-    doc.setFont("helvetica", "bold");
+    setPdfFont(doc, "bold");
     doc.setFontSize(11);
     rgb(doc, COLORS.ink);
-    doc.text((options.table.title ?? "DETAILED SCHEDULE").toUpperCase(), MARGIN, y);
+    pdfText(doc,(options.table.title ?? "DETAILED SCHEDULE").toUpperCase(), MARGIN, y);
     y += 14;
 
     const colCount = cols.length;
@@ -575,14 +670,14 @@ export function generatePremiumPdf(options: PremiumPdfOptions): void {
     const drawTableHeader = () => {
       fill(doc, COLORS.navy);
       drawRoundedRect(doc, MARGIN, y - 10, contentW, 18, 3, "F");
-      doc.setFont("helvetica", "bold");
+      setPdfFont(doc, "bold");
       doc.setFontSize(8);
       rgb(doc, COLORS.white);
       let x = MARGIN;
       cols.forEach((col, i) => {
         const align = i === 0 ? "left" : "right";
         const tx = align === "left" ? x + 6 : x + colWs[i] - 6;
-        doc.text(col.header, tx, y, { align });
+        pdfText(doc,col.header, tx, y, { align });
         x += colWs[i];
       });
       y += 14;
@@ -591,10 +686,10 @@ export function generatePremiumPdf(options: PremiumPdfOptions): void {
     groups.forEach((group) => {
       ensureSpace(36);
       if (group.title) {
-        doc.setFont("helvetica", "bold");
+        setPdfFont(doc, "bold");
         doc.setFontSize(9);
         rgb(doc, COLORS.navy);
-        doc.text(group.title, MARGIN, y);
+        pdfText(doc,group.title, MARGIN, y);
         y += 12;
       }
       drawTableHeader();
@@ -604,10 +699,10 @@ export function generatePremiumPdf(options: PremiumPdfOptions): void {
         if (y > pageHeight - 50) {
           newPage();
           if (group.title) {
-            doc.setFont("helvetica", "bold");
+            setPdfFont(doc, "bold");
             doc.setFontSize(9);
             rgb(doc, COLORS.navy);
-            doc.text(`${group.title} (continued)`, MARGIN, y);
+            pdfText(doc,`${group.title} (continued)`, MARGIN, y);
             y += 12;
           }
           drawTableHeader();
@@ -616,7 +711,7 @@ export function generatePremiumPdf(options: PremiumPdfOptions): void {
           fill(doc, COLORS.rowAlt);
           doc.rect(MARGIN, y - 9, contentW, 13, "F");
         }
-        doc.setFont("helvetica", "normal");
+        setPdfFont(doc, "normal");
         doc.setFontSize(8);
         rgb(doc, COLORS.ink);
         let x = MARGIN;
@@ -624,7 +719,7 @@ export function generatePremiumPdf(options: PremiumPdfOptions): void {
           const cell = String(row[col.key] ?? "");
           const align = i === 0 ? "left" : "right";
           const tx = align === "left" ? x + 6 : x + colWs[i] - 6;
-          doc.text(cell, tx, y, { align, maxWidth: colWs[i] - 10 });
+          pdfText(doc,cell, tx, y, { align, maxWidth: colWs[i] - 10 });
           x += colWs[i];
         });
         y += 13;
@@ -635,7 +730,7 @@ export function generatePremiumPdf(options: PremiumPdfOptions): void {
     if (options.table.rows.length > maxRows) {
       doc.setFontSize(8);
       rgb(doc, COLORS.muted);
-      doc.text(
+      pdfText(doc,
         `Showing first ${maxRows} of ${options.table.rows.length} rows.`,
         MARGIN,
         y
@@ -646,7 +741,7 @@ export function generatePremiumPdf(options: PremiumPdfOptions): void {
 
   // Disclaimer
   ensureSpace(40);
-  doc.setFont("helvetica", "normal");
+  setPdfFont(doc, "normal");
   doc.setFontSize(7.5);
   rgb(doc, COLORS.muted);
   const disclaimer = doc.splitTextToSize(
@@ -654,7 +749,7 @@ export function generatePremiumPdf(options: PremiumPdfOptions): void {
       SITE_NAME,
     contentW
   );
-  doc.text(disclaimer, MARGIN, y);
+  pdfText(doc,disclaimer, MARGIN, y);
 
   drawFooter();
 
@@ -662,10 +757,10 @@ export function generatePremiumPdf(options: PremiumPdfOptions): void {
   const totalPages = doc.getNumberOfPages();
   for (let i = 1; i <= totalPages; i++) {
     doc.setPage(i);
-    doc.setFont("helvetica", "normal");
+    setPdfFont(doc, "normal");
     doc.setFontSize(8);
     rgb(doc, COLORS.muted);
-    doc.text(`Page ${i} of ${totalPages}`, pageWidth - MARGIN, pageHeight - 22, {
+    pdfText(doc,`Page ${i} of ${totalPages}`, pageWidth - MARGIN, pageHeight - 22, {
       align: "right",
     });
   }

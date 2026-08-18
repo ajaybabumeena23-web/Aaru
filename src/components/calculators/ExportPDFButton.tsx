@@ -73,7 +73,7 @@ export function ExportPDFButton({
   const handleExport = async () => {
     setBusy(true);
     try {
-      generatePremiumPdf({
+      await generatePremiumPdf({
         title,
         inputs,
         results,
