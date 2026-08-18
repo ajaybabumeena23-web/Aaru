@@ -82,12 +82,14 @@ export function SiteSearch({
   className,
   autoFocus,
   large,
+  placeholder,
 }: {
   onNavigate?: () => void;
   compact?: boolean;
   className?: string;
   autoFocus?: boolean;
   large?: boolean;
+  placeholder?: string;
 }) {
   const [query, setQuery] = React.useState("");
   const [open, setOpen] = React.useState(false);
@@ -110,6 +112,14 @@ export function SiteSearch({
     router.push(href);
   };
 
+  const resolvedPlaceholder =
+    placeholder ??
+    (large
+      ? "Search calculators, guides, glossary…"
+      : compact
+        ? "Search…"
+        : "Search calculators & guides…");
+
   return (
     <div ref={rootRef} className={cn("relative w-full", className)}>
       <div className="relative">
@@ -117,13 +127,7 @@ export function SiteSearch({
         <Input
           value={query}
           autoFocus={autoFocus}
-          placeholder={
-            large
-              ? "Search calculators, guides, glossary…"
-              : compact
-                ? "Search…"
-                : "Search calculators & guides…"
-          }
+          placeholder={resolvedPlaceholder}
           className={cn(
             "border-border bg-white pl-9 text-foreground placeholder:text-muted-foreground",
             large && "h-12 text-base"

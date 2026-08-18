@@ -6,6 +6,9 @@ import {
   DraggableSlider,
   ExportPDFButton,
   FinancialDonutChart,
+  ResultInterpretation,
+  SensitivityBands,
+  rateBandHint,
 } from "@/components/calculators";
 import {
   CalculatorPageLayout,
@@ -13,6 +16,7 @@ import {
 } from "@/components/calculators/CalculatorPageLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useCalculatorParams } from "@/hooks/useCalculatorParams";
+import { rateSensitivityBands } from "@/lib/sensitivity";
 import { calculatePpf } from "@/utils/financial-math";
 import { formatINR, formatPercent } from "@/lib/utils";
 
@@ -32,6 +36,32 @@ function PpfInner() {
       }),
     [values]
   );
+
+  const rateBands = useMemo(() => {
+    return rateSensitivityBands(values.rate, 0.5, {
+      min: 6,
+      max: 9,
+      labels: ["Lower rate", "Your rate", "Higher rate"],
+    }).map((b) => {
+      const r = calculatePpf({
+        annualDeposit: values.annual,
+        years: values.years,
+        ratePct: b.ratePct,
+      });
+      return {
+        label: b.label,
+        hint: rateBandHint(b.ratePct),
+        value: formatINR(r.maturityValue, true),
+        emphasize: b.key === "base",
+      };
+    });
+  }, [values]);
+
+  const interpretationPoints = [
+    `Depositing ${formatINR(values.annual, true)}/year for ${values.years} years at ${formatPercent(values.rate, 1)} projects about ${formatINR(result.maturityValue, true)}.`,
+    `Interest earned is roughly ${formatINR(result.interestEarned, true)} on ${formatINR(result.totalDeposited, true)} deposited.`,
+    "PPF rates are notified by the government and can change — the bands show a ±0.5% what-if.",
+  ];
 
   return (
     <CalculatorPageLayout
@@ -187,7 +217,13 @@ function PpfInner() {
                 fileName="ppf.pdf"
               />
             }
-          />
+          >
+            <ResultInterpretation points={interpretationPoints} />
+            <SensitivityBands
+              parameterLabel="PPF interest rate"
+              bands={rateBands}
+            />
+          </CalculationResultCard>
         </div>
       </div>
     </CalculatorPageLayout>

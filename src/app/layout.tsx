@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Poppins, JetBrains_Mono } from "next/font/google";
+import { Inter, Source_Serif_4, JetBrains_Mono } from "next/font/google";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -7,10 +7,16 @@ import { SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE } from "@/lib/brand";
 import { getSiteUrl } from "@/lib/site";
 import "./globals.css";
 
-const poppins = Poppins({
-  variable: "--font-poppins",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
+
+const sourceSerif = Source_Serif_4({
+  variable: "--font-source-serif",
+  subsets: ["latin"],
+  weight: ["400", "600", "700"],
   display: "swap",
 });
 
@@ -54,7 +60,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
-  themeColor: "#0B5ED7",
+  themeColor: "#0B1F33",
 };
 
 export default function RootLayout({
@@ -65,7 +71,7 @@ export default function RootLayout({
   return (
     <html lang="en-IN">
       <body
-        className={`${poppins.variable} ${jetbrainsMono.variable} min-h-dvh font-sans antialiased`}
+        className={`${inter.variable} ${sourceSerif.variable} ${jetbrainsMono.variable} min-h-dvh font-sans antialiased`}
       >
         <JsonLd />
         <div className="flex min-h-dvh w-full max-w-[100vw] flex-col overflow-x-hidden bg-background">

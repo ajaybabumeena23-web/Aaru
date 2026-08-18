@@ -1,103 +1,83 @@
 import Link from "next/link";
-import { TOPIC_HUBS } from "@/lib/content/topics";
 import {
-  POPULAR_CALCULATORS,
   SITE_NAME,
   SITE_TAGLINE,
   TRUST_LINKS,
 } from "@/lib/brand";
+import {
+  FOOTER_CALCULATORS,
+  LEARN_LINKS,
+  MONEY_LINKS,
+} from "@/lib/nav";
 
 export function SiteFooter() {
   const year = new Date().getFullYear();
-  const calcLinks = [
-    ...POPULAR_CALCULATORS.slice(0, 7).map((c) => ({
-      href: `/calculators/${c.category}/${c.slug}`,
-      label: c.title,
-    })),
-  ];
 
   return (
     <footer className="mt-auto border-t border-border bg-navy text-white">
       <div className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-5">
-          <div className="space-y-3">
-            <p className="text-lg font-semibold text-white">{SITE_NAME}</p>
+          <div className="space-y-3 sm:col-span-2 lg:col-span-1">
+            <p className="font-serif text-xl font-normal text-white">
+              {SITE_NAME}
+            </p>
             <p className="text-sm text-white/70">{SITE_TAGLINE}</p>
-            <p className="text-sm text-white/60">
-              Free financial calculators and practical money guidance for Indian
-              households — estimates only, not personalised advice.
+            <p className="text-sm leading-relaxed text-white/55">
+              Calculate, understand and plan money decisions with transparent
+              tools for Indian households. Estimates only — not personalised
+              advice.
             </p>
           </div>
 
           <div>
-            <p className="mb-3 text-sm font-semibold text-white">Calculators</p>
+            <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-white/50">
+              Calculators
+            </p>
             <ul className="space-y-2 text-sm text-white/70">
-              {calcLinks.map((l) => (
+              {FOOTER_CALCULATORS.map((l) => (
                 <li key={l.href}>
                   <Link href={l.href} className="hover:text-white">
                     {l.label}
                   </Link>
                 </li>
               ))}
-              <li>
-                <Link href="/calculators" className="hover:text-white">
-                  All calculators
-                </Link>
-              </li>
             </ul>
           </div>
 
           <div>
-            <p className="mb-3 text-sm font-semibold text-white">Topics</p>
+            <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-white/50">
+              Money
+            </p>
             <ul className="space-y-2 text-sm text-white/70">
-              {TOPIC_HUBS.slice(0, 8).map((t) => (
-                <li key={t.slug}>
-                  <Link href={`/${t.slug}`} className="hover:text-white">
-                    {t.title}
+              {MONEY_LINKS.map((l) => (
+                <li key={l.href}>
+                  <Link href={l.href} className="hover:text-white">
+                    {l.label}
                   </Link>
                 </li>
               ))}
-              <li>
-                <Link href="/topics" className="hover:text-white">
-                  All topics
-                </Link>
-              </li>
             </ul>
           </div>
 
           <div>
-            <p className="mb-3 text-sm font-semibold text-white">Learn</p>
+            <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-white/50">
+              Learn
+            </p>
             <ul className="space-y-2 text-sm text-white/70">
-              <li>
-                <Link href="/guides" className="hover:text-white">
-                  Money Guides
-                </Link>
-              </li>
-              <li>
-                <Link href="/glossary" className="hover:text-white">
-                  Glossary
-                </Link>
-              </li>
-              <li>
-                <Link href="/methodology" className="hover:text-white">
-                  Methodology
-                </Link>
-              </li>
-              <li>
-                <Link href="/editorial-policy" className="hover:text-white">
-                  Editorial Policy
-                </Link>
-              </li>
-              <li>
-                <Link href="/topics" className="hover:text-white">
-                  Topic hubs
-                </Link>
-              </li>
+              {LEARN_LINKS.map((l) => (
+                <li key={l.href}>
+                  <Link href={l.href} className="hover:text-white">
+                    {l.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
           <div>
-            <p className="mb-3 text-sm font-semibold text-white">Company</p>
+            <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-white/50">
+              Aaru Wealth
+            </p>
             <ul className="space-y-2 text-sm text-white/70">
               {TRUST_LINKS.map((l) => (
                 <li key={l.href}>
@@ -115,10 +95,10 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="mt-10 border-t border-white/15 pt-6 text-xs text-white/55">
+        <div className="mt-10 border-t border-white/15 pt-6 text-xs text-white/50">
           <p>
-            © {year} {SITE_NAME}. Calculators provide illustrative estimates
-            based on stated assumptions. Not investment, tax, or legal advice.
+            © {year} {SITE_NAME}. Illustrative estimates based on stated
+            assumptions. Not investment, tax, or legal advice.
           </p>
         </div>
       </div>

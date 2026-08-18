@@ -20,7 +20,7 @@ export type CalculationResultCardProps = {
 };
 
 /**
- * Displays key calculator outputs (maturity, interest, EMI, etc.).
+ * Displays key calculator outputs with a clear primary → secondary hierarchy.
  */
 export function CalculationResultCard({
   title = "Results",
@@ -30,10 +30,13 @@ export function CalculationResultCard({
   footer,
   badge,
 }: CalculationResultCardProps) {
+  const primary = metrics.find((m) => m.emphasize);
+  const secondary = metrics.filter((m) => !m.emphasize);
+
   return (
     <Card
       className={cn(
-        "overflow-hidden illustrative-gradient border-border/70 shadow-card",
+        "overflow-hidden border-border/80 shadow-sm",
         className
       )}
     >
@@ -44,35 +47,46 @@ export function CalculationResultCard({
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <dl className="grid gap-3 sm:grid-cols-2">
-          {metrics.map((m) => (
-            <div
-              key={m.label}
-              className={cn(
-                "rounded-md border border-border/60 bg-navy/40 px-3 py-3",
-                m.emphasize &&
-                  "border-gold/40 bg-gold/5 sm:col-span-2 shadow-[inset_0_0_0_1px_rgba(247,198,21,0.08)]"
-              )}
-            >
-              <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                {m.label}
-              </dt>
-              <dd
-                className={cn(
-                  "mt-1 font-semibold tabular-nums",
-                  m.emphasize
-                    ? "text-3xl text-gold sm:text-4xl"
-                    : "text-xl text-card-foreground"
-                )}
+        {primary ? (
+          <div className="rounded-xl border border-navy/20 bg-navy px-4 py-4 text-white sm:px-5 sm:py-5">
+            <p className="text-xs font-semibold uppercase tracking-wide text-white/70">
+              {primary.label}
+            </p>
+            <p className="mt-1 font-serif text-3xl font-normal tracking-tight tabular-nums sm:text-4xl">
+              {primary.value}
+            </p>
+            {primary.hint ? (
+              <p className="mt-2 text-sm text-white/75">{primary.hint}</p>
+            ) : null}
+          </div>
+        ) : null}
+
+        {secondary.length > 0 ? (
+          <dl
+            className={cn(
+              "grid gap-3",
+              secondary.length === 1 ? "grid-cols-1" : "sm:grid-cols-2"
+            )}
+          >
+            {secondary.map((m) => (
+              <div
+                key={m.label}
+                className="rounded-lg border border-border/70 bg-secondary/50 px-3 py-3"
               >
-                {m.value}
-              </dd>
-              {m.hint ? (
-                <p className="mt-1 text-xs text-muted-foreground">{m.hint}</p>
-              ) : null}
-            </div>
-          ))}
-        </dl>
+                <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                  {m.label}
+                </dt>
+                <dd className="mt-1 text-xl font-semibold tabular-nums text-foreground">
+                  {m.value}
+                </dd>
+                {m.hint ? (
+                  <p className="mt-1 text-xs text-muted-foreground">{m.hint}</p>
+                ) : null}
+              </div>
+            ))}
+          </dl>
+        ) : null}
+
         {children}
         {footer}
       </CardContent>

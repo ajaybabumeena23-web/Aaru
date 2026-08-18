@@ -1,7 +1,7 @@
 export const SITE_NAME = "Aaru Wealth";
-export const SITE_TAGLINE = "Smart Financial Tools for India";
+export const SITE_TAGLINE = "Financial planning & decision support for India";
 export const SITE_DESCRIPTION =
-  "Free calculators and practical financial resources for SIPs, loans, taxes, retirement, savings and wealth planning in India.";
+  "Calculate investments, loans, taxes and goals with transparent tools — then understand, compare and plan with practical guides for Indian households.";
 
 export const POPULAR_CALCULATORS = [
   { category: "investment", slug: "sip", title: "SIP Calculator" },

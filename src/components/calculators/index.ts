@@ -4,6 +4,11 @@ export { CalculationResultCard } from "./CalculationResultCard";
 export { ExportPDFButton } from "./ExportPDFButton";
 export { CalculatorShell } from "./CalculatorShell";
 export { ShareResultButtons } from "./ShareResultButtons";
+export { ResultInterpretation } from "./ux/ResultInterpretation";
+export {
+  SensitivityBands,
+  rateBandHint,
+} from "./ux/SensitivityBands";
 export {
   CalculatorPageLayout,
   withCalculatorSuspense,

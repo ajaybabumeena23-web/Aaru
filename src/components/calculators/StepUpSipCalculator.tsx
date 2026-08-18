@@ -6,6 +6,9 @@ import {
   DraggableSlider,
   ExportPDFButton,
   FinancialDonutChart,
+  ResultInterpretation,
+  SensitivityBands,
+  rateBandHint,
 } from "@/components/calculators";
 import {
   CalculatorPageLayout,
@@ -15,6 +18,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useCalculatorParams } from "@/hooks/useCalculatorParams";
+import { rateSensitivityBands } from "@/lib/sensitivity";
 import { calculateStepUpSip } from "@/utils/financial-math";
 import { formatINR, formatPercent } from "@/lib/utils";
 
@@ -54,6 +58,42 @@ function StepUpSipCalculatorInner() {
     : values.adjustInflation
       ? result.realMaturityValue
       : result.maturityValue;
+
+  const maturityLabel = values.postTax
+    ? "Post-Tax Maturity"
+    : values.adjustInflation
+      ? "Real Maturity (Today ₹)"
+      : "Maturity Value";
+
+  const rateBands = useMemo(() => {
+    return rateSensitivityBands(values.rate, 2, { min: 1, max: 30 }).map((b) => {
+      const r = calculateStepUpSip({
+        monthlyInvestment: values.monthly,
+        annualRatePct: b.ratePct,
+        years: values.years,
+        stepUpPct: values.stepUp,
+        inflationPct: values.adjustInflation ? values.inflation : 0,
+        postTax: values.postTax,
+      });
+      const m = values.postTax
+        ? r.postTaxMaturityValue
+        : values.adjustInflation
+          ? r.realMaturityValue
+          : r.maturityValue;
+      return {
+        label: b.label,
+        hint: rateBandHint(b.ratePct),
+        value: formatINR(m, true),
+        emphasize: b.key === "base",
+      };
+    });
+  }, [values]);
+
+  const interpretationPoints = [
+    `Starting at ${formatINR(values.monthly, true)}/mo with a ${formatPercent(values.stepUp, 0)} annual step-up for ${values.years} years projects about ${formatINR(maturityDisplay, true)}.`,
+    `Total contributions are roughly ${formatINR(result.invested, true)}; estimated gains are ${formatINR(maturityDisplay - result.invested, true)}.`,
+    "Step-ups boost the corpus, but return assumptions still dominate — check the bands below.",
+  ];
 
   return (
     <CalculatorPageLayout
@@ -168,16 +208,13 @@ function StepUpSipCalculatorInner() {
 
           <CalculationResultCard
             metrics={[
-              { label: "Total Invested", value: formatINR(result.invested) },
               {
-                label: values.postTax
-                  ? "Post-Tax Maturity"
-                  : values.adjustInflation
-                    ? "Real Maturity (Today ₹)"
-                    : "Maturity Value",
+                label: maturityLabel,
                 value: formatINR(maturityDisplay),
                 emphasize: true,
+                hint: `${formatPercent(values.stepUp, 0)} annual step-up · ${formatPercent(values.rate, 1)} p.a.`,
               },
+              { label: "Total Invested", value: formatINR(result.invested) },
               {
                 label: "Wealth Gained",
                 value: formatINR(
@@ -210,11 +247,7 @@ function StepUpSipCalculatorInner() {
                 tagline="Your personalized step-up investment summary"
                 subtitle="Step-Up SIP — Aaru Wealth"
                 hero={{
-                  label: values.postTax
-                    ? "Post-Tax Maturity"
-                    : values.adjustInflation
-                      ? "Real Maturity (Today ₹)"
-                      : "Maturity Value",
+                  label: maturityLabel,
                   value: formatINR(maturityDisplay),
                   hint: `${formatPercent(values.stepUp, 0)} annual step-up`,
                 }}
@@ -294,7 +327,13 @@ function StepUpSipCalculatorInner() {
                 fileName="step-up-sip.pdf"
               />
             }
-          />
+          >
+            <ResultInterpretation points={interpretationPoints} />
+            <SensitivityBands
+              parameterLabel="expected return (p.a.)"
+              bands={rateBands}
+            />
+          </CalculationResultCard>
         </div>
       </div>
     </CalculatorPageLayout>

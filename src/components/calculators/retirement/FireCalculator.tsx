@@ -7,6 +7,9 @@ import {
   DraggableSlider,
   ExportPDFButton,
   FinancialDonutChart,
+  ResultInterpretation,
+  SensitivityBands,
+  rateBandHint,
 } from "@/components/calculators";
 import {
   CalculatorPageLayout,
@@ -14,6 +17,7 @@ import {
 } from "@/components/calculators/CalculatorPageLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useCalculatorParams } from "@/hooks/useCalculatorParams";
+import { rateSensitivityBands } from "@/lib/sensitivity";
 import { calculateFire } from "@/utils/financial-math";
 import { formatINR, formatPercent } from "@/lib/utils";
 
@@ -41,6 +45,36 @@ function FireInner() {
       }),
     [values]
   );
+
+  const returnBands = useMemo(() => {
+    return rateSensitivityBands(values.returnPct, 2, {
+      min: 6,
+      max: 18,
+    }).map((b) => {
+      const r = calculateFire({
+        currentAge: values.age,
+        retirementAge: values.retireAge,
+        monthlyExpenses: values.expenses,
+        withdrawalRatePct: values.swr,
+        currentCorpus: values.corpus,
+        expectedReturnPct: b.ratePct,
+        inflationPct: values.inflation,
+      });
+      return {
+        label: b.label,
+        hint: rateBandHint(b.ratePct),
+        value: formatINR(r.requiredMonthlySip, true),
+        sub: `Gap ${formatINR(r.corpusGap, true)}`,
+        emphasize: b.key === "base",
+      };
+    });
+  }, [values]);
+
+  const interpretationPoints = [
+    `To fund ${formatINR(values.expenses, true)}/mo expenses at a ${formatPercent(values.swr, 1)} withdrawal rate, you need about ${formatINR(result.targetCorpus, true)} by age ${result.retirementAge}.`,
+    `Closing the ${formatINR(result.corpusGap, true)} gap implies roughly ${formatINR(result.requiredMonthlySip, true)} monthly SIP at ${formatPercent(values.returnPct, 1)} returns.`,
+    "FIRE math is assumption-heavy — lower returns raise the SIP needed; use the bands below.",
+  ];
 
   return (
     <CalculatorPageLayout
@@ -257,7 +291,15 @@ function FireInner() {
                 fileName="fire.pdf"
               />
             }
-          />
+          >
+            <ResultInterpretation points={interpretationPoints} />
+            <SensitivityBands
+              title="Return sensitivity"
+              parameterLabel="expected return (p.a.)"
+              bands={returnBands}
+              footnote="Bands show required monthly SIP if returns differ — not a guarantee you can retire."
+            />
+          </CalculationResultCard>
         </div>
       </div>
     </CalculatorPageLayout>

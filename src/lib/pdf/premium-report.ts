@@ -36,18 +36,18 @@ export type PremiumPdfOptions = {
 };
 
 const COLORS = {
-  navy: [8, 59, 122] as [number, number, number],
-  navyMid: [11, 94, 215] as [number, number, number],
-  gold: [11, 94, 215] as [number, number, number],
-  turquoise: [25, 135, 84] as [number, number, number],
-  ink: [23, 32, 51] as [number, number, number],
-  muted: [102, 112, 133] as [number, number, number],
-  line: [208, 213, 221] as [number, number, number],
-  rowAlt: [245, 249, 255] as [number, number, number],
+  navy: [11, 31, 51] as [number, number, number],
+  navyMid: [38, 55, 70] as [number, number, number],
+  gold: [15, 118, 110] as [number, number, number],
+  turquoise: [15, 118, 110] as [number, number, number],
+  ink: [23, 32, 42] as [number, number, number],
+  muted: [100, 116, 139] as [number, number, number],
+  line: [226, 232, 240] as [number, number, number],
+  rowAlt: [248, 250, 252] as [number, number, number],
   white: [255, 255, 255] as [number, number, number],
-  pageBg: [245, 249, 255] as [number, number, number],
-  cardBorder: [208, 213, 221] as [number, number, number],
-  interest: [220, 53, 69] as [number, number, number],
+  pageBg: [248, 250, 252] as [number, number, number],
+  cardBorder: [226, 232, 240] as [number, number, number],
+  interest: [220, 38, 38] as [number, number, number],
 };
 
 const MARGIN = 40;
@@ -160,7 +160,7 @@ function drawBalancePng(points: number[], titleHint?: string): string | null {
   ctx.lineTo(xAt(points.length - 1), pad.t + plotH);
   ctx.lineTo(xAt(0), pad.t + plotH);
   ctx.closePath();
-  ctx.fillStyle = "rgba(11, 94, 215, 0.12)";
+  ctx.fillStyle = "rgba(15, 118, 110, 0.12)";
   ctx.fill();
 
   // line
@@ -171,7 +171,7 @@ function drawBalancePng(points: number[], titleHint?: string): string | null {
     if (i === 0) ctx.moveTo(x, y);
     else ctx.lineTo(x, y);
   });
-  ctx.strokeStyle = "#083B7A";
+  ctx.strokeStyle = "#0B1F33";
   ctx.lineWidth = 2.5;
   ctx.stroke();
 

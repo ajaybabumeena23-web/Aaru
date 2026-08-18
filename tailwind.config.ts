@@ -15,10 +15,11 @@ const config: Config = {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
-        /* Remapped brand aliases → blue/white financial palette */
-        navy: "#083B7A",
-        gold: "#0B5ED7",
-        turquoise: "#198754",
+        /* Brand aliases — navy/teal system */
+        navy: "#0B1F33",
+        slate: "#263746",
+        gold: "#0F766E", /* legacy class name → accent teal */
+        turquoise: "#0F766E",
         highlight: {
           DEFAULT: "hsl(var(--highlight))",
           foreground: "hsl(var(--highlight-foreground))",
@@ -63,13 +64,15 @@ const config: Config = {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        sans: ["var(--font-poppins)", "system-ui", "sans-serif"],
+        sans: ["var(--font-inter)", "system-ui", "sans-serif"],
+        serif: ["var(--font-source-serif)", "Georgia", "serif"],
         mono: ["var(--font-jetbrains)", "monospace"],
       },
       boxShadow: {
         "gold-glow":
-          "0 0 0 4px rgba(11, 94, 215, 0.15), 0 0 18px rgba(11, 94, 215, 0.25)",
-        card: "0 4px 24px rgba(8, 59, 122, 0.08)",
+          "0 0 0 4px rgba(15, 118, 110, 0.12), 0 0 16px rgba(15, 118, 110, 0.18)",
+        card: "0 4px 24px rgba(11, 31, 51, 0.06)",
+        soft: "0 1px 2px rgba(11, 31, 51, 0.04)",
       },
     },
   },

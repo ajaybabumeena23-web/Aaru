@@ -6,6 +6,9 @@ import {
   DraggableSlider,
   ExportPDFButton,
   FinancialDonutChart,
+  ResultInterpretation,
+  SensitivityBands,
+  rateBandHint,
 } from "@/components/calculators";
 import {
   CalculatorPageLayout,
@@ -15,6 +18,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useCalculatorParams } from "@/hooks/useCalculatorParams";
+import { rateSensitivityBands } from "@/lib/sensitivity";
 import { calculateFd, calculateRd } from "@/utils/financial-math";
 import { formatINR, formatPercent } from "@/lib/utils";
 
@@ -54,6 +58,48 @@ function FdRdInner() {
       interest: fd.interestEarned,
     };
   }, [values, mode]);
+
+  const rateBands = useMemo(() => {
+    return rateSensitivityBands(values.rate, 1, {
+      min: 3,
+      max: 12,
+      labels: ["Lower rate", "Your rate", "Higher rate"],
+    }).map((b) => {
+      if (mode === "rd") {
+        const r = calculateRd({
+          monthlyDeposit: values.amount,
+          ratePct: b.ratePct,
+          months: values.months,
+        });
+        return {
+          label: b.label,
+          hint: rateBandHint(b.ratePct),
+          value: formatINR(r.maturityValue, true),
+          emphasize: b.key === "base",
+        };
+      }
+      const r = calculateFd({
+        principal: values.amount,
+        ratePct: b.ratePct,
+        years: values.years,
+        compoundingPerYear: 4,
+      });
+      return {
+        label: b.label,
+        hint: rateBandHint(b.ratePct),
+        value: formatINR(r.maturityValue, true),
+        emphasize: b.key === "base",
+      };
+    });
+  }, [values, mode]);
+
+  const interpretationPoints = [
+    mode === "fd"
+      ? `A ${formatINR(values.amount, true)} FD at ${formatPercent(values.rate, 1)} for ${values.years} year${values.years === 1 ? "" : "s"} (quarterly compound) matures near ${formatINR(result.maturityValue, true)}.`
+      : `An RD of ${formatINR(values.amount, true)}/mo for ${values.months} months at ${formatPercent(values.rate, 1)} matures near ${formatINR(result.maturityValue, true)}.`,
+    `Interest earned is about ${formatINR(result.interest, true)}.`,
+    "Bank rates vary by tenure and special offers — use the bands for a ±1% check.",
+  ];
 
   return (
     <CalculatorPageLayout
@@ -226,7 +272,13 @@ function FdRdInner() {
                 fileName="fd-rd.pdf"
               />
             }
-          />
+          >
+            <ResultInterpretation points={interpretationPoints} />
+            <SensitivityBands
+              parameterLabel="interest rate (p.a.)"
+              bands={rateBands}
+            />
+          </CalculationResultCard>
         </div>
       </div>
     </CalculatorPageLayout>

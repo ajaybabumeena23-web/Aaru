@@ -6,6 +6,9 @@ import {
   DraggableSlider,
   ExportPDFButton,
   FinancialDonutChart,
+  ResultInterpretation,
+  SensitivityBands,
+  rateBandHint,
 } from "@/components/calculators";
 import {
   CalculatorPageLayout,
@@ -13,6 +16,7 @@ import {
 } from "@/components/calculators/CalculatorPageLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useCalculatorParams } from "@/hooks/useCalculatorParams";
+import { rateSensitivityBands } from "@/lib/sensitivity";
 import { basicEmi } from "@/utils/financial-math";
 import { formatINR, formatNumber, formatPercent } from "@/lib/utils";
 
@@ -52,6 +56,38 @@ function EmiInner({ config }: { config: EmiVariantConfig }) {
       }),
     [values]
   );
+
+  const rateBands = useMemo(() => {
+    return rateSensitivityBands(values.rate, 1, {
+      min: 5,
+      max: 24,
+      labels: ["Lower rate", "Your rate", "Higher rate"],
+    }).map((b) => {
+      const r = basicEmi({
+        principal: values.principal,
+        annualRatePct: b.ratePct,
+        tenureMonths: values.tenure * 12,
+      });
+      return {
+        label: b.label,
+        hint: rateBandHint(b.ratePct),
+        value: formatINR(r.emi, true),
+        sub: `Interest ${formatINR(r.totalInterest, true)}`,
+        emphasize: b.key === "base",
+      };
+    });
+  }, [values]);
+
+  const interestShare =
+    result.totalPayment > 0
+      ? Math.round((result.totalInterest / result.totalPayment) * 100)
+      : 0;
+
+  const interpretationPoints = [
+    `On a ${formatINR(values.principal, true)} loan at ${formatPercent(values.rate, 2)} for ${values.tenure} year${values.tenure === 1 ? "" : "s"}, EMI is about ${formatINR(result.emi, true)}.`,
+    `You pay roughly ${formatINR(result.totalInterest, true)} in interest (~${interestShare}% of total repayment).`,
+    "Even a 1% rate change moves EMI and lifetime interest meaningfully — compare the bands below.",
+  ];
 
   return (
     <CalculatorPageLayout
@@ -128,6 +164,7 @@ function EmiInner({ config }: { config: EmiVariantConfig }) {
                 label: "Monthly EMI",
                 value: formatINR(result.emi),
                 emphasize: true,
+                hint: `${formatPercent(values.rate, 2)} · ${values.tenure} yr tenure`,
               },
               { label: "Total Interest", value: formatINR(result.totalInterest) },
               { label: "Total Payment", value: formatINR(result.totalPayment) },
@@ -214,7 +251,14 @@ function EmiInner({ config }: { config: EmiVariantConfig }) {
                 fileName={config.fileName}
               />
             }
-          />
+          >
+            <ResultInterpretation points={interpretationPoints} />
+            <SensitivityBands
+              title="Rate sensitivity"
+              parameterLabel="interest rate (p.a.)"
+              bands={rateBands}
+            />
+          </CalculationResultCard>
         </div>
       </div>
 

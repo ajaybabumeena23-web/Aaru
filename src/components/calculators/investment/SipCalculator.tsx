@@ -6,6 +6,9 @@ import {
   DraggableSlider,
   ExportPDFButton,
   FinancialDonutChart,
+  ResultInterpretation,
+  SensitivityBands,
+  rateBandHint,
 } from "@/components/calculators";
 import {
   CalculatorPageLayout,
@@ -19,6 +22,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useCalculatorParams } from "@/hooks/useCalculatorParams";
+import { rateSensitivityBands } from "@/lib/sensitivity";
 import { calculateSip } from "@/utils/financial-math";
 import { formatINR, formatPercent } from "@/lib/utils";
 import Link from "next/link";
@@ -47,11 +51,56 @@ function SipInner() {
     [values]
   );
 
+  const adjustInflation = values.advanced && values.adjustInflation;
+  const postTax = values.advanced && values.postTax;
+
   const { maturityDisplay, chartGain, maturityLabel } = resolveMaturityDisplay({
     ...result,
-    adjustInflation: values.advanced && values.adjustInflation,
-    postTax: values.advanced && values.postTax,
+    adjustInflation,
+    postTax,
   });
+
+  const rateBands = useMemo(() => {
+    const bands = rateSensitivityBands(values.rate, 2, { min: 1, max: 30 });
+    return bands.map((b) => {
+      const r = calculateSip({
+        monthlyInvestment: values.monthly,
+        annualRatePct: b.ratePct,
+        years: values.years,
+        inflationPct: adjustInflation ? values.inflation : 0,
+        postTax,
+      });
+      const { maturityDisplay: m } = resolveMaturityDisplay({
+        ...r,
+        adjustInflation,
+        postTax,
+      });
+      return {
+        label: b.label,
+        hint: rateBandHint(b.ratePct),
+        value: formatINR(m, true),
+        emphasize: b.key === "base",
+        sub: `Gain ${formatINR(m - r.invested, true)}`,
+      };
+    });
+  }, [
+    values.monthly,
+    values.rate,
+    values.years,
+    values.inflation,
+    adjustInflation,
+    postTax,
+  ]);
+
+  const gain = maturityDisplay - result.invested;
+  const multiple =
+    result.invested > 0 ? (maturityDisplay / result.invested).toFixed(1) : "—";
+
+  const interpretationPoints = [
+    `A ${formatINR(values.monthly, true)} monthly SIP for ${values.years} year${values.years === 1 ? "" : "s"} at ${formatPercent(values.rate, 1)} grows to about ${formatINR(maturityDisplay, true)}.`,
+    `You invest roughly ${formatINR(result.invested, true)}; estimated wealth gained is ${formatINR(gain, true)} (~${multiple}× contributions).`,
+    "Returns are assumptions, not guarantees — use the sensitivity bands to stress-test higher and lower rates.",
+  ];
 
   return (
     <CalculatorPageLayout
@@ -129,7 +178,7 @@ function SipInner() {
                 Need annual increases? Try the{" "}
                 <Link
                   href="/calculators/investment/step-up-sip"
-                  className="text-gold hover:underline"
+                  className="text-accent hover:underline"
                 >
                   Step-Up SIP calculator
                 </Link>
@@ -158,17 +207,18 @@ function SipInner() {
 
           <CalculationResultCard
             metrics={[
-              { label: "Total Invested", value: formatINR(result.invested) },
               {
                 label: maturityLabel,
                 value: formatINR(maturityDisplay),
                 emphasize: true,
+                hint: `${values.years} year${values.years === 1 ? "" : "s"} · ${formatPercent(values.rate, 1)} p.a.`,
               },
+              { label: "Total Invested", value: formatINR(result.invested) },
               {
                 label: "Wealth Gained",
-                value: formatINR(maturityDisplay - result.invested),
+                value: formatINR(gain),
               },
-              ...(values.advanced && values.postTax && result.taxOnGains > 0
+              ...(postTax && result.taxOnGains > 0
                 ? [{ label: "Est. LTCG Tax", value: formatINR(result.taxOnGains) }]
                 : []),
             ]}
@@ -244,7 +294,13 @@ function SipInner() {
                 fileName="sip.pdf"
               />
             }
-          />
+          >
+            <ResultInterpretation points={interpretationPoints} />
+            <SensitivityBands
+              parameterLabel="expected return (p.a.)"
+              bands={rateBands}
+            />
+          </CalculationResultCard>
         </div>
       </div>
     </CalculatorPageLayout>

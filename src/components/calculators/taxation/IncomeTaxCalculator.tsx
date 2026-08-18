@@ -6,6 +6,7 @@ import {
   DraggableSlider,
   ExportPDFButton,
   FinancialDonutChart,
+  ResultInterpretation,
 } from "@/components/calculators";
 import {
   CalculatorPageLayout,
@@ -38,6 +39,17 @@ function IncomeTaxInner() {
       }),
     [values]
   );
+
+  const savings = Math.abs(result.old.totalTax - result.new.totalTax);
+  const interpretationPoints = [
+    result.better === "same"
+      ? `At ${formatINR(values.income, true)} gross income, old and new regimes land at a similar tax of about ${formatINR(result.new.totalTax, true)}.`
+      : result.better === "new"
+        ? `For these inputs, the new regime is lower by about ${formatINR(savings, true)} (${formatINR(result.new.totalTax, true)} vs ${formatINR(result.old.totalTax, true)}).`
+        : `For these inputs, the old regime is lower by about ${formatINR(savings, true)} (${formatINR(result.old.totalTax, true)} vs ${formatINR(result.new.totalTax, true)}).`,
+    "Old-regime advantage depends on deductions and exemptions you actually claim — change 80C/HRA inputs to retest.",
+    "Illustrative FY 2025-26 model with rebate 87A and 4% cess — verify against official rules for filing.",
+  ];
 
   return (
     <CalculatorPageLayout
@@ -265,6 +277,11 @@ function IncomeTaxInner() {
           }
         />
       </div>
+
+      <ResultInterpretation
+        title="What this comparison means"
+        points={interpretationPoints}
+      />
     </CalculatorPageLayout>
   );
 }

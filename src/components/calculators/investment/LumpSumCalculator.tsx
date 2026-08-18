@@ -6,6 +6,9 @@ import {
   DraggableSlider,
   ExportPDFButton,
   FinancialDonutChart,
+  ResultInterpretation,
+  SensitivityBands,
+  rateBandHint,
 } from "@/components/calculators";
 import {
   CalculatorPageLayout,
@@ -17,6 +20,7 @@ import {
 } from "@/components/calculators/InflationTaxToggles";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useCalculatorParams } from "@/hooks/useCalculatorParams";
+import { rateSensitivityBands } from "@/lib/sensitivity";
 import { calculateLumpSum } from "@/utils/financial-math";
 import { formatINR, formatPercent } from "@/lib/utils";
 
@@ -47,6 +51,36 @@ function LumpSumInner() {
     adjustInflation: values.adjustInflation,
     postTax: values.postTax,
   });
+
+  const rateBands = useMemo(() => {
+    return rateSensitivityBands(values.rate, 2, { min: 1, max: 30 }).map((b) => {
+      const r = calculateLumpSum({
+        principal: values.principal,
+        annualRatePct: b.ratePct,
+        years: values.years,
+        inflationPct: values.adjustInflation ? values.inflation : 0,
+        postTax: values.postTax,
+      });
+      const { maturityDisplay: m } = resolveMaturityDisplay({
+        ...r,
+        adjustInflation: values.adjustInflation,
+        postTax: values.postTax,
+      });
+      return {
+        label: b.label,
+        hint: rateBandHint(b.ratePct),
+        value: formatINR(m, true),
+        emphasize: b.key === "base",
+      };
+    });
+  }, [values]);
+
+  const gain = maturityDisplay - result.invested;
+  const interpretationPoints = [
+    `Investing ${formatINR(values.principal, true)} once for ${values.years} year${values.years === 1 ? "" : "s"} at ${formatPercent(values.rate, 1)} projects about ${formatINR(maturityDisplay, true)}.`,
+    `Estimated gain is ${formatINR(gain, true)} on top of your principal.`,
+    "Lump-sum outcomes swing with return assumptions — compare the bands below before deciding.",
+  ];
 
   return (
     <CalculatorPageLayout
@@ -123,15 +157,16 @@ function LumpSumInner() {
 
           <CalculationResultCard
             metrics={[
-              { label: "Invested", value: formatINR(result.invested) },
               {
                 label: maturityLabel,
                 value: formatINR(maturityDisplay),
                 emphasize: true,
+                hint: `${values.years} year${values.years === 1 ? "" : "s"} · ${formatPercent(values.rate, 1)} p.a.`,
               },
+              { label: "Invested", value: formatINR(result.invested) },
               {
                 label: "Wealth Gained",
-                value: formatINR(maturityDisplay - result.invested),
+                value: formatINR(gain),
               },
             ]}
             footer={
@@ -194,7 +229,13 @@ function LumpSumInner() {
                 fileName="lump-sum.pdf"
               />
             }
-          />
+          >
+            <ResultInterpretation points={interpretationPoints} />
+            <SensitivityBands
+              parameterLabel="expected return (p.a.)"
+              bands={rateBands}
+            />
+          </CalculationResultCard>
         </div>
       </div>
     </CalculatorPageLayout>

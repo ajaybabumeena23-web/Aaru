@@ -6,6 +6,9 @@ import {
   DraggableSlider,
   ExportPDFButton,
   FinancialDonutChart,
+  ResultInterpretation,
+  SensitivityBands,
+  rateBandHint,
 } from "@/components/calculators";
 import {
   CalculatorPageLayout,
@@ -13,6 +16,7 @@ import {
 } from "@/components/calculators/CalculatorPageLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useCalculatorParams } from "@/hooks/useCalculatorParams";
+import { rateSensitivityBands } from "@/lib/sensitivity";
 import { calculateSwp } from "@/utils/financial-math";
 import { formatINR, formatPercent } from "@/lib/utils";
 
@@ -37,6 +41,33 @@ function SwpInner() {
 
   const withdrawn = result.totalWithdrawn;
   const remaining = result.endingCorpus;
+
+  const rateBands = useMemo(() => {
+    return rateSensitivityBands(values.rate, 2, { min: 1, max: 20 }).map((b) => {
+      const r = calculateSwp({
+        corpus: values.corpus,
+        monthlyWithdrawal: values.withdrawal,
+        annualRatePct: b.ratePct,
+        years: values.years,
+      });
+      return {
+        label: b.label,
+        hint: rateBandHint(b.ratePct),
+        value: r.depleted
+          ? `${r.monthsLasted} mo`
+          : formatINR(r.endingCorpus, true),
+        sub: r.depleted ? "Depleted early" : "Ending corpus",
+        emphasize: b.key === "base",
+      };
+    });
+  }, [values]);
+
+  const interpretationPoints = [
+    result.depleted
+      ? `At ${formatPercent(values.rate, 1)} returns, withdrawing ${formatINR(values.withdrawal, true)}/mo from ${formatINR(values.corpus, true)} depletes the corpus after about ${result.monthsLasted} months.`
+      : `At ${formatPercent(values.rate, 1)} returns, this SWP can pay ${formatINR(withdrawn, true)} over ${values.years} years and still leave about ${formatINR(remaining, true)}.`,
+    "Lower returns or higher withdrawals shorten sustainability — stress-test with the bands below.",
+  ];
 
   return (
     <CalculatorPageLayout
@@ -209,7 +240,13 @@ function SwpInner() {
                 fileName="swp.pdf"
               />
             }
-          />
+          >
+            <ResultInterpretation points={interpretationPoints} />
+            <SensitivityBands
+              parameterLabel="expected return (p.a.)"
+              bands={rateBands}
+            />
+          </CalculationResultCard>
         </div>
       </div>
     </CalculatorPageLayout>
