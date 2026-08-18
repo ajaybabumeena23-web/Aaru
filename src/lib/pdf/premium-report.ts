@@ -223,8 +223,11 @@ function base64ToBinaryString(base64: string): string {
   if (typeof atob === "function") {
     return atob(base64);
   }
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  return Buffer.from(base64, "base64").toString("binary");
+  const Buf = (globalThis as { Buffer?: { from(data: string, enc: string): { toString(enc: string): string } } }).Buffer;
+  if (Buf) {
+    return Buf.from(base64, "base64").toString("binary");
+  }
+  throw new Error("No base64 decoder available");
 }
 
 function registerUnicodePdfFonts(doc: jsPDF) {
