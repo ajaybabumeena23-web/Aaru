@@ -48,15 +48,15 @@ export function CalculationResultCard({
       </CardHeader>
       <CardContent className="space-y-4">
         {primary ? (
-          <div className="rounded-xl border border-navy/20 bg-navy px-4 py-4 text-white sm:px-5 sm:py-5">
+          <div className="rounded-xl border border-navy/20 bg-navy px-3 py-4 text-white sm:px-5 sm:py-5">
             <p className="text-xs font-semibold uppercase tracking-wide text-white/70">
               {primary.label}
             </p>
-            <p className="mt-1 font-serif text-3xl font-normal tracking-tight tabular-nums sm:text-4xl">
+            <p className="mt-1 break-words font-serif text-2xl font-normal tracking-tight tabular-nums sm:text-3xl lg:text-4xl">
               {primary.value}
             </p>
             {primary.hint ? (
-              <p className="mt-2 text-sm text-white/75">{primary.hint}</p>
+              <p className="mt-2 text-sm leading-snug text-white/75">{primary.hint}</p>
             ) : null}
           </div>
         ) : null}
@@ -76,7 +76,7 @@ export function CalculationResultCard({
                 <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                   {m.label}
                 </dt>
-                <dd className="mt-1 text-xl font-semibold tabular-nums text-foreground">
+                <dd className="mt-1 break-words text-lg font-semibold tabular-nums text-foreground sm:text-xl">
                   {m.value}
                 </dd>
                 {m.hint ? (

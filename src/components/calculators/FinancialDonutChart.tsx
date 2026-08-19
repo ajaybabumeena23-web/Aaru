@@ -61,7 +61,7 @@ export function FinancialDonutChart({
   centerLabel,
   centerValue,
   className,
-  height = 240,
+  height,
   showLegend = true,
 }: FinancialDonutChartProps) {
   const chartData = React.useMemo(
@@ -74,27 +74,29 @@ export function FinancialDonutChart({
   );
 
   const total = chartData.reduce((sum, d) => sum + (d.value || 0), 0);
+  const resolvedHeight = height ?? undefined;
 
   return (
     <div
       className={cn(
-        "relative w-full rounded-lg illustrative-gradient border border-border/60 p-2",
+        "relative w-full min-w-0 overflow-hidden rounded-lg border border-border/60 illustrative-gradient p-2",
+        !resolvedHeight && "h-[200px] sm:h-[240px]",
         className
       )}
-      style={{ height }}
+      style={resolvedHeight ? { height: resolvedHeight } : undefined}
     >
-      <ResponsiveContainer width="100%" height="100%">
-        <PieChart>
+      <ResponsiveContainer width="100%" height="100%" minWidth={0}>
+        <PieChart margin={{ top: 4, right: 4, bottom: showLegend ? 4 : 4, left: 4 }}>
           <Pie
             data={chartData}
             dataKey="value"
             nameKey="name"
             cx="50%"
-            cy="50%"
-            innerRadius="58%"
-            outerRadius="82%"
+            cy={showLegend ? "46%" : "50%"}
+            innerRadius="54%"
+            outerRadius="78%"
             paddingAngle={2}
-            stroke="#13192B"
+            stroke="#0B1F33"
             strokeWidth={2}
           >
             {chartData.map((entry) => (
@@ -105,9 +107,12 @@ export function FinancialDonutChart({
           {showLegend ? (
             <Legend
               verticalAlign="bottom"
-              height={36}
+              height={32}
+              wrapperStyle={{ fontSize: 12, paddingTop: 4 }}
               formatter={(value) => (
-                <span className="text-sm text-card-foreground">{value}</span>
+                <span className="text-xs text-card-foreground sm:text-sm">
+                  {value}
+                </span>
               )}
             />
           ) : null}
@@ -116,21 +121,20 @@ export function FinancialDonutChart({
 
       {(centerLabel || centerValue) && (
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-          <div className="mb-6 text-center">
+          <div
+            className={cn(
+              "max-w-[45%] text-center",
+              showLegend ? "mb-7 sm:mb-8" : "mb-0"
+            )}
+          >
             {centerLabel ? (
-              <p className="text-xs uppercase tracking-wide text-muted-foreground">
+              <p className="text-[10px] uppercase tracking-wide text-muted-foreground sm:text-xs">
                 {centerLabel}
               </p>
             ) : null}
-            {centerValue ? (
-              <p className="text-lg font-semibold tabular-nums text-gold">
-                {centerValue}
-              </p>
-            ) : (
-              <p className="text-lg font-semibold tabular-nums text-gold">
-                {formatINR(total, true)}
-              </p>
-            )}
+            <p className="truncate text-base font-semibold tabular-nums text-accent sm:text-lg">
+              {centerValue ?? formatINR(total, true)}
+            </p>
           </div>
         </div>
       )}

@@ -110,6 +110,16 @@ export const TOPIC_HUBS: TopicHub[] = [
         blurb: "Auto loan EMI estimate",
       },
       {
+        href: "/calculators/debt/education-loan-emi",
+        title: "Education Loan EMI",
+        blurb: "Study loan EMI with typical tenure defaults",
+      },
+      {
+        href: "/calculators/debt/loan-affordability",
+        title: "Loan Affordability",
+        blurb: "How much loan income can support",
+      },
+      {
         href: "/calculators/debt/advanced-prepayment",
         title: "Loan Prepayment",
         blurb: "Lump-sum prepay & EMI step-up",
@@ -454,6 +464,21 @@ export const TOPIC_HUBS: TopicHub[] = [
         href: "/calculators/retirement/goal-planner",
         title: "Goal Planner",
         blurb: "SIP needed for a target corpus",
+      },
+      {
+        href: "/calculators/retirement/emergency-fund",
+        title: "Emergency Fund",
+        blurb: "Size a cash buffer from expenses",
+      },
+      {
+        href: "/calculators/investment/net-worth",
+        title: "Net Worth",
+        blurb: "Assets minus liabilities snapshot",
+      },
+      {
+        href: "/calculators/investment/inflation",
+        title: "Inflation Calculator",
+        blurb: "Future costs and real returns",
       },
       {
         href: "/calculators/retirement/fire",

@@ -11,3 +11,4 @@ export * from "./loan";
 export * from "./tax";
 export * from "./retirement";
 export * from "./fixed-income";
+export * from "./planning";

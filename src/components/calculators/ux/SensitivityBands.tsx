@@ -63,7 +63,7 @@ export function SensitivityBands({
           <div
             key={`${b.label}-${b.hint}`}
             className={cn(
-              "rounded-lg border px-3 py-3",
+              "min-w-0 rounded-lg border px-3 py-3",
               b.emphasize
                 ? "border-accent/40 bg-accent/5 shadow-sm"
                 : "border-border/70 bg-secondary/40"
@@ -75,14 +75,14 @@ export function SensitivityBands({
             <p className="mt-0.5 text-xs text-muted-foreground">{b.hint}</p>
             <p
               className={cn(
-                "mt-2 text-lg font-semibold tabular-nums tracking-tight",
+                "mt-2 break-words text-base font-semibold tabular-nums tracking-tight sm:text-lg",
                 b.emphasize ? "text-accent" : "text-foreground"
               )}
             >
               {b.value}
             </p>
             {b.sub ? (
-              <p className="mt-1 text-xs text-muted-foreground">{b.sub}</p>
+              <p className="mt-1 break-words text-xs text-muted-foreground">{b.sub}</p>
             ) : null}
           </div>
         ))}

@@ -70,8 +70,8 @@ const FEATURED_CALCS = [
 const GOALS = [
   {
     title: "Buying a home",
-    href: "/loans",
-    blurb: "Calculate affordability, EMI and total interest.",
+    href: "/calculators/debt/loan-affordability",
+    blurb: "Estimate affordability, then refine EMI and total interest.",
   },
   {
     title: "Building wealth",

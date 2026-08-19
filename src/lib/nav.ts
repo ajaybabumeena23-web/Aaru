@@ -15,7 +15,13 @@ export const DESKTOP_NAV: NavLink[] = [
   {
     href: "/sip",
     label: "Investments",
-    match: ["/sip", "/mutual-funds", "/stocks", "/calculators/investment"],
+    match: [
+      "/sip",
+      "/investments",
+      "/mutual-funds",
+      "/stocks",
+      "/calculators/investment",
+    ],
   },
   {
     href: "/loans",
@@ -25,7 +31,7 @@ export const DESKTOP_NAV: NavLink[] = [
   {
     href: "/income-tax",
     label: "Tax",
-    match: ["/income-tax", "/calculators/taxation"],
+    match: ["/income-tax", "/tax", "/calculators/taxation"],
   },
   {
     href: "/retirement",
@@ -35,7 +41,13 @@ export const DESKTOP_NAV: NavLink[] = [
   {
     href: "/wealth-planning",
     label: "Personal Finance",
-    match: ["/wealth-planning", "/fd-rd", "/insurance"],
+    match: [
+      "/wealth-planning",
+      "/personal-finance",
+      "/fd-rd",
+      "/savings",
+      "/insurance",
+    ],
   },
   { href: "/guides", label: "Guides", match: "/guides" },
 ];
@@ -60,12 +72,12 @@ export const LEARN_LINKS: NavLink[] = [
 ];
 
 export const FINANCIAL_GOALS: NavLink[] = [
-  { href: "/loans/50-lakh-home-loan-20-years", label: "Buy a Home" },
+  { href: "/calculators/debt/loan-affordability", label: "Buy a Home" },
   { href: "/retirement", label: "Retirement" },
   { href: "/calculators/retirement/child-education", label: "Education" },
   { href: "/sip", label: "Wealth Building" },
   { href: "/loans", label: "Debt-Free" },
-  { href: "/guides/emergency-fund-basics", label: "Emergency Fund" },
+  { href: "/calculators/retirement/emergency-fund", label: "Emergency Fund" },
 ];
 
 /** Footer calculator shortcuts (existing tools only) */

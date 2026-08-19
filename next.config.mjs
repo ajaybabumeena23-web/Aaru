@@ -32,6 +32,21 @@ const seoRedirects = [
   ["fd-rd-calculator", "government/fd-rd"],
   ["fd-calculator", "government/fd-rd"],
   ["rd-calculator", "government/fd-rd"],
+  ["inflation-calculator", "investment/inflation"],
+  ["cagr-calculator", "investment/cagr"],
+  ["net-worth-calculator", "investment/net-worth"],
+  ["loan-affordability-calculator", "debt/loan-affordability"],
+  ["loan-eligibility-calculator", "debt/loan-affordability"],
+  ["education-loan-emi-calculator", "debt/education-loan-emi"],
+  ["emergency-fund-calculator", "retirement/emergency-fund"],
+];
+
+/** Pretty IA aliases → existing canonical topic hubs (no new content URLs). */
+const hubIaAliases = [
+  ["investments", "sip"],
+  ["tax", "income-tax"],
+  ["personal-finance", "wealth-planning"],
+  ["savings", "fd-rd"],
 ];
 
 const nextConfig = {
@@ -60,7 +75,12 @@ const nextConfig = {
       destination: `/${slug}`,
       permanent: true,
     }));
-    return [...flat, ...topicAliases];
+    const iaAliases = hubIaAliases.map(([alias, canonical]) => ({
+      source: `/${alias}`,
+      destination: `/${canonical}`,
+      permanent: true,
+    }));
+    return [...flat, ...topicAliases, ...iaAliases];
   },
 };
 

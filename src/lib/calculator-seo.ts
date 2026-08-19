@@ -901,6 +901,186 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeo> = {
     ],
     lastUpdated: UPDATED,
   },
+  "investment/inflation": {
+    seoSlug: "inflation-calculator",
+    metaTitle: "Inflation Calculator India – Future Cost & Real Return | Aaru Wealth",
+    metaDescription:
+      "Estimate how inflation raises future costs and what real return remains after inflation. Free illustrative tool for India.",
+    intro:
+      "Inflation quietly changes what money can buy. This calculator projects future costs from today's prices and shows an illustrative real return when you enter a nominal return assumption.",
+    howToUse: [
+      "Enter today's amount and expected inflation.",
+      "Choose how many years ahead to project.",
+      "Optionally enter a nominal return to see real return.",
+    ],
+    formula:
+      "Future cost = P × (1+i)^n. Real return ≈ (1+r)/(1+i) − 1, where i is inflation and r is nominal return.",
+    example:
+      "₹1 lakh today at 6% inflation for 10 years becomes a much larger nominal price — cash needs returns that at least match inflation to hold purchasing power.",
+    factors: ["Inflation assumption", "Time horizon", "Nominal return assumption"],
+    faqs: [
+      {
+        q: "Is inflation fixed?",
+        a: "No. Use a range and stress-test. Official CPI series differ from your personal basket.",
+      },
+      {
+        q: "Does this predict markets?",
+        a: "No. It only applies the inflation and return rates you enter.",
+      },
+    ],
+    related: [
+      { category: "investment", slug: "cagr", title: "CAGR Calculator" },
+      { category: "investment", slug: "sip", title: "SIP Calculator" },
+      { category: "retirement", slug: "emergency-fund", title: "Emergency Fund" },
+    ],
+    lastUpdated: UPDATED,
+  },
+  "investment/cagr": {
+    seoSlug: "cagr-calculator",
+    metaTitle: "CAGR Calculator – Compound Annual Growth Rate | Aaru Wealth",
+    metaDescription:
+      "Calculate CAGR from start and end values, or project corpus growth from an assumed CAGR.",
+    intro:
+      "CAGR summarises growth between two values over time as a constant annual rate. Use it to compare investments or reverse-project an ending corpus.",
+    howToUse: [
+      "Choose Find CAGR or Project corpus.",
+      "Enter start value, end value (or CAGR), and years.",
+      "Read the implied rate or projected corpus.",
+    ],
+    formula: "CAGR = (End/Start)^(1/n) − 1. Projected End = Start × (1+CAGR)^n.",
+    example:
+      "₹10 lakh growing to ₹30 lakh in 10 years implies a double-digit CAGR — useful for comparison, not a promise of smooth yearly returns.",
+    factors: ["Start value", "End value", "Time period"],
+    faqs: [
+      {
+        q: "Is CAGR the same as XIRR?",
+        a: "No. CAGR uses two values and time. XIRR handles irregular cash flows.",
+      },
+    ],
+    related: [
+      { category: "investment", slug: "xirr", title: "XIRR Calculator" },
+      { category: "investment", slug: "lump-sum", title: "Lump Sum" },
+      { category: "investment", slug: "inflation", title: "Inflation Calculator" },
+    ],
+    lastUpdated: UPDATED,
+  },
+  "investment/net-worth": {
+    seoSlug: "net-worth-calculator",
+    metaTitle: "Net Worth Calculator India – Assets Minus Liabilities | Aaru Wealth",
+    metaDescription:
+      "Estimate personal net worth by adding assets and subtracting loans. Simple balance-sheet snapshot for India.",
+    intro:
+      "Net worth is assets minus liabilities. This tool helps you total major buckets — cash, investments, property and loans — for a shareable snapshot.",
+    howToUse: [
+      "Enter cash, investments, property and other assets.",
+      "Enter home loan and other debt balances.",
+      "Review net worth and the assets vs liabilities split.",
+    ],
+    formula: "Net worth = Total assets − Total liabilities.",
+    example:
+      "A home with a large outstanding loan can look wealthy on assets alone — net worth shows the equity picture.",
+    factors: ["Asset valuations", "Outstanding debt", "Liquidity of assets"],
+    faqs: [
+      {
+        q: "Should I use market value or purchase price?",
+        a: "Use a realistic market estimate for planning. Purchase price can understate or overstate today's position.",
+      },
+    ],
+    related: [
+      { category: "retirement", slug: "emergency-fund", title: "Emergency Fund" },
+      { category: "retirement", slug: "goal-planner", title: "Goal Planner" },
+      { category: "debt", slug: "emi", title: "EMI Calculator" },
+    ],
+    lastUpdated: UPDATED,
+  },
+  "debt/loan-affordability": {
+    seoSlug: "loan-affordability-calculator",
+    metaTitle: "Loan Affordability Calculator – How Much Loan Can I Get | Aaru Wealth",
+    metaDescription:
+      "Estimate max home or personal loan from income, existing EMIs and a FOIR-style EMI cap using reducing-balance EMI math.",
+    intro:
+      "Loan eligibility often hinges on how much EMI you can service. This illustration uses a FOIR-style income cap and the inverse of standard EMI math — not a bank sanction.",
+    howToUse: [
+      "Enter monthly income and existing EMIs.",
+      "Set a FOIR-style EMI cap (% of income).",
+      "Enter expected rate and tenure to see max loan.",
+    ],
+    formula:
+      "Available EMI = (Income × FOIR%) − existing EMIs. Max principal from EMI: P = EMI × ((1+r)^n − 1) / (r(1+r)^n).",
+    example:
+      "Higher income or longer tenure raises capacity; existing EMIs and higher rates shrink it.",
+    factors: ["Income", "Existing EMIs", "FOIR policy", "Rate", "Tenure"],
+    faqs: [
+      {
+        q: "Will my bank approve this amount?",
+        a: "Not necessarily. Lenders apply their own FOIR, bureau, and documentation rules. Treat this as a planning estimate.",
+      },
+    ],
+    related: [
+      { category: "debt", slug: "emi", title: "EMI Calculator" },
+      { category: "debt", slug: "home-loan-emi", title: "Home Loan EMI" },
+      { category: "debt", slug: "education-loan-emi", title: "Education Loan EMI" },
+    ],
+    lastUpdated: UPDATED,
+  },
+  "debt/education-loan-emi": {
+    seoSlug: "education-loan-emi-calculator",
+    metaTitle: "Education Loan EMI Calculator India | Aaru Wealth",
+    metaDescription:
+      "Calculate education loan EMI, total interest and amortisation with student-loan style defaults.",
+    intro:
+      "Education loans often have different tenures and rates than home loans. This calculator uses the same reducing-balance EMI engine with education-loan oriented defaults.",
+    howToUse: [
+      "Enter loan amount, interest rate and tenure.",
+      "Review EMI, total interest and schedule.",
+      "Confirm moratorium and rate resets with your lender separately.",
+    ],
+    formula: "EMI = P × r × (1+r)^n / ((1+r)^n − 1), where r is monthly rate and n is months.",
+    example:
+      "A ₹15 lakh education loan over 10 years at a mid-single to low-double digit rate has a steady EMI after disbursement — moratorium interest rules vary by lender.",
+    factors: ["Principal", "Rate", "Tenure", "Moratorium terms"],
+    faqs: [
+      {
+        q: "Does this include study-period moratorium?",
+        a: "No. Enter the repayment amount and tenure that apply after your moratorium, or adjust principal for accrued interest if needed.",
+      },
+    ],
+    related: [
+      { category: "debt", slug: "emi", title: "EMI Calculator" },
+      { category: "debt", slug: "loan-affordability", title: "Loan Affordability" },
+      { category: "retirement", slug: "child-education", title: "Child Education" },
+    ],
+    lastUpdated: UPDATED,
+  },
+  "retirement/emergency-fund": {
+    seoSlug: "emergency-fund-calculator",
+    metaTitle: "Emergency Fund Calculator – Months of Expenses | Aaru Wealth",
+    metaDescription:
+      "Size an emergency cash buffer from monthly expenses and months of cover, then compare with current savings.",
+    intro:
+      "An emergency fund is a liquid buffer for income shocks and urgent expenses. This tool sizes a target from expenses × months and shows any gap versus savings you already have.",
+    howToUse: [
+      "Enter essential monthly expenses.",
+      "Choose months of cover (often 3–12).",
+      "Enter current emergency savings to see the gap.",
+    ],
+    formula: "Target = monthly expenses × months of cover. Gap = max(0, target − savings).",
+    example:
+      "₹50,000 expenses × 6 months → ₹3 lakh target. If you have ₹1.5 lakh saved, the gap is ₹1.5 lakh.",
+    factors: ["Expense level", "Job stability", "Dependents", "Insurance cover"],
+    faqs: [
+      {
+        q: "How many months should I keep?",
+        a: "Common ranges are 3–12 months of essential expenses. Higher if income is variable or dependents rely on you.",
+      },
+    ],
+    related: [
+      { category: "investment", slug: "net-worth", title: "Net Worth" },
+      { category: "investment", slug: "inflation", title: "Inflation Calculator" },
+      { category: "government", slug: "fd-rd", title: "FD / RD" },
+    ],
+    lastUpdated: UPDATED,
+  },
 };
 
 export function getCalculatorSeo(key: string): CalculatorSeo | undefined {

@@ -176,9 +176,11 @@ function EmiInner({ config }: { config: EmiVariantConfig }) {
                     ? "Personal Loan EMI Calculator"
                     : config.seoKey === "debt/home-loan-emi"
                       ? "Home Loan EMI Calculator"
-                      : config.seoKey === "debt/car-loan-emi"
+                      :                   config.seoKey === "debt/car-loan-emi"
                         ? "Car Loan EMI Calculator"
-                        : "EMI Calculator"
+                        : config.seoKey === "debt/education-loan-emi"
+                          ? "Education Loan EMI Calculator"
+                          : "EMI Calculator"
                 }
                 tagline="Your personalized loan repayment summary"
                 subtitle={`${config.crumb} — Aaru Wealth`}
@@ -351,6 +353,23 @@ export function CarLoanEmiCalculator() {
         defaults: { principal: 8_00_000, rate: 10, tenure: 5 },
         principalMax: 50_00_000,
         fileName: "car-loan-emi.pdf",
+      }}
+    />
+  );
+}
+
+export function EducationLoanEmiCalculator() {
+  return withCalculatorSuspense(
+    <EmiInner
+      config={{
+        seoKey: "debt/education-loan-emi",
+        crumb: "Education Loan EMI",
+        title: "Education Loan EMI Calculator",
+        description:
+          "Estimate education loan EMI and total interest. Defaults suit typical study-loan tenures—confirm moratorium and rate with your lender.",
+        defaults: { principal: 15_00_000, rate: 9.5, tenure: 10 },
+        principalMax: 1_00_00_000,
+        fileName: "education-loan-emi.pdf",
       }}
     />
   );

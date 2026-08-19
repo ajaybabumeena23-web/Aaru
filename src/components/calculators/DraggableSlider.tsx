@@ -62,17 +62,17 @@ export function DraggableSlider({
   const display = formatValue ? formatValue(value) : formatNumber(value);
 
   return (
-    <div className={cn("space-y-3", className)}>
-      <div className="flex items-center justify-between gap-3">
+    <div className={cn("min-w-0 space-y-3", className)}>
+      <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
         <Label
           htmlFor={id}
-          className="text-sm font-medium text-card-foreground"
+          className="min-w-0 shrink text-sm font-medium leading-snug text-card-foreground"
         >
           {label}
         </Label>
-        <div className="flex items-center gap-1">
+        <div className="flex min-w-0 shrink-0 items-center gap-1.5 self-stretch sm:self-auto">
           {prefix ? (
-            <span className="text-sm text-muted-foreground">{prefix}</span>
+            <span className="shrink-0 text-sm text-muted-foreground">{prefix}</span>
           ) : null}
           <Input
             id={id}
@@ -87,34 +87,36 @@ export function DraggableSlider({
                 e.currentTarget.blur();
               }
             }}
-            className="h-8 w-28 border-border/70 bg-navy/50 text-right tabular-nums text-foreground focus-visible:ring-gold/40"
+            className="h-11 min-h-11 w-full min-w-0 flex-1 border-border/70 bg-secondary/80 text-right tabular-nums text-base text-foreground focus-visible:ring-accent/40 sm:h-10 sm:w-28 sm:flex-none sm:text-sm"
             aria-label={`${label} value`}
           />
           {suffix ? (
-            <span className="text-sm text-muted-foreground">{suffix}</span>
+            <span className="shrink-0 text-sm text-muted-foreground">{suffix}</span>
           ) : null}
         </div>
       </div>
 
-      <Slider
-        disabled={disabled}
-        min={min}
-        max={max}
-        step={step}
-        value={[clamp(value)]}
-        onValueChange={([v]) => onChange(clamp(v))}
-        aria-label={label}
-        className="[&_[role=slider]]:border-gold [&_[role=slider]]:bg-gold"
-      />
+      <div className="px-0.5 py-1">
+        <Slider
+          disabled={disabled}
+          min={min}
+          max={max}
+          step={step}
+          value={[clamp(value)]}
+          onValueChange={([v]) => onChange(clamp(v))}
+          aria-label={label}
+          className="[&_[role=slider]]:border-accent [&_[role=slider]]:bg-accent"
+        />
+      </div>
 
-      <div className="flex justify-between text-xs text-muted-foreground">
-        <span>
+      <div className="flex justify-between gap-2 text-[11px] text-muted-foreground sm:text-xs">
+        <span className="min-w-0 truncate">
           {prefix}
           {formatNumber(min)}
           {suffix ? ` ${suffix}` : ""}
         </span>
-        <span className="font-medium text-gold/90">{display}</span>
-        <span>
+        <span className="shrink-0 font-medium text-accent">{display}</span>
+        <span className="min-w-0 truncate text-right">
           {prefix}
           {formatNumber(max)}
           {suffix ? ` ${suffix}` : ""}

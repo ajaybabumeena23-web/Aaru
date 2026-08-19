@@ -32,4 +32,10 @@ export const CALCULATOR_GUIDE_LINKS: Record<string, string[]> = {
   "government/ppf": ["ppf-basics"],
   "government/nps": ["nps-basics", "how-to-plan-retirement-india"],
   "government/fd-rd": ["fd-vs-rd", "emergency-fund-basics"],
+  "investment/inflation": ["emergency-fund-basics", "asset-allocation-basics"],
+  "investment/cagr": ["how-sip-works", "xirr-explained"],
+  "investment/net-worth": ["net-worth-and-goals", "emergency-fund-basics"],
+  "debt/loan-affordability": ["how-emi-works", "loan-prepayment-strategies"],
+  "debt/education-loan-emi": ["how-emi-works"],
+  "retirement/emergency-fund": ["emergency-fund-basics", "net-worth-and-goals"],
 };

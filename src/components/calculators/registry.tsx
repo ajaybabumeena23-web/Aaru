@@ -7,6 +7,7 @@ import { SwpCalculator } from "@/components/calculators/investment/SwpCalculator
 import { XirrCalculator } from "@/components/calculators/investment/XirrCalculator";
 import {
   CarLoanEmiCalculator,
+  EducationLoanEmiCalculator,
   EmiCalculator,
   HomeLoanEmiCalculator,
   PersonalLoanEmiCalculator,
@@ -29,6 +30,11 @@ import { EpfCalculator } from "@/components/calculators/government/EpfCalculator
 import { SsyCalculator } from "@/components/calculators/government/SsyCalculator";
 import { PostOfficeCalculator } from "@/components/calculators/government/PostOfficeCalculator";
 import { FdRdCalculator } from "@/components/calculators/government/FdRdCalculator";
+import { InflationCalculator } from "@/components/calculators/investment/InflationCalculator";
+import { CagrCalculator } from "@/components/calculators/investment/CagrCalculator";
+import { NetWorthCalculator } from "@/components/calculators/investment/NetWorthCalculator";
+import { LoanAffordabilityCalculator } from "@/components/calculators/debt/LoanAffordabilityCalculator";
+import { EmergencyFundCalculator } from "@/components/calculators/retirement/EmergencyFundCalculator";
 
 /** Maps `category/slug` → live calculator component. */
 export const CALCULATOR_REGISTRY: Record<string, ComponentType> = {
@@ -37,10 +43,15 @@ export const CALCULATOR_REGISTRY: Record<string, ComponentType> = {
   "investment/lump-sum": LumpSumCalculator,
   "investment/swp": SwpCalculator,
   "investment/xirr": XirrCalculator,
+  "investment/inflation": InflationCalculator,
+  "investment/cagr": CagrCalculator,
+  "investment/net-worth": NetWorthCalculator,
   "debt/emi": EmiCalculator,
   "debt/home-loan-emi": HomeLoanEmiCalculator,
   "debt/personal-loan-emi": PersonalLoanEmiCalculator,
   "debt/car-loan-emi": CarLoanEmiCalculator,
+  "debt/education-loan-emi": EducationLoanEmiCalculator,
+  "debt/loan-affordability": LoanAffordabilityCalculator,
   "debt/advanced-prepayment": AdvancedPrepaymentCalculator,
   "debt/tenure-vs-emi": TenureVsEmiCalculator,
   "debt/refinance": RefinanceCalculator,
@@ -50,6 +61,7 @@ export const CALCULATOR_REGISTRY: Record<string, ComponentType> = {
   "retirement/goal-planner": GoalPlannerCalculator,
   "retirement/reverse-sip": ReverseSipCalculator,
   "retirement/child-education": ChildEducationCalculator,
+  "retirement/emergency-fund": EmergencyFundCalculator,
   "taxation/income-tax": IncomeTaxCalculator,
   "taxation/capital-gains": CapitalGainsCalculator,
   "taxation/hra-exemption": HraCalculator,

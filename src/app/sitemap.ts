@@ -46,7 +46,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${base}/${t.slug}`,
       lastModified,
       changeFrequency: "weekly" as const,
-      priority: 0.85,
+      /* Core money hubs rank slightly above niche hubs */
+      priority: ["sip", "loans", "income-tax", "retirement", "wealth-planning"].includes(
+        t.slug
+      )
+        ? 0.9
+        : 0.85,
     }));
 
     const scenarioRoutes: MetadataRoute.Sitemap = SCENARIOS.map((s) => ({

@@ -7,6 +7,7 @@ import { CALCULATOR_CATEGORIES } from "@/lib/calculators";
 import { GUIDES } from "@/lib/content/guides";
 import { GLOSSARY } from "@/lib/content/glossary";
 import { TOPIC_HUBS } from "@/lib/content/topics";
+import { HUB_ALIASES } from "@/lib/hub-aliases";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
@@ -43,6 +44,20 @@ function searchCatalog(query: string): Hit[] {
         title: `${topic.title} hub`,
         category: "Topic",
       });
+    }
+  }
+
+  for (const alias of HUB_ALIASES) {
+    const hay = `${alias.label} ${alias.alias}`.toLowerCase();
+    if (hay.includes(q)) {
+      const already = hits.some((h) => h.href === `/${alias.canonical}`);
+      if (!already) {
+        hits.push({
+          href: `/${alias.canonical}`,
+          title: `${alias.label} hub`,
+          category: "Topic",
+        });
+      }
     }
   }
 

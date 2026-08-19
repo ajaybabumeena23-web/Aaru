@@ -111,7 +111,10 @@ export function ExportPDFButton({
       variant="outline"
       disabled={disabled || busy}
       onClick={handleExport}
-      className={cn(className)}
+      className={cn(
+        "min-h-11 w-full touch-manipulation sm:min-h-10 sm:w-auto",
+        className
+      )}
     >
       <Download className="h-4 w-4" />
       {busy ? "Preparing PDF…" : "Export to PDF"}

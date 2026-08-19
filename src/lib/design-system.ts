@@ -32,7 +32,7 @@ export const ds = {
   section: "space-y-4 sm:space-y-5",
   sectionTight: "space-y-3",
   container: "mx-auto w-full max-w-6xl",
-  calcGrid: "grid gap-6 lg:grid-cols-2",
+  calcGrid: "grid min-w-0 gap-6 lg:grid-cols-2 [&>*]:min-w-0",
   /** Editorial display heading (serif) */
   display:
     "font-serif text-3xl font-normal tracking-tight text-foreground sm:text-4xl lg:text-[2.75rem] lg:leading-[1.15]",

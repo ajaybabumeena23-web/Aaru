@@ -57,6 +57,24 @@ export const CALCULATOR_CATEGORIES: CalculatorCategory[] = [
         h1: "Measure True Portfolio Returns",
         description: "Compute XIRR for irregular cash flows (Newton-Raphson).",
       },
+      {
+        slug: "inflation",
+        title: "Inflation Calculator",
+        h1: "See How Inflation Changes Costs",
+        description: "Project future prices and illustrative real returns.",
+      },
+      {
+        slug: "cagr",
+        title: "CAGR Calculator",
+        h1: "Measure Compound Annual Growth",
+        description: "Find CAGR from start/end values or project a corpus.",
+      },
+      {
+        slug: "net-worth",
+        title: "Net Worth Calculator",
+        h1: "Estimate Your Net Worth",
+        description: "Simple assets minus liabilities snapshot.",
+      },
     ],
   },
   {
@@ -87,6 +105,18 @@ export const CALCULATOR_CATEGORIES: CalculatorCategory[] = [
         title: "Car Loan EMI",
         h1: "Car Loan EMI Calculator",
         description: "Auto loan EMI estimate with typical tenure defaults.",
+      },
+      {
+        slug: "education-loan-emi",
+        title: "Education Loan EMI",
+        h1: "Education Loan EMI Calculator",
+        description: "Education loan EMI with typical student-loan defaults.",
+      },
+      {
+        slug: "loan-affordability",
+        title: "Loan Affordability",
+        h1: "Estimate How Much Loan You Can Afford",
+        description: "Max loan from income, existing EMIs and FOIR-style cap.",
       },
       {
         slug: "advanced-prepayment",
@@ -148,6 +178,12 @@ export const CALCULATOR_CATEGORIES: CalculatorCategory[] = [
         title: "Child Education",
         h1: "Fund Your Child's Education",
         description: "Plan for 10–12% education inflation.",
+      },
+      {
+        slug: "emergency-fund",
+        title: "Emergency Fund",
+        h1: "Size Your Emergency Fund",
+        description: "Cash buffer from expenses and months of cover.",
       },
     ],
   },

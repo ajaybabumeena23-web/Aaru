@@ -8,10 +8,21 @@ import { SITE_NAME } from "@/lib/brand";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
-  title: "Money Guides",
+  title: {
+    absolute: `Money Guides — SIP, Loans, Tax & Retirement | ${SITE_NAME}`,
+  },
   description:
-    "Practical guides on SIPs, loans, tax, retirement and government schemes for Indian households.",
+    "Practical guides on SIPs, loans, tax, retirement and government schemes for Indian households — paired with transparent calculators.",
   alternates: { canonical: `${getSiteUrl()}/guides` },
+  openGraph: {
+    title: `Money Guides | ${SITE_NAME}`,
+    description:
+      "Clear explainers that pair with our calculators—examples and frameworks, not product pitches.",
+    url: `${getSiteUrl()}/guides`,
+    siteName: SITE_NAME,
+    type: "website",
+    locale: "en_IN",
+  },
 };
 
 export default function GuidesIndexPage() {

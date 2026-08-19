@@ -14,7 +14,10 @@ import {
   RelatedCalculators,
   RelatedGuides,
   SourcesBlock,
+  TopicNavigation,
 } from "@/components/seo/RelatedContent";
+import { getTopic } from "@/lib/content/topics";
+import { resolveCalculatorTopicHub } from "@/lib/hub-aliases";
 
 export type CalculatorPageLayoutProps = {
   /** e.g. investment/sip */
@@ -41,6 +44,21 @@ export function CalculatorPageLayout({
   const relatedGuides = (CALCULATOR_GUIDE_LINKS[seoKey] ?? [])
     .map((slug) => getGuide(slug))
     .filter(Boolean);
+
+  const topicHubSlug = resolveCalculatorTopicHub(seoKey);
+  const topicHub = topicHubSlug ? getTopic(topicHubSlug) : undefined;
+  const topicNavItems = topicHub
+    ? [
+        { href: `/${topicHub.slug}`, title: `${topicHub.title} hub` },
+        { href: "/topics", title: "All topics" },
+        { href: "/guides", title: "Guides" },
+        { href: "/glossary", title: "Glossary" },
+      ]
+    : [
+        { href: "/topics", title: "All topics" },
+        { href: "/guides", title: "Guides" },
+        { href: "/glossary", title: "Glossary" },
+      ];
 
   const breadcrumbLd = {
     "@context": "https://schema.org",
@@ -90,26 +108,40 @@ export function CalculatorPageLayout({
       ) : null}
 
       <nav aria-label="Breadcrumb" className="text-sm text-muted-foreground">
-        <ol className="flex flex-wrap items-center gap-x-2 gap-y-1">
+        <ol className="flex flex-wrap items-center gap-x-1 gap-y-1">
           <li>
-            <Link href="/" className="hover:text-primary">
+            <Link href="/" className="inline-flex min-h-9 items-center px-0.5 hover:text-primary">
               Home
             </Link>
           </li>
-          <li aria-hidden>/</li>
+          <li aria-hidden className="px-0.5">
+            /
+          </li>
           <li>
-            <Link href="/calculators" className="hover:text-primary">
+            <Link
+              href="/calculators"
+              className="inline-flex min-h-9 items-center px-0.5 hover:text-primary"
+            >
               Calculators
             </Link>
           </li>
-          <li aria-hidden>/</li>
+          <li aria-hidden className="px-0.5">
+            /
+          </li>
           <li>
-            <Link href={categoryHref} className="hover:text-primary">
+            <Link
+              href={categoryHref}
+              className="inline-flex min-h-9 items-center px-0.5 hover:text-primary"
+            >
               {categoryLabel}
             </Link>
           </li>
-          <li aria-hidden>/</li>
-          <li className="text-foreground">{crumb}</li>
+          <li aria-hidden className="px-0.5">
+            /
+          </li>
+          <li className="inline-flex min-h-9 items-center text-foreground">
+            {crumb}
+          </li>
         </ol>
       </nav>
 
@@ -138,7 +170,7 @@ export function CalculatorPageLayout({
             <h2 id="formula" className={ds.h2}>
               Formula & assumptions
             </h2>
-            <p className="rounded-lg border border-primary/20 bg-secondary p-4 font-mono text-sm text-navy">
+            <p className="calc-formula rounded-lg border border-primary/20 bg-secondary p-3 text-navy sm:p-4">
               {seo.formula}
             </p>
             <p className={ds.muted}>
@@ -224,6 +256,11 @@ export function CalculatorPageLayout({
                   ]
                 : []
             )}
+          />
+
+          <TopicNavigation
+            heading="Explore topics & learning"
+            items={topicNavItems}
           />
 
           <SourcesBlock

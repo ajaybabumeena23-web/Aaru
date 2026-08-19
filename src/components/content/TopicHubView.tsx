@@ -3,6 +3,7 @@ import { getTopic, TOPIC_HUBS } from "@/lib/content/topics";
 import { getGuide } from "@/lib/content/guides";
 import { getGlossaryTerm } from "@/lib/content/glossary";
 import { getScenario, scenarioPath } from "@/lib/content/scenarios";
+import { RELATED_TOPIC_SLUGS } from "@/lib/hub-aliases";
 import { ds } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
 import { SITE_NAME } from "@/lib/brand";
@@ -15,9 +16,7 @@ export function TopicHubView({ slug }: { slug: string }) {
   const topic = getTopic(slug);
   if (!topic) return null;
 
-  const guides = topic.guideSlugs
-    .map((s) => getGuide(s))
-    .filter(Boolean);
+  const guides = topic.guideSlugs.map((s) => getGuide(s)).filter(Boolean);
   const scenarios = (topic.scenarioSlugs ?? [])
     .map((s) => getScenario(s))
     .filter(Boolean);
@@ -25,14 +24,64 @@ export function TopicHubView({ slug }: { slug: string }) {
     .map((s) => getGlossaryTerm(s))
     .filter(Boolean);
 
+  const relatedSlugs = RELATED_TOPIC_SLUGS[slug] ?? [];
+  const relatedTopics = relatedSlugs
+    .map((s) => getTopic(s))
+    .filter(Boolean)
+    .map((t) => ({ href: `/${t!.slug}`, title: t!.title }));
+
+  const fallbackTopics = TOPIC_HUBS.filter((t) => t.slug !== topic.slug)
+    .slice(0, 6)
+    .map((t) => ({ href: `/${t.slug}`, title: t.title }));
+
+  const topicNav =
+    relatedTopics.length > 0 ? relatedTopics : fallbackTopics;
+
+  const faqLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: topic.faqs.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
+  };
+
   return (
     <div className={ds.page}>
-      <nav className="text-sm text-muted-foreground">
-        <Link href="/" className="hover:text-primary">
-          Home
-        </Link>
-        <span className="mx-2">/</span>
-        <span className="text-foreground">{topic.title}</span>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
+      />
+
+      <nav aria-label="Breadcrumb" className="text-sm text-muted-foreground">
+        <ol className="flex flex-wrap items-center gap-x-1 gap-y-1">
+          <li>
+            <Link
+              href="/"
+              className="inline-flex min-h-9 items-center hover:text-primary"
+            >
+              Home
+            </Link>
+          </li>
+          <li aria-hidden className="px-0.5">
+            /
+          </li>
+          <li>
+            <Link
+              href="/topics"
+              className="inline-flex min-h-9 items-center hover:text-primary"
+            >
+              Topics
+            </Link>
+          </li>
+          <li aria-hidden className="px-0.5">
+            /
+          </li>
+          <li className="inline-flex min-h-9 items-center text-foreground">
+            {topic.title}
+          </li>
+        </ol>
       </nav>
 
       <header className={ds.sectionTight}>
@@ -40,8 +89,10 @@ export function TopicHubView({ slug }: { slug: string }) {
         <p className={ds.lead}>{topic.intro}</p>
       </header>
 
-      <section className={ds.section}>
-        <h2 className={ds.h2}>Calculators</h2>
+      <section className={ds.section} aria-labelledby="hub-calcs">
+        <h2 id="hub-calcs" className={ds.h2}>
+          Calculators
+        </h2>
         <div className="grid gap-3 sm:grid-cols-2">
           {topic.calculators.map((c) => (
             <Link
@@ -58,11 +109,18 @@ export function TopicHubView({ slug }: { slug: string }) {
             </Link>
           ))}
         </div>
+        <p className="text-sm">
+          <Link href="/calculators" className="text-primary hover:underline">
+            Browse all calculators
+          </Link>
+        </p>
       </section>
 
       {guides.length ? (
-        <section className={ds.section}>
-          <h2 className={ds.h2}>Guides</h2>
+        <section className={ds.section} aria-labelledby="hub-guides">
+          <h2 id="hub-guides" className={ds.h2}>
+            Guides
+          </h2>
           <ul className="space-y-2">
             {guides.map((g) =>
               g ? (
@@ -90,8 +148,10 @@ export function TopicHubView({ slug }: { slug: string }) {
       ) : null}
 
       {scenarios.length ? (
-        <section className={ds.section}>
-          <h2 className={ds.h2}>Example scenarios</h2>
+        <section className={ds.section} aria-labelledby="hub-scenarios">
+          <h2 id="hub-scenarios" className={ds.h2}>
+            Example scenarios
+          </h2>
           <div className="grid gap-3 sm:grid-cols-2">
             {scenarios.map((s) =>
               s ? (
@@ -112,8 +172,10 @@ export function TopicHubView({ slug }: { slug: string }) {
       ) : null}
 
       {terms.length ? (
-        <section className={ds.section}>
-          <h2 className={ds.h2}>Key terms</h2>
+        <section className={ds.section} aria-labelledby="hub-terms">
+          <h2 id="hub-terms" className={ds.h2}>
+            Key terms
+          </h2>
           <div className="flex flex-wrap gap-2">
             {terms.map((t) =>
               t ? (
@@ -127,11 +189,18 @@ export function TopicHubView({ slug }: { slug: string }) {
               ) : null
             )}
           </div>
+          <p className="mt-2 text-sm">
+            <Link href="/glossary" className="text-primary hover:underline">
+              Open glossary
+            </Link>
+          </p>
         </section>
       ) : null}
 
-      <section className={ds.section}>
-        <h2 className={ds.h2}>FAQs</h2>
+      <section className={ds.section} aria-labelledby="hub-faq">
+        <h2 id="hub-faq" className={ds.h2}>
+          FAQs
+        </h2>
         <div className="space-y-3">
           {topic.faqs.map((f) => (
             <details
@@ -145,11 +214,7 @@ export function TopicHubView({ slug }: { slug: string }) {
         </div>
       </section>
 
-      <TopicNavigation
-        items={TOPIC_HUBS.filter((t) => t.slug !== topic.slug)
-          .slice(0, 8)
-          .map((t) => ({ href: `/${t.slug}`, title: t.title }))}
-      />
+      <TopicNavigation items={topicNav} heading="Explore related topics" />
 
       <SourcesBlock
         sources={[
