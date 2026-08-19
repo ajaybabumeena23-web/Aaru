@@ -10,6 +10,7 @@ import {
   ResultInterpretation,
   SensitivityBands,
   rateBandHint,
+  HighReturnCaution,
 } from "@/components/calculators";
 import {
   CalculatorPageLayout,
@@ -289,10 +290,12 @@ function FireInner() {
                   `${formatINR(result.requiredMonthlySip, true)} monthly SIP needed`,
                 ]}
                 fileName="fire.pdf"
+                expectedReturnPct={values.returnPct}
               />
             }
           >
             <ResultInterpretation points={interpretationPoints} />
+            <HighReturnCaution ratePct={values.returnPct} className="mt-3" />
             <SensitivityBands
               title="Return sensitivity"
               parameterLabel="expected return (p.a.)"

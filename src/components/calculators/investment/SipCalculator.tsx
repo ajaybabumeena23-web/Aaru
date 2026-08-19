@@ -9,6 +9,7 @@ import {
   ResultInterpretation,
   SensitivityBands,
   rateBandHint,
+  HighReturnCaution,
 } from "@/components/calculators";
 import {
   CalculatorPageLayout,
@@ -292,10 +293,12 @@ function SipInner() {
                   })),
                 }}
                 fileName="sip.pdf"
+                expectedReturnPct={values.rate}
               />
             }
           >
             <ResultInterpretation points={interpretationPoints} />
+            <HighReturnCaution ratePct={values.rate} className="mt-3" />
             <SensitivityBands
               parameterLabel="expected return (p.a.)"
               bands={rateBands}

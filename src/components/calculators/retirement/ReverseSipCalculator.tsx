@@ -6,6 +6,7 @@ import {
   DraggableSlider,
   ExportPDFButton,
   FinancialDonutChart,
+  HighReturnCaution,
 } from "@/components/calculators";
 import {
   CalculatorPageLayout,
@@ -173,9 +174,11 @@ function ReverseSipInner() {
                   `${formatINR(result.monthlySip, true)} monthly SIP`,
                 ]}
                 fileName="reverse-sip.pdf"
+                expectedReturnPct={values.rate}
               />
             }
           />
+          <HighReturnCaution ratePct={values.rate} className="mt-3" />
         </div>
       </div>
     </CalculatorPageLayout>

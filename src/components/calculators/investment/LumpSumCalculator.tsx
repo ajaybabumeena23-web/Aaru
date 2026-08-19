@@ -9,6 +9,7 @@ import {
   ResultInterpretation,
   SensitivityBands,
   rateBandHint,
+  HighReturnCaution,
 } from "@/components/calculators";
 import {
   CalculatorPageLayout,
@@ -227,10 +228,12 @@ function LumpSumInner() {
                   `${formatINR(maturityDisplay, true)} at maturity`,
                 ]}
                 fileName="lump-sum.pdf"
+                expectedReturnPct={values.rate}
               />
             }
           >
             <ResultInterpretation points={interpretationPoints} />
+            <HighReturnCaution ratePct={values.rate} className="mt-3" />
             <SensitivityBands
               parameterLabel="expected return (p.a.)"
               bands={rateBands}

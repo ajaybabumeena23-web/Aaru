@@ -5,6 +5,7 @@ export { ExportPDFButton } from "./ExportPDFButton";
 export { CalculatorShell } from "./CalculatorShell";
 export { ShareResultButtons } from "./ShareResultButtons";
 export { ResultInterpretation } from "./ux/ResultInterpretation";
+export { HighReturnCaution } from "./ux/HighReturnCaution";
 export {
   SensitivityBands,
   rateBandHint,

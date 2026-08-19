@@ -5,6 +5,7 @@ import {
   CalculationResultCard,
   DraggableSlider,
   ExportPDFButton,
+  HighReturnCaution,
 } from "@/components/calculators";
 import {
   CalculatorPageLayout,
@@ -246,9 +247,11 @@ function GoalPlannerInner() {
                     : `${formatINR(Math.abs(whatIf.gap), true)} surplus at what-if SIP`,
                 ]}
                 fileName="goal-planner.pdf"
+                expectedReturnPct={values.rate}
               />
             }
           />
+          <HighReturnCaution ratePct={values.rate} className="mt-3" />
         </div>
       </div>
     </CalculatorPageLayout>

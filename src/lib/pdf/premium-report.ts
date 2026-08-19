@@ -4,6 +4,14 @@ import {
   NOTO_RUPEE_BOLD_BASE64,
   NOTO_RUPEE_REGULAR_BASE64,
 } from "@/lib/pdf/noto-rupee-font-data";
+import {
+  formatForPDF,
+  HIGH_RETURN_THRESHOLD_PCT,
+  HIGH_RETURN_WARNING,
+  isInvestmentReturnInput,
+  normalizePdfMoneyText,
+  parsePercentFromLabelValue,
+} from "@/lib/pdf/format";
 
 export type PdfInputRow = { label: string; value: string };
 export type PdfResultRow = { label: string; value: string };
@@ -28,11 +36,13 @@ export type PremiumPdfOptions = {
     rows: PdfTableRow[];
     maxRows?: number;
     title?: string;
-    /** Group amortization by year when a month column exists */
+    /** Collapse monthly rows into one year-end summary row per year */
     groupByYear?: boolean;
     monthKey?: string;
   };
   fileName?: string;
+  /** Explicit expected return % — triggers high-return warning when > 15 */
+  expectedReturnPct?: number;
 };
 
 const COLORS = {
@@ -48,9 +58,19 @@ const COLORS = {
   pageBg: [248, 250, 252] as [number, number, number],
   cardBorder: [226, 232, 240] as [number, number, number],
   interest: [220, 38, 38] as [number, number, number],
+  warnBg: [255, 247, 237] as [number, number, number],
+  warnBorder: [251, 146, 60] as [number, number, number],
+  warnText: [154, 52, 18] as [number, number, number],
 };
 
 const MARGIN = 40;
+const FOOTER_RESERVE = 56;
+const SITE_URL = "aaruwealth.com";
+const DISCLAIMER_SHORT =
+  "Illustrative only — not financial, tax or legal advice. Figures typically exclude inflation, taxes and fees unless stated.*";
+const DISCLAIMER_FULL =
+  "*Figures are illustrative estimates based on the inputs shown. They are not investment, tax or legal advice and do not guarantee outcomes. Unless explicitly modelled, projections exclude inflation, taxes, fees, exit loads and lender charges. Rounding may create a small residual in the final instalment.";
+
 const SLICE_COLORS: [number, number, number][] = [
   COLORS.navy,
   COLORS.gold,
@@ -78,7 +98,8 @@ function drawDonutPng(
   const total = slices.reduce((s, x) => s + Math.max(0, x.value), 0);
   if (total <= 0) return null;
 
-  const size = 420;
+  // Extra canvas room for external % callouts (B&W / print friendly)
+  const size = 520;
   const canvas = document.createElement("canvas");
   canvas.width = size;
   canvas.height = size;
@@ -87,22 +108,54 @@ function drawDonutPng(
 
   const cx = size / 2;
   const cy = size / 2;
-  const outer = size * 0.38;
-  const inner = size * 0.22;
+  const outer = size * 0.32;
+  const inner = size * 0.18;
+  const labelR = outer + 36;
 
   let start = -Math.PI / 2;
   slices.forEach((slice, i) => {
     const angle = (Math.max(0, slice.value) / total) * Math.PI * 2;
+    const mid = start + angle / 2;
+    const c = SLICE_COLORS[i % SLICE_COLORS.length];
+    let fillStyle = `rgb(${c[0]},${c[1]},${c[2]})`;
+    if (slice.color?.startsWith("#") && slice.color.length >= 7) {
+      fillStyle = slice.color;
+    }
+
     ctx.beginPath();
     ctx.moveTo(cx, cy);
     ctx.arc(cx, cy, outer, start, start + angle);
     ctx.closePath();
-    const c = SLICE_COLORS[i % SLICE_COLORS.length];
-    ctx.fillStyle = `rgb(${c[0]},${c[1]},${c[2]})`;
-    if (slice.color?.startsWith("#") && slice.color.length >= 7) {
-      ctx.fillStyle = slice.color;
-    }
+    ctx.fillStyle = fillStyle;
     ctx.fill();
+
+    const pct = total > 0 ? (Math.max(0, slice.value) / total) * 100 : 0;
+    if (pct >= 4) {
+      const lx = cx + Math.cos(mid) * labelR;
+      const ly = cy + Math.sin(mid) * labelR;
+      const ix = cx + Math.cos(mid) * (outer + 4);
+      const iy = cy + Math.sin(mid) * (outer + 4);
+
+      ctx.strokeStyle = "#64748B";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(ix, iy);
+      ctx.lineTo(lx, ly);
+      ctx.stroke();
+
+      ctx.fillStyle = "#17202A";
+      ctx.font = "bold 18px Helvetica, Arial, sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      const pctLabel = `${pct.toFixed(0)}%`;
+      ctx.fillText(pctLabel, lx, ly - 10);
+      ctx.font = "13px Helvetica, Arial, sans-serif";
+      ctx.fillStyle = "#64748B";
+      const short =
+        slice.label.length > 14 ? `${slice.label.slice(0, 12)}…` : slice.label;
+      ctx.fillText(short, lx, ly + 12);
+    }
+
     start += angle;
   });
 
@@ -115,11 +168,33 @@ function drawDonutPng(
   return canvas.toDataURL("image/png");
 }
 
+/** Year tick marks for a monthly (or near-monthly) series. */
+function yearAxisTicks(
+  pointCount: number
+): { index: number; label: string }[] {
+  if (pointCount < 2) return [];
+  const totalYears = Math.max(1, Math.round((pointCount - 1) / 12));
+  const step =
+    totalYears <= 6 ? 1 : totalYears <= 20 ? 5 : totalYears <= 40 ? 10 : 15;
+  const ticks: { index: number; label: string }[] = [];
+  const push = (year: number) => {
+    const index = Math.min(
+      pointCount - 1,
+      Math.max(0, Math.round((year * (pointCount - 1)) / totalYears))
+    );
+    const label = `Year ${year}`;
+    if (!ticks.some((t) => t.index === index)) ticks.push({ index, label });
+  };
+  for (let y = 0; y <= totalYears; y += step) push(y);
+  push(totalYears);
+  return ticks.sort((a, b) => a.index - b.index);
+}
+
 function drawBalancePng(points: number[], titleHint?: string): string | null {
   if (typeof document === "undefined" || points.length < 2) return null;
   const w = 900;
-  const h = 320;
-  const pad = { t: 28, r: 24, b: 36, l: 56 };
+  const h = 340;
+  const pad = { t: 36, r: 28, b: 44, l: 72 };
   const canvas = document.createElement("canvas");
   canvas.width = w;
   canvas.height = h;
@@ -134,7 +209,6 @@ function drawBalancePng(points: number[], titleHint?: string): string | null {
   const plotW = w - pad.l - pad.r;
   const plotH = h - pad.t - pad.b;
 
-  // grid
   ctx.strokeStyle = "#e8ebf0";
   ctx.lineWidth = 1;
   for (let i = 0; i <= 4; i++) {
@@ -149,7 +223,6 @@ function drawBalancePng(points: number[], titleHint?: string): string | null {
   const yAt = (v: number) =>
     pad.t + plotH - ((v - minY) / (maxY - minY)) * plotH;
 
-  // area fill
   ctx.beginPath();
   points.forEach((v, i) => {
     const x = xAt(i);
@@ -163,7 +236,6 @@ function drawBalancePng(points: number[], titleHint?: string): string | null {
   ctx.fillStyle = "rgba(15, 118, 110, 0.12)";
   ctx.fill();
 
-  // line
   ctx.beginPath();
   points.forEach((v, i) => {
     const x = xAt(i);
@@ -175,13 +247,31 @@ function drawBalancePng(points: number[], titleHint?: string): string | null {
   ctx.lineWidth = 2.5;
   ctx.stroke();
 
-  ctx.fillStyle = "#646e82";
-  ctx.font = "12px Helvetica, Arial, sans-serif";
-  ctx.fillText(formatCompact(points[0]), pad.l, pad.t - 8);
-  const endLabel = formatCompact(points[points.length - 1]);
-  ctx.fillText(endLabel, w - pad.r - ctx.measureText(endLabel).width, pad.t - 8);
-  ctx.fillText("Start", pad.l, h - 12);
-  ctx.fillText("End", w - pad.r - 22, h - 12);
+  ctx.fillStyle = "#64748B";
+  ctx.font = "11px Helvetica, Arial, sans-serif";
+  const startVal = formatForPDF(points[0]);
+  const endVal = formatForPDF(points[points.length - 1]);
+  ctx.fillText(startVal, pad.l, pad.t - 10);
+  ctx.fillText(
+    endVal,
+    w - pad.r - ctx.measureText(endVal).width,
+    pad.t - 10
+  );
+
+  ctx.fillStyle = "#17202A";
+  ctx.font = "11px Helvetica, Arial, sans-serif";
+  yearAxisTicks(points.length).forEach((tick) => {
+    const x = xAt(tick.index);
+    ctx.strokeStyle = "#cbd5e1";
+    ctx.beginPath();
+    ctx.moveTo(x, pad.t + plotH);
+    ctx.lineTo(x, pad.t + plotH + 5);
+    ctx.stroke();
+    const tw = ctx.measureText(tick.label).width;
+    ctx.fillStyle = "#64748B";
+    ctx.fillText(tick.label, x - tw / 2, h - 14);
+  });
+
   if (titleHint) {
     ctx.fillStyle = "#1a1f2e";
     ctx.font = "bold 13px Helvetica, Arial, sans-serif";
@@ -189,13 +279,6 @@ function drawBalancePng(points: number[], titleHint?: string): string | null {
   }
 
   return canvas.toDataURL("image/png");
-}
-
-function formatCompact(n: number): string {
-  if (!Number.isFinite(n)) return "—";
-  if (Math.abs(n) >= 1_00_00_000) return `₹${(n / 1_00_00_000).toFixed(2)} Cr`;
-  if (Math.abs(n) >= 1_00_000) return `₹${(n / 1_00_000).toFixed(2)} L`;
-  return `₹${Math.round(n).toLocaleString("en-IN")}`;
 }
 
 function drawRoundedRect(
@@ -219,11 +302,16 @@ let pdfFontStyle: "normal" | "bold" = "normal";
 let unicodeFontsReady = false;
 
 function base64ToBinaryString(base64: string): string {
-  // Prefer browser atob; fall back for Node/test environments.
   if (typeof atob === "function") {
     return atob(base64);
   }
-  const Buf = (globalThis as { Buffer?: { from(data: string, enc: string): { toString(enc: string): string } } }).Buffer;
+  const Buf = (
+    globalThis as {
+      Buffer?: {
+        from(data: string, enc: string): { toString(enc: string): string };
+      };
+    }
+  ).Buffer;
   if (Buf) {
     return Buf.from(base64, "base64").toString("binary");
   }
@@ -231,7 +319,6 @@ function base64ToBinaryString(base64: string): string {
 }
 
 function registerUnicodePdfFonts(doc: jsPDF) {
-  // Each jsPDF instance has its own VFS — register on every document.
   const regular = base64ToBinaryString(NOTO_RUPEE_REGULAR_BASE64);
   const bold = base64ToBinaryString(NOTO_RUPEE_BOLD_BASE64);
   doc.addFileToVFS("NotoSans-Rupee.ttf", regular);
@@ -251,7 +338,6 @@ function textHasRupee(text: string | string[]): boolean {
   return text.includes("₹");
 }
 
-/** Draw text; use embedded Unicode font when the string contains ₹. */
 function pdfText(
   doc: jsPDF,
   text: string | string[],
@@ -261,7 +347,6 @@ function pdfText(
 ) {
   if (unicodeFontsReady && textHasRupee(text)) {
     doc.setFont(UNICODE_FONT, pdfFontStyle);
-    // Use instance method — jsPDF.prototype.text is undefined in some bundles.
     doc.text(text, x, y, options);
     doc.setFont("helvetica", pdfFontStyle);
     return;
@@ -279,9 +364,118 @@ function pdfSplitTextToSize(doc: jsPDF, text: string, size: number): string[] {
   return doc.splitTextToSize(text, size);
 }
 
+function sanitizeCell(value: string | number): string {
+  const raw = normalizePdfMoneyText(String(value ?? ""));
+  // Drop stray pipe artefacts from broken schedule layouts
+  return raw
+    .replace(/\|\s*\|/g, " ")
+    .replace(/^\s*\|\s*|\s*\|\s*$/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function detectHighReturnPct(options: PremiumPdfOptions): number | null {
+  if (
+    typeof options.expectedReturnPct === "number" &&
+    Number.isFinite(options.expectedReturnPct) &&
+    options.expectedReturnPct > HIGH_RETURN_THRESHOLD_PCT
+  ) {
+    return options.expectedReturnPct;
+  }
+  for (const input of options.inputs) {
+    if (!isInvestmentReturnInput(input.label)) continue;
+    const pct = parsePercentFromLabelValue(input.value);
+    if (pct != null && pct > HIGH_RETURN_THRESHOLD_PCT) return pct;
+  }
+  return null;
+}
+
+/** Normalize all money strings + expand compact K/L/Cr before drawing. */
+function prepareOptions(options: PremiumPdfOptions): PremiumPdfOptions {
+  const money = (s: string) => normalizePdfMoneyText(s);
+  return {
+    ...options,
+    hero: options.hero
+      ? {
+          ...options.hero,
+          value: money(options.hero.value),
+          hint: options.hero.hint ? money(options.hero.hint) : undefined,
+        }
+      : undefined,
+    inputs: options.inputs.map((i) => ({
+      ...i,
+      value: money(i.value),
+    })),
+    results: options.results.map((r) => ({
+      ...r,
+      value: money(r.value),
+    })),
+    journey: options.journey?.map(money),
+    table: options.table
+      ? {
+          ...options.table,
+          rows: options.table.rows.map((row) => {
+            const next: PdfTableRow = {};
+            for (const [k, v] of Object.entries(row)) {
+              next[k] = typeof v === "string" ? sanitizeCell(v) : v;
+            }
+            return next;
+          }),
+        }
+      : undefined,
+  };
+}
+
+/**
+ * Collapse monthly schedule rows into one clean year-end summary per year.
+ * Fixes sparse/broken month layouts and empty pipe columns.
+ */
+function buildAnnualSummaryTable(
+  columns: PdfTableColumn[],
+  rows: PdfTableRow[],
+  monthKey: string
+): { columns: PdfTableColumn[]; rows: PdfTableRow[] } {
+  const byYear = new Map<number, PdfTableRow[]>();
+  rows.forEach((row) => {
+    const m = Number(row[monthKey]);
+    const year = Number.isFinite(m) && m > 0 ? Math.ceil(m / 12) : 1;
+    if (!byYear.has(year)) byYear.set(year, []);
+    byYear.get(year)!.push(row);
+  });
+
+  const yearColKey = monthKey;
+  const annualCols = columns.map((c) =>
+    c.key === monthKey || /month|mo/i.test(c.header)
+      ? { ...c, header: "Year", key: yearColKey }
+      : c
+  );
+
+  const annualRows: PdfTableRow[] = [...byYear.entries()]
+    .sort((a, b) => a[0] - b[0])
+    .map(([year, yearRows]) => {
+      const last = yearRows[yearRows.length - 1];
+      const out: PdfTableRow = { ...last };
+      out[yearColKey] = `Year ${year}`;
+      // Ensure every declared column has a clean string (no blanks / pipes)
+      annualCols.forEach((col) => {
+        if (out[col.key] == null || out[col.key] === "") {
+          out[col.key] = "—";
+        } else {
+          out[col.key] = sanitizeCell(out[col.key]);
+        }
+      });
+      return out;
+    });
+
+  return { columns: annualCols, rows: annualRows };
+}
+
 export async function generatePremiumPdf(
   options: PremiumPdfOptions
 ): Promise<void> {
+  const prepared = prepareOptions(options);
+  const highReturnPct = detectHighReturnPct(options);
+
   const doc = new jsPDF({ unit: "pt", format: "a4", putOnlyUsedFonts: true });
   registerUnicodePdfFonts(doc);
   pdfFontStyle = "normal";
@@ -290,7 +484,6 @@ export async function generatePremiumPdf(
   const pageHeight = doc.internal.pageSize.getHeight();
   const contentW = pageWidth - MARGIN * 2;
   let y = 0;
-  let pageIndex = 1;
 
   const generated = new Date().toLocaleString("en-IN", {
     day: "numeric",
@@ -301,16 +494,21 @@ export async function generatePremiumPdf(
   });
 
   const drawFooter = () => {
-    const footerY = pageHeight - 22;
+    const footerTop = pageHeight - FOOTER_RESERVE;
     stroke(doc, COLORS.line);
     doc.setLineWidth(0.6);
-    doc.line(MARGIN, footerY - 10, pageWidth - MARGIN, footerY - 10);
+    doc.line(MARGIN, footerTop, pageWidth - MARGIN, footerTop);
+
     setPdfFont(doc, "normal");
-    doc.setFontSize(8);
+    doc.setFontSize(7.5);
     rgb(doc, COLORS.muted);
-    pdfText(doc,SITE_NAME, MARGIN, footerY);
-    pdfText(doc,options.title, pageWidth / 2, footerY, { align: "center" });
-    // page numbers filled at end
+    pdfText(doc, SITE_URL, MARGIN, footerTop + 12);
+    pdfText(doc, generated, pageWidth / 2, footerTop + 12, { align: "center" });
+    // page numbers filled in final pass (right side)
+
+    const discLines = doc.splitTextToSize(DISCLAIMER_SHORT, contentW);
+    doc.setFontSize(6.5);
+    pdfText(doc, discLines.slice(0, 2), MARGIN, footerTop + 26);
   };
 
   const paintPageBackground = () => {
@@ -321,16 +519,15 @@ export async function generatePremiumPdf(
   const newPage = () => {
     drawFooter();
     doc.addPage();
-    pageIndex += 1;
     paintPageBackground();
     y = MARGIN;
   };
 
   const ensureSpace = (needed: number) => {
-    if (y + needed > pageHeight - 48) newPage();
+    if (y + needed > pageHeight - FOOTER_RESERVE - 8) newPage();
   };
 
-  // —— PAGE 1 HEADER ——
+  // —— PAGE 1 HEADER (no timestamp here — moved to footer) ——
   paintPageBackground();
   fill(doc, COLORS.navy);
   doc.rect(0, 0, pageWidth, 92, "F");
@@ -340,46 +537,47 @@ export async function generatePremiumPdf(
   setPdfFont(doc, "bold");
   doc.setFontSize(11);
   rgb(doc, COLORS.gold);
-  pdfText(doc,SITE_NAME.toUpperCase(), MARGIN, 28);
+  pdfText(doc, SITE_NAME.toUpperCase(), MARGIN, 28);
 
   setPdfFont(doc, "normal");
   doc.setFontSize(8);
   rgb(doc, [180, 190, 210]);
-  pdfText(doc,SITE_TAGLINE, MARGIN, 42);
+  pdfText(doc, SITE_TAGLINE, MARGIN, 42);
 
   setPdfFont(doc, "bold");
   doc.setFontSize(20);
   rgb(doc, COLORS.white);
-  pdfText(doc,options.title, MARGIN, 68);
-
-  setPdfFont(doc, "normal");
-  doc.setFontSize(8);
-  rgb(doc, [160, 170, 190]);
-  pdfText(doc,generated, pageWidth - MARGIN, 28, { align: "right" });
+  pdfText(doc, prepared.title, MARGIN, 68);
 
   y = 112;
 
-  if (options.tagline) {
+  if (prepared.tagline) {
     setPdfFont(doc, "normal");
     doc.setFontSize(11);
     rgb(doc, COLORS.muted);
-    pdfText(doc,options.tagline, MARGIN, y);
+    pdfText(doc, prepared.tagline, MARGIN, y);
     y += 18;
-  } else if (options.subtitle) {
+  } else if (prepared.subtitle) {
     setPdfFont(doc, "normal");
     doc.setFontSize(10);
     rgb(doc, COLORS.muted);
-    pdfText(doc,options.subtitle, MARGIN, y);
-    y += 16;
+    // Strip trailing brand duplication like "— Aaru Wealth" from subtitles
+    const cleanSub = prepared.subtitle
+      .replace(/\s*[—–-]\s*Aaru Wealth\s*$/i, "")
+      .trim();
+    if (cleanSub) {
+      pdfText(doc, cleanSub, MARGIN, y);
+      y += 16;
+    }
   }
 
   // —— HERO ——
   const hero =
-    options.hero ??
-    (options.results[0]
+    prepared.hero ??
+    (prepared.results[0]
       ? {
-          label: options.results[0].label,
-          value: options.results[0].value,
+          label: prepared.results[0].label,
+          value: prepared.results[0].value,
           hint: undefined as string | undefined,
         }
       : null);
@@ -394,36 +592,65 @@ export async function generatePremiumPdf(
     setPdfFont(doc, "bold");
     doc.setFontSize(9);
     rgb(doc, COLORS.gold);
-    pdfText(doc,hero.label.toUpperCase(), MARGIN + 22, y + 24);
+    pdfText(doc, `${hero.label.toUpperCase()}*`, MARGIN + 22, y + 24);
 
     setPdfFont(doc, "bold");
-    doc.setFontSize(28);
+    doc.setFontSize(26);
     rgb(doc, COLORS.white);
-    pdfText(doc,hero.value, MARGIN + 22, y + 54);
+    pdfText(doc, hero.value, MARGIN + 22, y + 54);
 
     if (hero.hint) {
       setPdfFont(doc, "normal");
       doc.setFontSize(9);
       rgb(doc, [180, 190, 210]);
-      pdfText(doc,hero.hint, pageWidth - MARGIN - 16, y + 54, { align: "right" });
+      pdfText(doc, hero.hint, pageWidth - MARGIN - 16, y + 54, {
+        align: "right",
+      });
     }
     y += 94;
   }
 
+  // —— HIGH RETURN WARNING ——
+  if (highReturnPct != null) {
+    ensureSpace(70);
+    fill(doc, COLORS.warnBg);
+    stroke(doc, COLORS.warnBorder);
+    doc.setLineWidth(1);
+    drawRoundedRect(doc, MARGIN, y, contentW, 58, 8, "FD");
+    setPdfFont(doc, "bold");
+    doc.setFontSize(9);
+    rgb(doc, COLORS.warnText);
+    pdfText(
+      doc,
+      `HIGH-RETURN REALITY CHECK · ${highReturnPct.toFixed(1)}% p.a. assumed`,
+      MARGIN + 12,
+      y + 16
+    );
+    setPdfFont(doc, "normal");
+    doc.setFontSize(8);
+    const warnLines = pdfSplitTextToSize(
+      doc,
+      HIGH_RETURN_WARNING,
+      contentW - 24
+    );
+    pdfText(doc, warnLines.slice(0, 3), MARGIN + 12, y + 32);
+    y += 70;
+  }
+
   // —— INPUT SUMMARY CARDS ——
-  if (options.inputs.length > 0) {
+  if (prepared.inputs.length > 0) {
     ensureSpace(90);
     setPdfFont(doc, "bold");
     doc.setFontSize(11);
     rgb(doc, COLORS.ink);
-    pdfText(doc,"SUMMARY", MARGIN, y);
+    pdfText(doc, "SUMMARY", MARGIN, y);
     y += 12;
 
-    const n = Math.min(options.inputs.length, 4);
+    const n = Math.min(prepared.inputs.length, 4);
     const gap = 10;
     const cardW = (contentW - gap * (n - 1)) / n;
     const cardH = 58;
-    options.inputs.slice(0, n).forEach((input, i) => {
+    prepared.inputs.slice(0, n).forEach((input, i) => {
       const x = MARGIN + i * (cardW + gap);
       fill(doc, COLORS.white);
       stroke(doc, COLORS.cardBorder);
@@ -432,13 +659,13 @@ export async function generatePremiumPdf(
       setPdfFont(doc, "normal");
       doc.setFontSize(8);
       rgb(doc, COLORS.muted);
-      pdfText(doc,input.label.toUpperCase(), x + 12, y + 18, {
+      pdfText(doc, input.label.toUpperCase(), x + 12, y + 18, {
         maxWidth: cardW - 20,
       });
       setPdfFont(doc, "bold");
       doc.setFontSize(12);
       rgb(doc, COLORS.ink);
-      pdfText(doc,String(input.value), x + 12, y + 40, {
+      pdfText(doc, String(input.value), x + 12, y + 40, {
         maxWidth: cardW - 20,
       });
     });
@@ -446,7 +673,7 @@ export async function generatePremiumPdf(
   }
 
   // —— RESULTS / BREAKDOWN ——
-  const breakdown = options.results.filter(
+  const breakdown = prepared.results.filter(
     (r) => !hero || r.label.toLowerCase() !== hero.label.toLowerCase()
   );
   if (breakdown.length > 0) {
@@ -454,7 +681,7 @@ export async function generatePremiumPdf(
     setPdfFont(doc, "bold");
     doc.setFontSize(11);
     rgb(doc, COLORS.ink);
-    pdfText(doc,"KEY RESULTS", MARGIN, y);
+    pdfText(doc, "KEY RESULTS", MARGIN, y);
     y += 12;
 
     const n = Math.min(breakdown.length, 3);
@@ -470,27 +697,30 @@ export async function generatePremiumPdf(
       setPdfFont(doc, "normal");
       doc.setFontSize(8);
       rgb(doc, COLORS.muted);
-      pdfText(doc,row.label.toUpperCase(), x + 12, y + 18, {
+      pdfText(doc, row.label.toUpperCase(), x + 12, y + 18, {
         maxWidth: cardW - 20,
       });
       setPdfFont(doc, "bold");
       doc.setFontSize(13);
       rgb(doc, i === 0 ? COLORS.navy : COLORS.ink);
-      pdfText(doc,String(row.value), x + 12, y + 40, { maxWidth: cardW - 20 });
+      pdfText(doc, String(row.value), x + 12, y + 40, {
+        maxWidth: cardW - 20,
+      });
     });
     y += cardH + 10;
 
-    // remaining results as compact rows
     if (breakdown.length > n) {
       breakdown.slice(n).forEach((row) => {
         ensureSpace(16);
         setPdfFont(doc, "normal");
         doc.setFontSize(9);
         rgb(doc, COLORS.muted);
-        pdfText(doc,row.label, MARGIN, y);
+        pdfText(doc, row.label, MARGIN, y);
         setPdfFont(doc, "bold");
         rgb(doc, COLORS.ink);
-        pdfText(doc,String(row.value), pageWidth - MARGIN, y, { align: "right" });
+        pdfText(doc, String(row.value), pageWidth - MARGIN, y, {
+          align: "right",
+        });
         y += 14;
       });
       y += 6;
@@ -500,38 +730,39 @@ export async function generatePremiumPdf(
   }
 
   // —— DONUT + LEGEND ——
-  if (options.chartSlices && options.chartSlices.length >= 2) {
-    const png = drawDonutPng(options.chartSlices);
+  if (prepared.chartSlices && prepared.chartSlices.length >= 2) {
+    const png = drawDonutPng(prepared.chartSlices);
     if (png) {
-      ensureSpace(160);
+      ensureSpace(170);
       setPdfFont(doc, "bold");
       doc.setFontSize(11);
       rgb(doc, COLORS.ink);
-      pdfText(doc,"BREAKDOWN", MARGIN, y);
+      pdfText(doc, "BREAKDOWN", MARGIN, y);
       y += 8;
 
-      const chartSize = 120;
+      const chartSize = 132;
       const chartX = MARGIN;
       doc.addImage(png, "PNG", chartX, y, chartSize, chartSize);
 
-      const total = options.chartSlices.reduce(
+      const total = prepared.chartSlices.reduce(
         (s, x) => s + Math.max(0, x.value),
         0
       );
       let ly = y + 28;
-      options.chartSlices.forEach((slice, i) => {
+      prepared.chartSlices.forEach((slice, i) => {
         const c = SLICE_COLORS[i % SLICE_COLORS.length];
         fill(doc, c);
         doc.circle(MARGIN + chartSize + 28, ly - 3, 4, "F");
         setPdfFont(doc, "normal");
         doc.setFontSize(9);
         rgb(doc, COLORS.muted);
-        pdfText(doc,slice.label, MARGIN + chartSize + 40, ly);
+        pdfText(doc, slice.label, MARGIN + chartSize + 40, ly);
         setPdfFont(doc, "bold");
         rgb(doc, COLORS.ink);
         const pct = total > 0 ? ((slice.value / total) * 100).toFixed(1) : "0";
-        pdfText(doc,
-          `${formatCompact(slice.value)}  (${pct}%)`,
+        pdfText(
+          doc,
+          `${formatForPDF(slice.value)}  (${pct}%)`,
           MARGIN + chartSize + 40,
           ly + 12
         );
@@ -541,16 +772,16 @@ export async function generatePremiumPdf(
     }
   }
 
-  // —— JOURNEY ——
-  if (options.journey && options.journey.length >= 2) {
+  // —— INVESTMENT TIMELINE (formerly JOURNEY) ——
+  if (prepared.journey && prepared.journey.length >= 2) {
     ensureSpace(56);
     setPdfFont(doc, "bold");
     doc.setFontSize(11);
     rgb(doc, COLORS.ink);
-    pdfText(doc,"JOURNEY", MARGIN, y);
+    pdfText(doc, "INVESTMENT TIMELINE", MARGIN, y);
     y += 14;
 
-    const steps = options.journey;
+    const steps = prepared.journey;
     const stepW = contentW / steps.length;
     steps.forEach((step, i) => {
       const cx = MARGIN + stepW * i + stepW / 2;
@@ -570,82 +801,72 @@ export async function generatePremiumPdf(
     y += 48;
   }
 
-  // —— BALANCE CHART (prefer page 2 if crowded) ——
+  // —— BALANCE / PORTFOLIO CHART ——
   const maybeBalance = () => {
-    if (!options.balanceSeries || options.balanceSeries.length < 2) return;
+    if (!prepared.balanceSeries || prepared.balanceSeries.length < 2) return;
     const png = drawBalancePng(
-      options.balanceSeries,
-      options.balanceChartTitle ?? "Outstanding balance over time"
+      prepared.balanceSeries,
+      prepared.balanceChartTitle ?? "Portfolio value over time"
     );
     if (!png) return;
-    ensureSpace(150);
+    ensureSpace(160);
     setPdfFont(doc, "bold");
     doc.setFontSize(11);
     rgb(doc, COLORS.ink);
-    pdfText(doc,
-      (options.balanceChartTitle ?? "OUTSTANDING BALANCE").toUpperCase(),
+    pdfText(
+      doc,
+      (prepared.balanceChartTitle ?? "PORTFOLIO VALUE OVER TIME").toUpperCase(),
       MARGIN,
       y
     );
     y += 8;
     fill(doc, COLORS.white);
     stroke(doc, COLORS.cardBorder);
-    drawRoundedRect(doc, MARGIN, y, contentW, 128, 8, "FD");
-    doc.addImage(png, "PNG", MARGIN + 8, y + 6, contentW - 16, 116);
-    y += 140;
+    drawRoundedRect(doc, MARGIN, y, contentW, 138, 8, "FD");
+    doc.addImage(png, "PNG", MARGIN + 8, y + 6, contentW - 16, 126);
+    y += 150;
   };
 
-  // If little room left on page 1, put chart+table on next pages
   if (y > pageHeight - 200) {
     newPage();
   }
   maybeBalance();
 
-  // —— TABLE ——
-  if (options.table && options.table.rows.length > 0) {
-    const maxRows = options.table.maxRows ?? 400;
-    const allRows = options.table.rows.slice(0, maxRows);
-    const cols = options.table.columns;
+  // —— TABLE (annual summary when monthly schedule) ——
+  if (prepared.table && prepared.table.rows.length > 0) {
+    const maxRows = prepared.table.maxRows ?? 400;
     const monthKey =
-      options.table.monthKey ??
-      cols.find((c) => /month|mo/i.test(c.header) || c.key === "month")?.key;
+      prepared.table.monthKey ??
+      prepared.table.columns.find(
+        (c) => /month|mo/i.test(c.header) || c.key === "month"
+      )?.key;
 
-    type Group = { title?: string; rows: PdfTableRow[] };
-    const groups: Group[] = [];
-    if (options.table.groupByYear && monthKey) {
-      const byYear = new Map<number, PdfTableRow[]>();
-      allRows.forEach((row) => {
-        const m = Number(row[monthKey]);
-        const year = Number.isFinite(m) ? Math.ceil(m / 12) : 1;
-        if (!byYear.has(year)) byYear.set(year, []);
-        byYear.get(year)!.push(row);
-      });
-      [...byYear.entries()]
-        .sort((a, b) => a[0] - b[0])
-        .forEach(([year, rows]) => {
-          const start = (year - 1) * 12 + 1;
-          const end = Math.min(year * 12, Number(rows[rows.length - 1]?.[monthKey] ?? year * 12));
-          groups.push({
-            title: `YEAR ${year}  ·  Months ${start}–${end}`,
-            rows,
-          });
-        });
-    } else {
-      groups.push({ rows: allRows });
+    let cols = prepared.table.columns;
+    let allRows = prepared.table.rows.slice(0, maxRows);
+
+    if (prepared.table.groupByYear && monthKey) {
+      const annual = buildAnnualSummaryTable(cols, allRows, monthKey);
+      cols = annual.columns;
+      allRows = annual.rows;
     }
 
     ensureSpace(40);
     setPdfFont(doc, "bold");
     doc.setFontSize(11);
     rgb(doc, COLORS.ink);
-    pdfText(doc,(options.table.title ?? "DETAILED SCHEDULE").toUpperCase(), MARGIN, y);
+    const tableTitle =
+      prepared.table.groupByYear && monthKey
+        ? (prepared.table.title ?? "Annual summary").replace(
+            /detailed schedule/i,
+            "Annual summary"
+          )
+        : (prepared.table.title ?? "DETAILED SCHEDULE");
+    pdfText(doc, tableTitle.toUpperCase(), MARGIN, y);
     y += 14;
 
-    const colCount = cols.length;
     const usable = contentW;
-    // weight first col smaller if month
     const weights = cols.map((c, i) =>
-      i === 0 && /month|mo/i.test(c.header) ? 0.7 : 1
+      i === 0 && /year|month|mo/i.test(c.header) ? 0.75 : 1
     );
     const weightSum = weights.reduce((a, b) => a + b, 0);
     const colWs = weights.map((w) => (usable * w) / weightSum);
@@ -660,97 +881,75 @@ export async function generatePremiumPdf(
       cols.forEach((col, i) => {
         const align = i === 0 ? "left" : "right";
         const tx = align === "left" ? x + 6 : x + colWs[i] - 6;
-        pdfText(doc,col.header, tx, y, { align });
+        pdfText(doc, col.header, tx, y, { align });
         x += colWs[i];
       });
       y += 14;
     };
 
-    groups.forEach((group) => {
-      ensureSpace(36);
-      if (group.title) {
-        setPdfFont(doc, "bold");
-        doc.setFontSize(9);
-        rgb(doc, COLORS.navy);
-        pdfText(doc,group.title, MARGIN, y);
-        y += 12;
+    drawTableHeader();
+
+    allRows.forEach((row, ri) => {
+      ensureSpace(16);
+      if (y > pageHeight - FOOTER_RESERVE - 12) {
+        newPage();
+        drawTableHeader();
       }
-      drawTableHeader();
-
-      group.rows.forEach((row, ri) => {
-        ensureSpace(16);
-        if (y > pageHeight - 50) {
-          newPage();
-          if (group.title) {
-            setPdfFont(doc, "bold");
-            doc.setFontSize(9);
-            rgb(doc, COLORS.navy);
-            pdfText(doc,`${group.title} (continued)`, MARGIN, y);
-            y += 12;
-          }
-          drawTableHeader();
-        }
-        if (ri % 2 === 1) {
-          fill(doc, COLORS.rowAlt);
-          doc.rect(MARGIN, y - 9, contentW, 13, "F");
-        }
-        setPdfFont(doc, "normal");
-        doc.setFontSize(8);
-        rgb(doc, COLORS.ink);
-        let x = MARGIN;
-        cols.forEach((col, i) => {
-          const cell = String(row[col.key] ?? "");
-          const align = i === 0 ? "left" : "right";
-          const tx = align === "left" ? x + 6 : x + colWs[i] - 6;
-          pdfText(doc,cell, tx, y, { align, maxWidth: colWs[i] - 10 });
-          x += colWs[i];
-        });
-        y += 13;
-      });
-      y += 10;
-    });
-
-    if (options.table.rows.length > maxRows) {
+      if (ri % 2 === 1) {
+        fill(doc, COLORS.rowAlt);
+        doc.rect(MARGIN, y - 9, contentW, 13, "F");
+      }
+      setPdfFont(doc, "normal");
       doc.setFontSize(8);
-      rgb(doc, COLORS.muted);
-      pdfText(doc,
-        `Showing first ${maxRows} of ${options.table.rows.length} rows.`,
-        MARGIN,
-        y
-      );
-      y += 12;
-    }
+      rgb(doc, COLORS.ink);
+      let x = MARGIN;
+      cols.forEach((col, i) => {
+        const cell = sanitizeCell(row[col.key] ?? "—");
+        const align = i === 0 ? "left" : "right";
+        const tx = align === "left" ? x + 6 : x + colWs[i] - 6;
+        pdfText(doc, cell, tx, y, { align, maxWidth: colWs[i] - 10 });
+        x += colWs[i];
+      });
+      y += 13;
+    });
+    y += 10;
   }
 
-  // Disclaimer
-  ensureSpace(40);
+  // Full disclosure (end of document — linked from hero *)
+  ensureSpace(56);
+  setPdfFont(doc, "bold");
+  doc.setFontSize(9);
+  rgb(doc, COLORS.ink);
+  pdfText(doc, "DISCLOSURE", MARGIN, y);
+  y += 12;
   setPdfFont(doc, "normal");
   doc.setFontSize(7.5);
   rgb(doc, COLORS.muted);
-  const disclaimer = doc.splitTextToSize(
-    "Illustrative estimate based on the inputs shown. Not investment, tax or legal advice. Rounding may create a small residual in the final instalment. © " +
-      SITE_NAME,
-    contentW
-  );
-  pdfText(doc,disclaimer, MARGIN, y);
+  const disclaimer = doc.splitTextToSize(DISCLAIMER_FULL, contentW);
+  pdfText(doc, disclaimer, MARGIN, y);
+  y += disclaimer.length * 10 + 8;
 
   drawFooter();
 
-  // Page numbers
+  // Page numbers (right side of footer)
   const totalPages = doc.getNumberOfPages();
   for (let i = 1; i <= totalPages; i++) {
     doc.setPage(i);
     setPdfFont(doc, "normal");
-    doc.setFontSize(8);
+    doc.setFontSize(7.5);
     rgb(doc, COLORS.muted);
-    pdfText(doc,`Page ${i} of ${totalPages}`, pageWidth - MARGIN, pageHeight - 22, {
-      align: "right",
-    });
+    pdfText(
+      doc,
+      `Page ${i} of ${totalPages}`,
+      pageWidth - MARGIN,
+      pageHeight - FOOTER_RESERVE + 12,
+      { align: "right" }
+    );
   }
 
   const safeName =
-    options.fileName ??
-    `${options.title
+    prepared.fileName ??
+    `${prepared.title
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-|-$/g, "")}.pdf`;

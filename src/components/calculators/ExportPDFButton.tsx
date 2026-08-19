@@ -41,8 +41,13 @@ export type ExportPDFButtonProps = {
   /** Line chart series (e.g. outstanding balance). */
   balanceSeries?: number[];
   balanceChartTitle?: string;
-  /** Simple journey steps. */
+  /** Simple journey / timeline steps. */
   journey?: string[];
+  /**
+   * Assumed investment return % (p.a.). When above 15, the PDF injects a
+   * high-return reality-check warning.
+   */
+  expectedReturnPct?: number;
   fileName?: string;
   className?: string;
   disabled?: boolean;
@@ -64,6 +69,7 @@ export function ExportPDFButton({
   balanceSeries,
   balanceChartTitle,
   journey,
+  expectedReturnPct,
   fileName,
   className,
   disabled,
@@ -86,7 +92,7 @@ export function ExportPDFButton({
                   table.columns.some(
                     (c) => c.key === "month" || /month|mo/i.test(c.header)
                   )),
-              title: table.title ?? "Detailed schedule",
+              title: table.title ?? "Annual summary",
             }
           : undefined,
         subtitle,
@@ -96,6 +102,7 @@ export function ExportPDFButton({
         balanceSeries,
         balanceChartTitle,
         journey,
+        expectedReturnPct,
         fileName,
       });
     } catch (err) {
