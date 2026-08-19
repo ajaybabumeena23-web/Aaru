@@ -54,6 +54,8 @@ export const TOPIC_HUBS: TopicHub[] = [
       "sip-vs-lump-sum",
       "sip-for-beginners",
       "sip-taxation-basics",
+      "how-to-choose-sip-amount",
+      "goal-based-investing-basics",
     ],
     scenarioSlugs: [
       "5000-sip-for-10-years",
@@ -135,10 +137,17 @@ export const TOPIC_HUBS: TopicHub[] = [
         blurb: "Housing opportunity-cost view",
       },
     ],
-    guideSlugs: ["how-emi-works", "loan-prepayment-strategies"],
+    guideSlugs: [
+      "how-emi-works",
+      "loan-prepayment-strategies",
+      "how-much-home-loan-can-i-afford",
+      "home-loan-tenure-tradeoffs",
+    ],
     scenarioSlugs: [
       "50-lakh-home-loan-20-years",
       "75-lakh-home-loan-25-years",
+      "75-lakh-home-loan-affordability",
+      "50-lakh-home-loan-affordability",
       "5-lakh-personal-loan-4-years",
     ],
     glossaryTerms: ["emi", "reducing-balance", "flat-rate", "prepayment"],
@@ -227,8 +236,18 @@ export const TOPIC_HUBS: TopicHub[] = [
         blurb: "Withdrawal sustainability check",
       },
     ],
-    guideSlugs: ["how-to-plan-retirement-india", "what-is-fire"],
-    scenarioSlugs: ["1-crore-in-15-years", "50-lakh-in-10-years"],
+    guideSlugs: [
+      "how-to-plan-retirement-india",
+      "what-is-fire",
+      "how-much-retirement-corpus",
+      "goal-based-investing-basics",
+    ],
+    scenarioSlugs: [
+      "1-crore-in-15-years",
+      "1-crore-in-20-years",
+      "1-crore-with-10-lakh-saved",
+      "50-lakh-in-10-years",
+    ],
     glossaryTerms: ["fire", "swr", "corpus", "inflation"],
     faqs: [
       {
@@ -500,6 +519,8 @@ export const TOPIC_HUBS: TopicHub[] = [
       "emergency-fund-basics",
       "asset-allocation-basics",
       "net-worth-and-goals",
+      "goal-based-investing-basics",
+      "how-to-choose-sip-amount",
     ],
     scenarioSlugs: ["2-crore-in-20-years"],
     glossaryTerms: [

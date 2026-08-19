@@ -150,7 +150,7 @@ export function TopicHubView({ slug }: { slug: string }) {
       {scenarios.length ? (
         <section className={ds.section} aria-labelledby="hub-scenarios">
           <h2 id="hub-scenarios" className={ds.h2}>
-            Example scenarios
+            Example scenarios & decision tools
           </h2>
           <div className="grid gap-3 sm:grid-cols-2">
             {scenarios.map((s) =>
@@ -160,7 +160,14 @@ export function TopicHubView({ slug }: { slug: string }) {
                   href={scenarioPath(s)}
                   className={cn(ds.cardInteractive, "block px-4 py-3")}
                 >
-                  <p className="font-medium">{s.title}</p>
+                  {s.decisionTool ? (
+                    <p className="text-xs font-semibold uppercase tracking-wide text-accent">
+                      Decision tool
+                    </p>
+                  ) : null}
+                  <p className={cn("font-medium", s.decisionTool && "mt-1")}>
+                    {s.title}
+                  </p>
                   <p className="mt-1 text-sm text-muted-foreground">
                     {s.description}
                   </p>

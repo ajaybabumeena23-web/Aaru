@@ -1,4 +1,10 @@
-import { calculateSip, calculateStepUpSip, calculateReverseSip, basicEmi } from "@/utils/financial-math";
+import {
+  calculateSip,
+  calculateStepUpSip,
+  calculateReverseSip,
+  basicEmi,
+  calculateLoanAffordability,
+} from "@/utils/financial-math";
 
 /** Long-tail scenario pages with genuine utility (not thin doorway pages). */
 
@@ -12,6 +18,9 @@ type ScenarioBase = {
   insight: string;
   compareNote: string;
   relatedGuides?: string[];
+  /** Highlight on hubs / homepage as a decision tool */
+  decisionTool?: boolean;
+  faqs?: { q: string; a: string }[];
 };
 
 export type SipScenario = ScenarioBase & {
@@ -41,7 +50,23 @@ export type GoalScenario = ScenarioBase & {
   current?: number;
 };
 
-export type ContentScenario = SipScenario | EmiScenario | GoalScenario;
+/** Income → max loan vs a target principal (uses existing affordability math). */
+export type AffordabilityScenario = ScenarioBase & {
+  kind: "affordability";
+  targetLoan: number;
+  monthlyIncome: number;
+  existingEmis: number;
+  foirPct: number;
+  rate: number;
+  years: number;
+  loanLabel: string;
+};
+
+export type ContentScenario =
+  | SipScenario
+  | EmiScenario
+  | GoalScenario
+  | AffordabilityScenario;
 
 export const SCENARIOS: ContentScenario[] = [
   // —— SIP ——
@@ -60,7 +85,7 @@ export const SCENARIOS: ContentScenario[] = [
       "A modest SIP builds habit first. At this size, consistency usually matters more than fine-tuning the return assumption within a realistic band.",
     compareNote:
       "Try the same tenure at 8% and 12% in the live calculator to see how sensitive the corpus is to return assumptions.",
-    relatedGuides: ["how-sip-works", "sip-for-beginners"],
+    relatedGuides: ["how-sip-works", "sip-for-beginners", "how-to-choose-sip-amount"],
   },
   {
     kind: "sip",
@@ -77,7 +102,7 @@ export const SCENARIOS: ContentScenario[] = [
       "Over 20 years, compounding and contribution totals both dominate. Small annual step-ups can change the ending corpus more than obsessing over a 0.5% return tweak.",
     compareNote:
       "Open Step-Up SIP with a 10% annual increase to compare against a flat ₹10,000 plan.",
-    relatedGuides: ["how-sip-works", "sip-vs-lump-sum"],
+    relatedGuides: ["how-sip-works", "sip-vs-lump-sum", "how-to-choose-sip-amount"],
   },
   {
     kind: "sip",
@@ -94,7 +119,7 @@ export const SCENARIOS: ContentScenario[] = [
       "For goals with a hard date (education, down payment), also run an inflation-adjusted view so the corpus is expressed in today’s purchasing power.",
     compareNote:
       "Use Advanced mode on the SIP calculator to toggle inflation and compare real vs nominal corpus.",
-    relatedGuides: ["how-sip-works"],
+    relatedGuides: ["how-sip-works", "goal-based-investing-basics"],
   },
   {
     kind: "sip",
@@ -128,7 +153,7 @@ export const SCENARIOS: ContentScenario[] = [
       "A smaller SIP sustained for two decades often beats an ambitious SIP that stops after a few years. Sustainability is a feature.",
     compareNote:
       "Contrast with ₹5,000 for 10 years on this site to see the tenure effect with the same monthly amount.",
-    relatedGuides: ["sip-for-beginners"],
+    relatedGuides: ["sip-for-beginners", "how-to-choose-sip-amount"],
   },
   {
     kind: "sip",
@@ -164,7 +189,7 @@ export const SCENARIOS: ContentScenario[] = [
       "Step-ups raise both contributions and ending corpus if you can sustain them. The gap is not “free return”—it is mostly higher savings plus compounding on those extras.",
     compareNote:
       "Only step up when cash flow allows. Open the Step-Up SIP calculator to try 5% vs 10% increases.",
-    relatedGuides: ["how-sip-works", "sip-vs-lump-sum"],
+    relatedGuides: ["how-sip-works", "sip-vs-lump-sum", "how-to-choose-sip-amount"],
   },
 
   // —— Loans / EMI ——
@@ -184,7 +209,11 @@ export const SCENARIOS: ContentScenario[] = [
       "Early EMIs are interest-heavy on reducing-balance loans. A lower EMI from a longer tenure usually means more total interest—compare both before choosing comfort over cost.",
     compareNote:
       "Model a mid-tenure prepayment on the Loan Prepayment calculator to see months and interest saved.",
-    relatedGuides: ["how-emi-works", "loan-prepayment-strategies"],
+    relatedGuides: [
+      "how-emi-works",
+      "loan-prepayment-strategies",
+      "home-loan-tenure-tradeoffs",
+    ],
   },
   {
     kind: "emi",
@@ -198,11 +227,26 @@ export const SCENARIOS: ContentScenario[] = [
     rate: 8.5,
     years: 25,
     loanLabel: "Home loan",
+    decisionTool: true,
     insight:
       "A 25-year tenure can make EMI fit a budget while quietly increasing total interest. Stress-test a 20-year tenure EMI before locking the longer plan.",
     compareNote:
-      "Use the Home Loan EMI calculator and toggle tenure between 20 and 25 years with the same principal.",
-    relatedGuides: ["how-emi-works"],
+      "Pair this with the ₹75 lakh affordability scenario to check income capacity—not only the EMI number.",
+    relatedGuides: [
+      "how-emi-works",
+      "how-much-home-loan-can-i-afford",
+      "home-loan-tenure-tradeoffs",
+    ],
+    faqs: [
+      {
+        q: "Why does a longer tenure raise total interest?",
+        a: "You pay interest for more months even if each EMI is smaller. Compare total interest for 20 vs 25 years with the same principal and rate.",
+      },
+      {
+        q: "Is 8.5% the rate I will get?",
+        a: "No—this is an illustration only. Actual offers depend on the lender, your profile and prevailing rates. Re-run with your quoted rate.",
+      },
+    ],
   },
   {
     kind: "emi",
@@ -222,8 +266,66 @@ export const SCENARIOS: ContentScenario[] = [
       "If a lender quotes a flat rate, compare with the Flat vs Reducing calculator before accepting the EMI.",
     relatedGuides: ["how-emi-works", "loan-prepayment-strategies"],
   },
+  {
+    kind: "affordability",
+    hub: "loans",
+    slug: "75-lakh-home-loan-affordability",
+    title: "Can I afford a ₹75 lakh home loan?",
+    h1: "₹75 lakh home loan affordability — income vs EMI capacity",
+    description:
+      "Illustrate whether a ₹75 lakh home loan fits under a FOIR-style EMI cap for sample income, then open the live affordability and EMI calculators with the same assumptions.",
+    targetLoan: 75_00_000,
+    monthlyIncome: 1_50_000,
+    existingEmis: 10_000,
+    foirPct: 40,
+    rate: 8.5,
+    years: 25,
+    loanLabel: "Home loan",
+    decisionTool: true,
+    insight:
+      "Affordability is not only “what EMI can I pay emotionally?”—it is also how much EMI capacity remains after existing obligations under a conservative share of income. Banks apply their own FOIR, bureau and property rules; treat this as a planning screen.",
+    compareNote:
+      "Change income, existing EMIs and FOIR in the Loan Affordability calculator. Then lock a comfortable EMI on the Home Loan EMI tool before shopping for a sanction.",
+    relatedGuides: [
+      "how-much-home-loan-can-i-afford",
+      "how-emi-works",
+      "home-loan-tenure-tradeoffs",
+    ],
+    faqs: [
+      {
+        q: "What is FOIR in this illustration?",
+        a: "A simple share of monthly income assumed available for all EMIs (existing + new). Lenders use their own policies—this site’s number is educational, not a bank rule.",
+      },
+      {
+        q: "Does a “fit” mean I should take the loan?",
+        a: "No. Also check emergency reserves, job stability, other goals and total interest over the tenure. Fit is a screen, not advice.",
+      },
+    ],
+  },
+  {
+    kind: "affordability",
+    hub: "loans",
+    slug: "50-lakh-home-loan-affordability",
+    title: "Can I afford a ₹50 lakh home loan?",
+    h1: "₹50 lakh home loan affordability — income vs EMI capacity",
+    description:
+      "Check whether a ₹50 lakh loan fits a sample income under a FOIR-style cap, then customise in the live tools.",
+    targetLoan: 50_00_000,
+    monthlyIncome: 1_00_000,
+    existingEmis: 5_000,
+    foirPct: 40,
+    rate: 8.5,
+    years: 20,
+    loanLabel: "Home loan",
+    decisionTool: true,
+    insight:
+      "Halving the loan size versus ₹75 lakh does not always halve stress—existing EMIs and FOIR still dominate. Re-run with your take-home and other EMIs.",
+    compareNote:
+      "Compare this page with the ₹50 lakh / 20-year EMI scenario to see payment totals once you know the loan is in range.",
+    relatedGuides: ["how-much-home-loan-can-i-afford", "how-emi-works"],
+  },
 
-  // —— Goals ——
+  // —— Goals / decision tools ——
   {
     kind: "goal",
     hub: "retirement",
@@ -231,15 +333,76 @@ export const SCENARIOS: ContentScenario[] = [
     title: "₹1 crore in 15 years",
     h1: "SIP needed for ₹1 crore in 15 years — illustrative",
     description:
-      "Reverse-solve the monthly SIP required to reach ₹1 crore in 15 years at an assumed return.",
+      "Reverse-solve the monthly SIP required to reach ₹1 crore in 15 years at an assumed return—then stress-test lower returns in the live Goal Planner.",
     target: 1_00_00_000,
     rate: 12,
     years: 15,
+    decisionTool: true,
     insight:
-      "The required SIP is only as good as the return assumption. Re-run at a lower rate to see how much buffer you need in contributions.",
+      "The required SIP is only as good as the return assumption. Re-run at a lower rate to see how much buffer you need in contributions. ₹1 crore is a round target—not automatically a full retirement corpus.",
     compareNote:
-      "Open the Goal Planner to subtract money already saved and test a what-if SIP.",
-    relatedGuides: ["how-to-plan-retirement-india", "how-sip-works"],
+      "Open the Goal Planner to subtract money already saved, or try the 20-year ₹1 crore scenario if your horizon is longer.",
+    relatedGuides: [
+      "how-to-plan-retirement-india",
+      "how-sip-works",
+      "how-much-retirement-corpus",
+      "goal-based-investing-basics",
+    ],
+    faqs: [
+      {
+        q: "Is 12% a guaranteed return?",
+        a: "No. It is an illustration only. Equity-heavy portfolios can deliver more or less over any 15-year window. Always stress-test a lower rate.",
+      },
+      {
+        q: "Should I use Reverse SIP or Goal Planner?",
+        a: "Both use the same core idea. Goal Planner is better when you already have savings to subtract from the target.",
+      },
+    ],
+  },
+  {
+    kind: "goal",
+    hub: "retirement",
+    slug: "1-crore-in-20-years",
+    title: "₹1 crore in 20 years",
+    h1: "SIP needed for ₹1 crore in 20 years — illustrative",
+    description:
+      "Longer-horizon reverse SIP for a ₹1 crore target—shows how extra years reduce the required monthly contribution under the same return assumption.",
+    target: 1_00_00_000,
+    rate: 12,
+    years: 20,
+    decisionTool: true,
+    insight:
+      "Extra years lower the required SIP, but they also expose the plan to more inflation and life changes. Pair the number with an inflation-aware goal if the ₹1 crore is meant to buy something priced in today’s rupees.",
+    compareNote:
+      "Contrast with the 15-year ₹1 crore scenario to see the tenure effect at the same assumed return.",
+    relatedGuides: [
+      "how-sip-works",
+      "how-much-retirement-corpus",
+      "goal-based-investing-basics",
+    ],
+  },
+  {
+    kind: "goal",
+    hub: "retirement",
+    slug: "1-crore-with-10-lakh-saved",
+    title: "₹1 crore with ₹10 lakh already saved",
+    h1: "SIP for ₹1 crore in 15 years if you already have ₹10 lakh",
+    description:
+      "Goal scenario that subtracts ₹10 lakh already invested, then reverse-solves the SIP for the remaining gap.",
+    target: 1_00_00_000,
+    current: 10_00_000,
+    rate: 12,
+    years: 15,
+    decisionTool: true,
+    insight:
+      "Existing savings reduce the SIP needed—but only if those savings stay invested toward the same goal. Revisit when you add lump sums or change the target date.",
+    compareNote:
+      "Replace ₹10 lakh with your actual corpus in the Goal Planner URL params or sliders.",
+    relatedGuides: [
+      "goal-based-investing-basics",
+      "how-sip-works",
+      "net-worth-and-goals",
+    ],
   },
   {
     kind: "goal",
@@ -256,7 +419,11 @@ export const SCENARIOS: ContentScenario[] = [
       "Shorter deadlines leave less room for equity volatility. Pair a required-SIP number with an emergency fund and realistic risk level.",
     compareNote:
       "Also price the goal in future rupees if costs will inflate (education, property).",
-    relatedGuides: ["how-to-plan-retirement-india", "emergency-fund-basics"],
+    relatedGuides: [
+      "how-to-plan-retirement-india",
+      "emergency-fund-basics",
+      "goal-based-investing-basics",
+    ],
   },
   {
     kind: "goal",
@@ -277,6 +444,7 @@ export const SCENARIOS: ContentScenario[] = [
       "asset-allocation-basics",
       "emergency-fund-basics",
       "how-to-plan-retirement-india",
+      "goal-based-investing-basics",
     ],
   },
 ];
@@ -291,6 +459,21 @@ export function getScenario(slug: string): ContentScenario | undefined {
 
 export function getScenariosForHub(hub: string): ContentScenario[] {
   return SCENARIOS.filter((s) => s.hub === hub);
+}
+
+export function getDecisionToolScenarios(): ContentScenario[] {
+  return SCENARIOS.filter((s) => s.decisionTool);
+}
+
+export function getRelatedScenarios(
+  scenario: ContentScenario,
+  limit = 4
+): ContentScenario[] {
+  return SCENARIOS.filter(
+    (s) =>
+      s.slug !== scenario.slug &&
+      (s.hub === scenario.hub || s.kind === scenario.kind)
+  ).slice(0, limit);
 }
 
 /** @deprecated use getScenario */
@@ -340,4 +523,23 @@ export function computeGoalScenario(s: GoalScenario) {
     years: s.years,
   });
   return { remaining, reverse };
+}
+
+export function computeAffordabilityScenario(s: AffordabilityScenario) {
+  const capacity = calculateLoanAffordability({
+    monthlyIncome: s.monthlyIncome,
+    existingEmis: s.existingEmis,
+    foirPct: s.foirPct,
+    annualRatePct: s.rate,
+    tenureYears: s.years,
+  });
+  const targetEmi = basicEmi({
+    principal: s.targetLoan,
+    annualRatePct: s.rate,
+    tenureMonths: s.years * 12,
+  });
+  const affordable = capacity.maxLoan >= s.targetLoan;
+  const principalGap = Math.max(0, s.targetLoan - capacity.maxLoan);
+  const emiGap = Math.max(0, targetEmi.emi - capacity.availableEmi);
+  return { capacity, targetEmi, affordable, principalGap, emiGap };
 }

@@ -822,8 +822,245 @@ export const GUIDES: Guide[] = [
       { href: "/calculators/retirement/goal-planner", title: "Goal Planner" },
       { href: "/calculators/debt/emi", title: "EMI Calculator" },
       { href: "/calculators/retirement/fire", title: "FIRE Planner" },
+      { href: "/calculators/investment/net-worth", title: "Net Worth" },
     ],
-    relatedGuides: ["asset-allocation-basics", "how-to-plan-retirement-india"],
+    relatedGuides: [
+      "asset-allocation-basics",
+      "how-to-plan-retirement-india",
+      "goal-based-investing-basics",
+    ],
+  },
+  {
+    slug: "how-to-choose-sip-amount",
+    title: "How to choose a SIP amount",
+    description:
+      "Pick a sustainable monthly SIP from surplus cash flow—after emergency reserves and high-interest debt—then stress-test returns.",
+    category: "Investing",
+    readingMinutes: 7,
+    lastUpdated: UPDATED,
+    topicSlugs: ["sip", "mutual-funds", "wealth-planning"],
+    sections: [
+      {
+        h2: "Start from surplus, not from a headline corpus",
+        paragraphs: [
+          "A useful SIP is one you can continue through ordinary life events. Begin with take-home income, subtract essential expenses, minimum debt payments and a contribution toward an emergency fund. What remains is investable surplus—not the full surplus if you also need short-term sinking funds.",
+          "Rules like “invest 20% of income” are only starting points. High rent, dependents or aggressive loan EMIs can make that unrealistic; low fixed costs can make it too timid.",
+        ],
+      },
+      {
+        h2: "Separate habit SIPs from goal SIPs",
+        paragraphs: [
+          "A habit SIP builds long-term wealth without a single deadline. A goal SIP is reverse-engineered from a target date and amount (house down payment, education, retirement milestone). Mixing both into one vague “₹X SIP” often underfunds the dated goal.",
+        ],
+        bullets: [
+          "Habit SIP: sized to cash flow you can sustain for years",
+          "Goal SIP: use Reverse SIP / Goal Planner, then check affordability",
+          "Step-ups: raise only when income reliably rises",
+        ],
+      },
+      {
+        h2: "Stress-test before you lock the number",
+        paragraphs: [
+          "Run the same SIP at a lower assumed return and, for dated goals, with inflation. If the plan only “works” at an optimistic rate, increase contributions, extend the horizon, or lower the goal—don’t stretch risk just to make a calculator look green.",
+        ],
+      },
+    ],
+    relatedCalculators: [
+      { href: "/calculators/investment/sip", title: "SIP Calculator" },
+      { href: "/calculators/retirement/goal-planner", title: "Goal Planner" },
+      { href: "/calculators/investment/step-up-sip", title: "Step-Up SIP" },
+    ],
+    relatedGuides: [
+      "sip-for-beginners",
+      "how-sip-works",
+      "goal-based-investing-basics",
+      "emergency-fund-basics",
+    ],
+  },
+  {
+    slug: "how-much-home-loan-can-i-afford",
+    title: "How much home loan can I afford?",
+    description:
+      "Estimate loan size from income, existing EMIs and a FOIR-style EMI cap—then compare with the EMI for the property you want.",
+    category: "Loans",
+    readingMinutes: 8,
+    lastUpdated: UPDATED,
+    topicSlugs: ["loans"],
+    sections: [
+      {
+        h2: "Affordability is capacity, not desire",
+        paragraphs: [
+          "Banks often look at a share of income that can go toward all EMIs (sometimes discussed as FOIR or similar internal limits), credit history and property rules. Online illustrations use transparent assumptions so you can see the math—they are not a sanction letter.",
+          "Your personal affordability also includes emergency reserves, job stability and other goals. Passing a FOIR-style screen does not mean the EMI is comfortable every month.",
+        ],
+      },
+      {
+        h2: "A practical sequence",
+        paragraphs: [
+          "First estimate max loan from income and existing EMIs. Then compute EMI for the loan you actually need after down payment. If required EMI exceeds available capacity, options include a larger down payment, a smaller property, a longer tenure (usually more total interest), or waiting.",
+        ],
+        bullets: [
+          "Use Loan Affordability for capacity",
+          "Use Home Loan EMI for payment and interest totals",
+          "Stress-test a higher rate and a shorter tenure you might prefer later",
+        ],
+      },
+      {
+        h2: "What this site does not claim",
+        paragraphs: [
+          "We do not publish bank-specific eligibility grids or promised rates. Re-run tools with the rate and FOIR your lender quotes, and verify fees, insurance and prepayment terms in the offer documents.",
+        ],
+      },
+    ],
+    relatedCalculators: [
+      {
+        href: "/calculators/debt/loan-affordability",
+        title: "Loan Affordability",
+      },
+      { href: "/calculators/debt/home-loan-emi", title: "Home Loan EMI" },
+      { href: "/calculators/debt/advanced-prepayment", title: "Loan Prepayment" },
+    ],
+    relatedGuides: [
+      "how-emi-works",
+      "home-loan-tenure-tradeoffs",
+      "loan-prepayment-strategies",
+    ],
+  },
+  {
+    slug: "home-loan-tenure-tradeoffs",
+    title: "Home loan tenure: EMI vs total interest",
+    description:
+      "Why a longer home-loan tenure lowers EMI but usually raises lifetime interest—and how to compare 20 vs 25 years honestly.",
+    category: "Loans",
+    readingMinutes: 6,
+    lastUpdated: UPDATED,
+    topicSlugs: ["loans"],
+    sections: [
+      {
+        h2: "Two numbers that pull in opposite directions",
+        paragraphs: [
+          "For the same principal and interest rate, stretching tenure reduces monthly EMI and increases the number of interest-bearing months. Comfortable cash flow and minimum lifetime interest are different objectives—pick deliberately.",
+        ],
+      },
+      {
+        h2: "A useful comparison habit",
+        paragraphs: [
+          "Before accepting the longest tenure on offer, note EMI and total interest for a shorter tenure you could still pay. If the shorter EMI fits with a buffer, you may prefer it even if the longer EMI feels “easy.”",
+          "Prepayments later can shorten an initially long tenure—but only if you actually make them. Do not rely on future discipline to justify an oversized loan today.",
+        ],
+      },
+      {
+        h2: "Assumptions to keep visible",
+        paragraphs: [
+          "Illustrations on this site use reducing-balance EMI math and exclude processing fees, insurance and floating-rate resets. When your lender’s schedule differs, trust the lender’s amortization for legal purposes and use our tools for education.",
+        ],
+      },
+    ],
+    relatedCalculators: [
+      { href: "/calculators/debt/home-loan-emi", title: "Home Loan EMI" },
+      { href: "/calculators/debt/tenure-vs-emi", title: "Tenure vs EMI" },
+      { href: "/calculators/debt/advanced-prepayment", title: "Loan Prepayment" },
+    ],
+    relatedGuides: [
+      "how-emi-works",
+      "how-much-home-loan-can-i-afford",
+      "loan-prepayment-strategies",
+    ],
+  },
+  {
+    slug: "how-much-retirement-corpus",
+    title: "How much retirement corpus might you need?",
+    description:
+      "Translate monthly retirement expenses into a planning corpus using withdrawal-rate style assumptions—then reverse-solve the SIP.",
+    category: "Retirement",
+    readingMinutes: 8,
+    lastUpdated: UPDATED,
+    topicSlugs: ["retirement", "wealth-planning"],
+    sections: [
+      {
+        h2: "Corpus is a bridge from expenses, not a round number",
+        paragraphs: [
+          "₹1 crore is a popular headline, but need depends on the lifestyle you fund, other pensions/rental income, longevity and healthcare. A clearer path is: estimate monthly expenses in today’s rupees → inflate to retirement → choose a planning withdrawal assumption → back into a corpus range.",
+        ],
+      },
+      {
+        h2: "Withdrawal-rate illustrations are assumptions",
+        paragraphs: [
+          "Common educational illustrations use roughly 3–4% of corpus per year as a starting withdrawal idea. That is not a guarantee of sustainability. Markets, sequence of returns, healthcare shocks and longevity can require a lower rate or a flexible spending plan.",
+        ],
+        bullets: [
+          "Lower withdrawal rate → larger corpus needed for the same expense",
+          "Higher assumed investment return while accumulating → lower SIP, more risk",
+          "Always keep an emergency buffer separate from “invested forever” money",
+        ],
+      },
+      {
+        h2: "Connect corpus to contributions",
+        paragraphs: [
+          "Once you have a target range, use Goal Planner or Reverse SIP to estimate monthly investing. Revisit when income, family or the expense estimate changes—retirement planning is iterative, not a one-time calculator screenshot.",
+        ],
+      },
+    ],
+    relatedCalculators: [
+      { href: "/calculators/retirement/fire", title: "FIRE Planner" },
+      { href: "/calculators/retirement/goal-planner", title: "Goal Planner" },
+      { href: "/calculators/retirement/reverse-sip", title: "Reverse SIP" },
+      { href: "/calculators/investment/swp", title: "SWP Calculator" },
+    ],
+    relatedGuides: [
+      "how-to-plan-retirement-india",
+      "what-is-fire",
+      "goal-based-investing-basics",
+      "how-swp-works",
+    ],
+  },
+  {
+    slug: "goal-based-investing-basics",
+    title: "Goal-based investing basics",
+    description:
+      "Attach dates and amounts to money goals, then use reverse-SIP style tools—without treating any single projection as a promise.",
+    category: "Wealth planning",
+    readingMinutes: 7,
+    lastUpdated: UPDATED,
+    topicSlugs: ["wealth-planning", "sip", "retirement"],
+    sections: [
+      {
+        h2: "Goals need three inputs",
+        paragraphs: [
+          "A usable goal states what you are funding, roughly when you need the money, and an amount in today’s or future rupees. Vague goals (“be rich”, “secure future”) do not produce actionable SIPs.",
+        ],
+      },
+      {
+        h2: "Map each goal to a tool",
+        paragraphs: [
+          "Dated corpus goals → Goal Planner / Reverse SIP. Loan capacity → Affordability + EMI. Near-term safety → Emergency fund sizing. Retirement lifestyle → expense → corpus → SIP chain. Keep the mapping explicit so tools do not fight each other for the same rupee of surplus.",
+        ],
+      },
+      {
+        h2: "Prioritise before you optimise returns",
+        paragraphs: [
+          "High-interest debt and empty emergency reserves usually beat fine-tuning equity allocation. After the foundation, assign surplus across goals by deadline and importance—not by whichever calculator produced the largest number.",
+        ],
+      },
+    ],
+    relatedCalculators: [
+      { href: "/calculators/retirement/goal-planner", title: "Goal Planner" },
+      { href: "/calculators/investment/sip", title: "SIP Calculator" },
+      {
+        href: "/calculators/debt/loan-affordability",
+        title: "Loan Affordability",
+      },
+      {
+        href: "/calculators/retirement/emergency-fund",
+        title: "Emergency Fund",
+      },
+    ],
+    relatedGuides: [
+      "how-to-choose-sip-amount",
+      "emergency-fund-basics",
+      "asset-allocation-basics",
+      "net-worth-and-goals",
+    ],
   },
 ];
 

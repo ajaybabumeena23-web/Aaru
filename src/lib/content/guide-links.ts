@@ -1,28 +1,51 @@
 /** Maps calculator seoKey → related guide slugs for internal linking. */
 export const CALCULATOR_GUIDE_LINKS: Record<string, string[]> = {
-  "investment/sip": ["how-sip-works", "sip-vs-lump-sum", "sip-for-beginners"],
-  "investment/step-up-sip": ["how-sip-works", "sip-vs-lump-sum"],
+  "investment/sip": [
+    "how-sip-works",
+    "sip-vs-lump-sum",
+    "sip-for-beginners",
+    "how-to-choose-sip-amount",
+  ],
+  "investment/step-up-sip": [
+    "how-sip-works",
+    "sip-vs-lump-sum",
+    "how-to-choose-sip-amount",
+  ],
   "investment/lump-sum": ["sip-vs-lump-sum", "how-sip-works"],
   "investment/swp": ["how-swp-works", "how-to-plan-retirement-india"],
   "investment/xirr": ["xirr-explained", "how-sip-works", "stocks-vs-mutual-funds"],
   "debt/emi": ["how-emi-works", "loan-prepayment-strategies"],
-  "debt/home-loan-emi": ["how-emi-works", "loan-prepayment-strategies"],
+  "debt/home-loan-emi": [
+    "how-emi-works",
+    "how-much-home-loan-can-i-afford",
+    "home-loan-tenure-tradeoffs",
+    "loan-prepayment-strategies",
+  ],
   "debt/personal-loan-emi": ["how-emi-works"],
   "debt/car-loan-emi": ["how-emi-works"],
   "debt/advanced-prepayment": ["loan-prepayment-strategies", "how-emi-works"],
-  "debt/tenure-vs-emi": ["loan-prepayment-strategies"],
+  "debt/tenure-vs-emi": [
+    "loan-prepayment-strategies",
+    "home-loan-tenure-tradeoffs",
+  ],
   "retirement/fire": [
     "what-is-fire",
     "how-to-plan-retirement-india",
+    "how-much-retirement-corpus",
     "asset-allocation-basics",
   ],
   "retirement/goal-planner": [
     "how-to-plan-retirement-india",
     "how-sip-works",
+    "goal-based-investing-basics",
+    "how-much-retirement-corpus",
     "emergency-fund-basics",
-    "asset-allocation-basics",
   ],
-  "retirement/reverse-sip": ["how-sip-works", "how-to-plan-retirement-india"],
+  "retirement/reverse-sip": [
+    "how-sip-works",
+    "how-to-plan-retirement-india",
+    "goal-based-investing-basics",
+  ],
   "taxation/income-tax": ["old-vs-new-tax-regime"],
   "taxation/take-home-salary": [
     "understanding-take-home-salary",
@@ -35,7 +58,11 @@ export const CALCULATOR_GUIDE_LINKS: Record<string, string[]> = {
   "investment/inflation": ["emergency-fund-basics", "asset-allocation-basics"],
   "investment/cagr": ["how-sip-works", "xirr-explained"],
   "investment/net-worth": ["net-worth-and-goals", "emergency-fund-basics"],
-  "debt/loan-affordability": ["how-emi-works", "loan-prepayment-strategies"],
+  "debt/loan-affordability": [
+    "how-much-home-loan-can-i-afford",
+    "how-emi-works",
+    "home-loan-tenure-tradeoffs",
+  ],
   "debt/education-loan-emi": ["how-emi-works"],
   "retirement/emergency-fund": ["emergency-fund-basics", "net-worth-and-goals"],
 };

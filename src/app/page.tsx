@@ -405,19 +405,26 @@ export default function HomePage() {
           )}
         </div>
         <p className="text-sm text-muted-foreground">
-          Looking for a specific goal? Try{" "}
+          Looking for a specific decision? Try{" "}
           <Link
             href="/retirement/1-crore-in-15-years"
             className="font-medium text-accent hover:underline"
           >
             SIP needed for ₹1 crore
-          </Link>{" "}
-          or{" "}
+          </Link>
+          ,{" "}
+          <Link
+            href="/loans/75-lakh-home-loan-affordability"
+            className="font-medium text-accent hover:underline"
+          >
+            can I afford a ₹75 lakh home loan
+          </Link>
+          , or{" "}
           <Link
             href="/loans/75-lakh-home-loan-25-years"
             className="font-medium text-accent hover:underline"
           >
-            ₹75 lakh home loan EMI
+            ₹75 lakh EMI totals
           </Link>
           .
         </p>
