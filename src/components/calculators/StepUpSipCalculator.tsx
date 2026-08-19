@@ -304,6 +304,7 @@ function StepUpSipCalculatorInner() {
                   },
                 ]}
                 balanceSeries={result.monthlySeries.map((r) => r.value)}
+                balanceSeriesYears={values.years}
                 balanceChartTitle="Portfolio value over time"
                 journey={[
                   `${formatINR(values.monthly, true)} starting SIP`,

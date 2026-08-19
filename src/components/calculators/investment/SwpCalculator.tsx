@@ -230,6 +230,7 @@ function SwpInner() {
                   },
                 ]}
                 balanceSeries={result.series.map((r) => r.corpus)}
+                balanceSeriesYears={values.years}
                 balanceChartTitle="Corpus balance over time"
                 journey={[
                   `${formatINR(values.corpus, true)} starting corpus`,

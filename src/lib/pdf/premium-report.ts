@@ -30,6 +30,11 @@ export type PremiumPdfOptions = {
   /** Outstanding balance (or corpus) over time — numeric, in order */
   balanceSeries?: number[];
   balanceChartTitle?: string;
+  /**
+   * Investment / loan horizon in years for the balance series.
+   * Required for correct X-axis labels when the series is yearly (SIP) vs monthly (EMI).
+   */
+  balanceSeriesYears?: number;
   journey?: string[];
   table?: {
     columns: PdfTableColumn[];
@@ -45,15 +50,16 @@ export type PremiumPdfOptions = {
   expectedReturnPct?: number;
 };
 
+/** Brand tokens aligned with `theme` in design-system.ts / globals.css */
 const COLORS = {
-  navy: [11, 31, 51] as [number, number, number],
-  navyMid: [38, 55, 70] as [number, number, number],
-  gold: [15, 118, 110] as [number, number, number],
-  turquoise: [15, 118, 110] as [number, number, number],
-  ink: [23, 32, 42] as [number, number, number],
-  muted: [100, 116, 139] as [number, number, number],
-  line: [226, 232, 240] as [number, number, number],
-  rowAlt: [248, 250, 252] as [number, number, number],
+  navy: [11, 31, 51] as [number, number, number], // #0B1F33
+  navyMid: [38, 55, 70] as [number, number, number], // #263746
+  gold: [15, 118, 110] as [number, number, number], // accent teal used for header accent bar
+  turquoise: [15, 118, 110] as [number, number, number], // #0F766E
+  ink: [23, 32, 42] as [number, number, number], // #17202A
+  muted: [100, 116, 139] as [number, number, number], // #64748B
+  line: [226, 232, 240] as [number, number, number], // #E2E8F0
+  rowAlt: [248, 250, 252] as [number, number, number], // #F8FAFC
   white: [255, 255, 255] as [number, number, number],
   pageBg: [248, 250, 252] as [number, number, number],
   cardBorder: [226, 232, 240] as [number, number, number],
@@ -71,12 +77,15 @@ const DISCLAIMER_SHORT =
 const DISCLAIMER_FULL =
   "*Figures are illustrative estimates based on the inputs shown. They are not investment, tax or legal advice and do not guarantee outcomes. Unless explicitly modelled, projections exclude inflation, taxes, fees, exit loads and lender charges. Rounding may create a small residual in the final instalment.";
 
+/**
+ * Donut segment colours — same palette as the live FinancialDonutChart /
+ * design-system brand (navy + accent teal), not arbitrary PDF-only hues.
+ */
 const SLICE_COLORS: [number, number, number][] = [
-  COLORS.navy,
-  COLORS.gold,
-  COLORS.turquoise,
-  COLORS.interest,
-  [90, 120, 180],
+  COLORS.navy, // #0B1F33 — primary brand
+  COLORS.turquoise, // #0F766E — accent
+  COLORS.navyMid, // #263746 — slate
+  [148, 163, 184], // muted slate fallback (#94A3B8)
 ];
 
 function rgb(doc: jsPDF, c: [number, number, number]) {
@@ -116,11 +125,9 @@ function drawDonutPng(
   slices.forEach((slice, i) => {
     const angle = (Math.max(0, slice.value) / total) * Math.PI * 2;
     const mid = start + angle / 2;
+    // Always use site brand palette (ignore per-calculator overrides)
     const c = SLICE_COLORS[i % SLICE_COLORS.length];
-    let fillStyle = `rgb(${c[0]},${c[1]},${c[2]})`;
-    if (slice.color?.startsWith("#") && slice.color.length >= 7) {
-      fillStyle = slice.color;
-    }
+    const fillStyle = `rgb(${c[0]},${c[1]},${c[2]})`;
 
     ctx.beginPath();
     ctx.moveTo(cx, cy);
@@ -168,29 +175,66 @@ function drawDonutPng(
   return canvas.toDataURL("image/png");
 }
 
-/** Year tick marks for a monthly (or near-monthly) series. */
-function yearAxisTicks(
-  pointCount: number
+/**
+ * X-axis ticks for portfolio / balance charts.
+ *
+ * SIP-style series stores one point per year (length === years).
+ * EMI-style series stores one point per month (length === years * 12).
+ * Labels always reflect real calendar years of the horizon — never "Year 1…Year 2"
+ * for a 20-year run.
+ */
+export function yearAxisTicks(
+  pointCount: number,
+  horizonYears?: number
 ): { index: number; label: string }[] {
   if (pointCount < 2) return [];
-  const totalYears = Math.max(1, Math.round((pointCount - 1) / 12));
-  const step =
-    totalYears <= 6 ? 1 : totalYears <= 20 ? 5 : totalYears <= 40 ? 10 : 15;
-  const ticks: { index: number; label: string }[] = [];
-  const push = (year: number) => {
-    const index = Math.min(
-      pointCount - 1,
-      Math.max(0, Math.round((year * (pointCount - 1)) / totalYears))
-    );
-    const label = `Year ${year}`;
-    if (!ticks.some((t) => t.index === index)) ticks.push({ index, label });
+
+  const inferredMonthly =
+    pointCount % 12 === 0 && pointCount / 12 >= 2 && pointCount >= 60;
+  const totalYears = Math.max(
+    1,
+    Math.round(
+      horizonYears != null && horizonYears > 0
+        ? horizonYears
+        : inferredMonthly
+          ? pointCount / 12
+          : pointCount
+    )
+  );
+
+  const isAnnualSeries =
+    horizonYears != null
+      ? pointCount <= totalYears + 1
+      : !inferredMonthly;
+
+  const indexForYear = (year: number): number => {
+    if (year <= 0) return 0;
+    if (isAnnualSeries) {
+      // index 0 = end of year 1, index N-1 = end of year N
+      return Math.min(pointCount - 1, Math.max(0, year - 1));
+    }
+    // monthly: month 12 → index 11, month (year*12) → index year*12 - 1
+    return Math.min(pointCount - 1, Math.max(0, year * 12 - 1));
   };
-  for (let y = 0; y <= totalYears; y += step) push(y);
-  push(totalYears);
-  return ticks.sort((a, b) => a.index - b.index);
+
+  const step =
+    totalYears <= 5 ? 1 : totalYears <= 10 ? 2 : totalYears <= 30 ? 5 : 10;
+
+  const years: number[] = [];
+  for (let y = step; y < totalYears; y += step) years.push(y);
+  if (!years.includes(totalYears)) years.push(totalYears);
+
+  return years.map((year) => ({
+    index: indexForYear(year),
+    label: year === 1 ? "1 Year" : `${year} Years`,
+  }));
 }
 
-function drawBalancePng(points: number[], titleHint?: string): string | null {
+function drawBalancePng(
+  points: number[],
+  titleHint?: string,
+  horizonYears?: number
+): string | null {
   if (typeof document === "undefined" || points.length < 2) return null;
   const w = 900;
   const h = 340;
@@ -209,6 +253,11 @@ function drawBalancePng(points: number[], titleHint?: string): string | null {
   const plotW = w - pad.l - pad.r;
   const plotH = h - pad.t - pad.b;
 
+  const xAt = (i: number) => pad.l + (plotW * i) / (points.length - 1);
+  const yAt = (v: number) =>
+    pad.t + plotH - ((v - minY) / (maxY - minY)) * plotH;
+
+  // Horizontal grid
   ctx.strokeStyle = "#e8ebf0";
   ctx.lineWidth = 1;
   for (let i = 0; i <= 4; i++) {
@@ -219,9 +268,18 @@ function drawBalancePng(points: number[], titleHint?: string): string | null {
     ctx.stroke();
   }
 
-  const xAt = (i: number) => pad.l + (plotW * i) / (points.length - 1);
-  const yAt = (v: number) =>
-    pad.t + plotH - ((v - minY) / (maxY - minY)) * plotH;
+  const ticks = yearAxisTicks(points.length, horizonYears);
+
+  // Vertical reference lines at year interval ticks
+  ticks.forEach((tick) => {
+    const x = xAt(tick.index);
+    ctx.strokeStyle = "#cbd5e1";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(x, pad.t);
+    ctx.lineTo(x, pad.t + plotH);
+    ctx.stroke();
+  });
 
   ctx.beginPath();
   points.forEach((v, i) => {
@@ -258,11 +316,10 @@ function drawBalancePng(points: number[], titleHint?: string): string | null {
     pad.t - 10
   );
 
-  ctx.fillStyle = "#17202A";
   ctx.font = "11px Helvetica, Arial, sans-serif";
-  yearAxisTicks(points.length).forEach((tick) => {
+  ticks.forEach((tick) => {
     const x = xAt(tick.index);
-    ctx.strokeStyle = "#cbd5e1";
+    ctx.strokeStyle = "#94a3b8";
     ctx.beginPath();
     ctx.moveTo(x, pad.t + plotH);
     ctx.lineTo(x, pad.t + plotH + 5);
@@ -279,6 +336,44 @@ function drawBalancePng(points: number[], titleHint?: string): string | null {
   }
 
   return canvas.toDataURL("image/png");
+}
+
+/** Load the site brand mark (favicon / app icon) for the PDF header. */
+async function loadBrandMarkDataUrl(): Promise<string | null> {
+  if (typeof document === "undefined") return null;
+  const candidates = [
+    "/android-chrome-192x192.png",
+    "/apple-touch-icon.png",
+    "/icon.png",
+    "/favicon-32x32.png",
+  ];
+  for (const src of candidates) {
+    try {
+      const dataUrl = await new Promise<string>((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => {
+          const size = 128;
+          const canvas = document.createElement("canvas");
+          canvas.width = size;
+          canvas.height = size;
+          const ctx = canvas.getContext("2d");
+          if (!ctx) {
+            reject(new Error("no canvas"));
+            return;
+          }
+          ctx.clearRect(0, 0, size, size);
+          ctx.drawImage(img, 0, 0, size, size);
+          resolve(canvas.toDataURL("image/png"));
+        };
+        img.onerror = () => reject(new Error("load failed"));
+        img.src = src;
+      });
+      return dataUrl;
+    } catch {
+      /* try next */
+    }
+  }
+  return null;
 }
 
 function drawRoundedRect(
@@ -475,6 +570,7 @@ export async function generatePremiumPdf(
 ): Promise<void> {
   const prepared = prepareOptions(options);
   const highReturnPct = detectHighReturnPct(options);
+  const brandMark = await loadBrandMarkDataUrl();
 
   const doc = new jsPDF({ unit: "pt", format: "a4", putOnlyUsedFonts: true });
   registerUnicodePdfFonts(doc);
@@ -527,22 +623,38 @@ export async function generatePremiumPdf(
     if (y + needed > pageHeight - FOOTER_RESERVE - 8) newPage();
   };
 
-  // —— PAGE 1 HEADER (no timestamp here — moved to footer) ——
+  // —— PAGE 1 HEADER (brand mark + title; timestamp is in the footer) ——
   paintPageBackground();
   fill(doc, COLORS.navy);
   doc.rect(0, 0, pageWidth, 92, "F");
-  fill(doc, COLORS.gold);
+  fill(doc, COLORS.turquoise);
   doc.rect(0, 92, pageWidth, 3, "F");
+
+  const logoSize = 36;
+  const textLeft = brandMark ? MARGIN + logoSize + 12 : MARGIN;
+  if (brandMark) {
+    // White plate so the transparent navy/gold mark stays legible on navy header
+    fill(doc, COLORS.white);
+    doc.roundedRect(MARGIN, 18, logoSize + 8, logoSize + 8, 6, 6, "F");
+    doc.addImage(
+      brandMark,
+      "PNG",
+      MARGIN + 4,
+      22,
+      logoSize,
+      logoSize
+    );
+  }
 
   setPdfFont(doc, "bold");
   doc.setFontSize(11);
-  rgb(doc, COLORS.gold);
-  pdfText(doc, SITE_NAME.toUpperCase(), MARGIN, 28);
+  rgb(doc, COLORS.turquoise);
+  pdfText(doc, SITE_NAME.toUpperCase(), textLeft, 28);
 
   setPdfFont(doc, "normal");
   doc.setFontSize(8);
   rgb(doc, [180, 190, 210]);
-  pdfText(doc, SITE_TAGLINE, MARGIN, 42);
+  pdfText(doc, SITE_TAGLINE, textLeft, 42);
 
   setPdfFont(doc, "bold");
   doc.setFontSize(20);
@@ -586,12 +698,12 @@ export async function generatePremiumPdf(
     ensureSpace(88);
     fill(doc, COLORS.navy);
     drawRoundedRect(doc, MARGIN, y, contentW, 78, 10, "F");
-    fill(doc, COLORS.gold);
+    fill(doc, COLORS.turquoise);
     doc.roundedRect(MARGIN, y, 6, 78, 3, 3, "F");
 
     setPdfFont(doc, "bold");
     doc.setFontSize(9);
-    rgb(doc, COLORS.gold);
+    rgb(doc, COLORS.turquoise);
     pdfText(doc, `${hero.label.toUpperCase()}*`, MARGIN + 22, y + 24);
 
     setPdfFont(doc, "bold");
@@ -785,7 +897,7 @@ export async function generatePremiumPdf(
     const stepW = contentW / steps.length;
     steps.forEach((step, i) => {
       const cx = MARGIN + stepW * i + stepW / 2;
-      fill(doc, i === steps.length - 1 ? COLORS.gold : COLORS.navy);
+      fill(doc, i === steps.length - 1 ? COLORS.turquoise : COLORS.navy);
       doc.circle(cx, y + 6, 5, "F");
       if (i < steps.length - 1) {
         stroke(doc, COLORS.line);
@@ -806,7 +918,8 @@ export async function generatePremiumPdf(
     if (!prepared.balanceSeries || prepared.balanceSeries.length < 2) return;
     const png = drawBalancePng(
       prepared.balanceSeries,
-      prepared.balanceChartTitle ?? "Portfolio value over time"
+      prepared.balanceChartTitle ?? "Portfolio value over time",
+      prepared.balanceSeriesYears
     );
     if (!png) return;
     ensureSpace(160);
@@ -870,10 +983,17 @@ export async function generatePremiumPdf(
     );
     const weightSum = weights.reduce((a, b) => a + b, 0);
     const colWs = weights.map((w) => (usable * w) / weightSum);
+    const rowH = 14;
+    const headerH = 18;
 
     const drawTableHeader = () => {
+      const headerTop = y;
       fill(doc, COLORS.navy);
-      drawRoundedRect(doc, MARGIN, y - 10, contentW, 18, 3, "F");
+      doc.rect(MARGIN, headerTop, contentW, headerH, "F");
+      stroke(doc, COLORS.navy);
+      doc.setLineWidth(0.6);
+      doc.rect(MARGIN, headerTop, contentW, headerH, "S");
+
       setPdfFont(doc, "bold");
       doc.setFontSize(8);
       rgb(doc, COLORS.white);
@@ -881,24 +1001,34 @@ export async function generatePremiumPdf(
       cols.forEach((col, i) => {
         const align = i === 0 ? "left" : "right";
         const tx = align === "left" ? x + 6 : x + colWs[i] - 6;
-        pdfText(doc, col.header, tx, y, { align });
+        pdfText(doc, col.header, tx, headerTop + 12, { align });
+        // Vertical column rules through header
+        if (i > 0) {
+          stroke(doc, COLORS.white);
+          doc.setLineWidth(0.4);
+          doc.line(x, headerTop, x, headerTop + headerH);
+        }
         x += colWs[i];
       });
-      y += 14;
+      // Outer border in navy already stroked; restore ink stroke for body
+      stroke(doc, COLORS.cardBorder);
+      y = headerTop + headerH;
     };
 
     drawTableHeader();
 
     allRows.forEach((row, ri) => {
-      ensureSpace(16);
+      ensureSpace(rowH + 4);
       if (y > pageHeight - FOOTER_RESERVE - 12) {
         newPage();
         drawTableHeader();
       }
+      const rowTop = y;
       if (ri % 2 === 1) {
         fill(doc, COLORS.rowAlt);
-        doc.rect(MARGIN, y - 9, contentW, 13, "F");
+        doc.rect(MARGIN, rowTop, contentW, rowH, "F");
       }
+
       setPdfFont(doc, "normal");
       doc.setFontSize(8);
       rgb(doc, COLORS.ink);
@@ -907,10 +1037,23 @@ export async function generatePremiumPdf(
         const cell = sanitizeCell(row[col.key] ?? "—");
         const align = i === 0 ? "left" : "right";
         const tx = align === "left" ? x + 6 : x + colWs[i] - 6;
-        pdfText(doc, cell, tx, y, { align, maxWidth: colWs[i] - 10 });
+        pdfText(doc, cell, tx, rowTop + 10, {
+          align,
+          maxWidth: colWs[i] - 10,
+        });
         x += colWs[i];
       });
-      y += 13;
+
+      // Full cell grid: outer + vertical + bottom horizontal
+      stroke(doc, COLORS.cardBorder);
+      doc.setLineWidth(0.5);
+      doc.rect(MARGIN, rowTop, contentW, rowH, "S");
+      x = MARGIN;
+      for (let i = 0; i < cols.length - 1; i++) {
+        x += colWs[i];
+        doc.line(x, rowTop, x, rowTop + rowH);
+      }
+      y = rowTop + rowH;
     });
     y += 10;
   }

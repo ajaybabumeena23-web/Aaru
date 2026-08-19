@@ -271,6 +271,7 @@ function SipInner() {
                   },
                 ]}
                 balanceSeries={result.monthlySeries.map((r) => r.value)}
+                balanceSeriesYears={values.years}
                 balanceChartTitle="Portfolio value over time"
                 journey={[
                   `${formatINR(values.monthly, true)} monthly SIP`,

@@ -320,6 +320,10 @@ function AdvancedPrepaymentInner() {
                   },
                 ]}
                 balanceSeries={result.schedule.map((r) => r.balance)}
+                balanceSeriesYears={Math.max(
+                  1,
+                  Math.ceil(result.monthsTaken / 12)
+                )}
                 balanceChartTitle="Outstanding loan balance"
                 journey={[
                   `${formatINR(values.principal, true)} borrowed`,

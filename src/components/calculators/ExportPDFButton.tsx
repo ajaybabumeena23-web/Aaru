@@ -41,6 +41,8 @@ export type ExportPDFButtonProps = {
   /** Line chart series (e.g. outstanding balance). */
   balanceSeries?: number[];
   balanceChartTitle?: string;
+  /** Horizon in years for balanceSeries X-axis labels (SIP yearly vs EMI monthly). */
+  balanceSeriesYears?: number;
   /** Simple journey / timeline steps. */
   journey?: string[];
   /**
@@ -68,6 +70,7 @@ export function ExportPDFButton({
   chartSlices,
   balanceSeries,
   balanceChartTitle,
+  balanceSeriesYears,
   journey,
   expectedReturnPct,
   fileName,
@@ -101,6 +104,7 @@ export function ExportPDFButton({
         chartSlices,
         balanceSeries,
         balanceChartTitle,
+        balanceSeriesYears,
         journey,
         expectedReturnPct,
         fileName,

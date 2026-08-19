@@ -221,6 +221,7 @@ function LumpSumInner() {
                   },
                 ]}
                 balanceSeries={result.monthlySeries.map((r) => r.value)}
+                balanceSeriesYears={values.years}
                 balanceChartTitle="Corpus growth over time"
                 journey={[
                   `${formatINR(values.principal, true)} invested once`,

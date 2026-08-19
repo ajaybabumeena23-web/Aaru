@@ -195,6 +195,7 @@ function PpfInner() {
                   },
                 ]}
                 balanceSeries={result.yearly.map((y) => y.balance)}
+                balanceSeriesYears={values.years}
                 balanceChartTitle="PPF balance over years"
                 journey={[
                   `${formatINR(values.annual, true)} deposited yearly`,

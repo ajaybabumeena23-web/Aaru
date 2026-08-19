@@ -224,6 +224,7 @@ function EmiInner({ config }: { config: EmiVariantConfig }) {
                   },
                 ]}
                 balanceSeries={result.schedule.map((r) => r.balance)}
+                balanceSeriesYears={values.tenure}
                 balanceChartTitle="Outstanding loan balance"
                 journey={[
                   `${formatINR(values.principal, true)} borrowed`,
