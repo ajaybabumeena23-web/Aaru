@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import { Inter, Source_Serif_4, JetBrains_Mono } from "next/font/google";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
@@ -91,6 +92,21 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en-IN">
+      <head>
+        <Script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-1TN0NPSW11"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-1TN0NPSW11');
+          `}
+        </Script>
+      </head>
       <body
         className={`${inter.variable} ${sourceSerif.variable} ${jetbrainsMono.variable} min-h-dvh font-sans antialiased`}
       >
