@@ -815,6 +815,14 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeo> = {
         q: "Does this match EPFO passbook?",
         a: "Unlikely exactly — real accounts have wage ceilings, EPS splits and yearly crediting conventions.",
       },
+      {
+        q: "What is the employer contribution rate?",
+        a: "The employer typically contributes 12% of basic, but a portion goes to EPS. This calculator uses a simplified 3.67% EPF portion — verify with EPFO for exact splits.",
+      },
+      {
+        q: "Can I withdraw EPF before retirement?",
+        a: "Partial withdrawals are allowed for specific purposes like home purchase, illness or education. Full withdrawal is generally permitted at retirement or after unemployment. Check EPFO rules.",
+      },
     ],
     related: [
       { category: "government", slug: "ppf", title: "PPF Calculator" },
@@ -840,6 +848,14 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeo> = {
       {
         q: "Who can open SSY?",
         a: "Subject to scheme eligibility (girl child age limits etc.). Confirm with India Post / bank.",
+      },
+      {
+        q: "How long do I need to deposit in SSY?",
+        a: "Deposits are typically made for 15 years, after which the account continues to earn interest until maturity at 21 years from opening.",
+      },
+      {
+        q: "What is the SSY interest rate?",
+        a: "The rate is notified by the government and can change quarterly. Use the current notified rate in the calculator for an accurate projection.",
       },
     ],
     related: [
@@ -867,6 +883,14 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeo> = {
         q: "Are rates guaranteed?",
         a: "Use current notified rates from India Post. Defaults are illustrative.",
       },
+      {
+        q: "What is the difference between NSC and SCSS?",
+        a: "NSC compounds annually over 5 years and returns principal plus interest at maturity. SCSS pays interest quarterly and returns principal at the end — suited for regular income in retirement.",
+      },
+      {
+        q: "Is the interest taxable?",
+        a: "Interest from these schemes is generally taxable according to your slab, though some may qualify for Section 80C deductions. Verify current tax treatment before investing.",
+      },
     ],
     related: [
       { category: "government", slug: "fd-rd", title: "FD / RD" },
@@ -893,6 +917,14 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeo> = {
       {
         q: "Is TDS considered?",
         a: "Not automatically. Interest may attract TDS depending on thresholds and declarations.",
+      },
+      {
+        q: "What is the difference between FD and RD?",
+        a: "A fixed deposit invests a lump sum once, while a recurring deposit accepts fixed monthly contributions. Choose FD if you have money upfront and RD if you save monthly.",
+      },
+      {
+        q: "How does compounding frequency affect returns?",
+        a: "More frequent compounding (e.g. quarterly vs annual) slightly increases the effective yield. This calculator defaults to quarterly compounding for FD, matching most bank quotes.",
       },
     ],
     related: [
@@ -927,6 +959,10 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeo> = {
         q: "Does this predict markets?",
         a: "No. It only applies the inflation and return rates you enter.",
       },
+      {
+        q: "What is real return?",
+        a: "Real return is your investment return minus inflation. If you earn 12% and inflation is 6%, your real return is roughly 5.7% — the actual growth in purchasing power.",
+      },
     ],
     related: [
       { category: "investment", slug: "cagr", title: "CAGR Calculator" },
@@ -956,6 +992,14 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeo> = {
         q: "Is CAGR the same as XIRR?",
         a: "No. CAGR uses two values and time. XIRR handles irregular cash flows.",
       },
+      {
+        q: "Can CAGR be negative?",
+        a: "Yes. If the end value is lower than the start value, CAGR is negative, indicating a loss over the period.",
+      },
+      {
+        q: "Does CAGR show volatility?",
+        a: "No. CAGR is a smoothed rate. Two investments can have the same CAGR but very different year-to-year paths. It is a comparison tool, not a risk measure.",
+      },
     ],
     related: [
       { category: "investment", slug: "xirr", title: "XIRR Calculator" },
@@ -984,6 +1028,14 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeo> = {
       {
         q: "Should I use market value or purchase price?",
         a: "Use a realistic market estimate for planning. Purchase price can understate or overstate today's position.",
+      },
+      {
+        q: "Should I include my car or gold?",
+        a: "Include assets you would count in a financial snapshot. Some people exclude personal-use items like a primary car; gold and investments are typically included.",
+      },
+      {
+        q: "How often should I update my net worth?",
+        a: "Annually is a good cadence. Update after major life events like buying a home, taking a loan, or a significant change in investment value.",
       },
     ],
     related: [
@@ -1015,6 +1067,14 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeo> = {
         q: "Will my bank approve this amount?",
         a: "Not necessarily. Lenders apply their own FOIR, bureau, and documentation rules. Treat this as a planning estimate.",
       },
+      {
+        q: "What is a good FOIR percentage?",
+        a: "Many banks use 40–50% as an internal guideline, but it varies by lender and income level. A lower FOIR gives a more conservative estimate.",
+      },
+      {
+        q: "How do existing EMIs affect eligibility?",
+        a: "Existing EMIs reduce the EMI capacity available for a new loan. Clearing or reducing other debts before applying can increase your eligible loan amount.",
+      },
     ],
     related: [
       { category: "debt", slug: "emi", title: "EMI Calculator" },
@@ -1044,6 +1104,14 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeo> = {
         q: "Does this include study-period moratorium?",
         a: "No. Enter the repayment amount and tenure that apply after your moratorium, or adjust principal for accrued interest if needed.",
       },
+      {
+        q: "Are education loan rates fixed or floating?",
+        a: "Both options exist. Government-backed education loan schemes may offer subsidised rates. Confirm the rate type and any subsidy eligibility with your lender.",
+      },
+      {
+        q: "Can I get tax benefits on education loan interest?",
+        a: "Interest paid on education loans may qualify for deduction under Section 80E. Verify current rules and your eligibility with a tax professional.",
+      },
     ],
     related: [
       { category: "debt", slug: "emi", title: "EMI Calculator" },
@@ -1072,6 +1140,14 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeo> = {
       {
         q: "How many months should I keep?",
         a: "Common ranges are 3–12 months of essential expenses. Higher if income is variable or dependents rely on you.",
+      },
+      {
+        q: "Where should I keep my emergency fund?",
+        a: "In liquid, low-risk options like a savings account, liquid fund or short-term FD. The priority is accessibility, not return — chasing yield with emergency money defeats the purpose.",
+      },
+      {
+        q: "Should I invest my emergency fund?",
+        a: "Generally no. Emergency money should be safe and instantly accessible. Invest only the surplus beyond your target buffer.",
       },
     ],
     related: [
