@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { TopicHubView } from "@/components/content/TopicHubView";
 import { getTopic } from "@/lib/content/topics";
